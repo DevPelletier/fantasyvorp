@@ -296,7 +296,7 @@ export default function LeagueSettingsForm(props) {
             <h2>Your League Settings</h2>
             <p>
                 Please input your league settings below. <br />
-                <span className="subtext">Form is set to standard Yahoo! H2H Categories by default</span>
+                <span className="subtext">Form is set to standard <strong>Yahoo! H2H Categories</strong> by default</span>
             </p>
 
             <form className="ls-form" onSubmit={handleSubmit(onSubmit)}>
