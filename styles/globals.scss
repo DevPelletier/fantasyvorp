@@ -1,0 +1,415 @@
+@import './core';
+@import './typography';
+
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  // font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  //   Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: $dark-bg;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+}
+
+.hidden {
+  // display: none;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  transition: visibility 0s, opacity 0.5s linear;
+}
+
+// ----------------- GENERAL STYLING...? ----------------- //
+
+// ----------- IMAGES ----------- //
+.img-container {
+  @include flex-center;
+  overflow: hidden;
+  // background-color: $blue01;
+
+  img {
+    max-width: 120%;
+    // max-height: 120%;
+  }
+}
+
+.text-logo-container {
+  @include centerAll;
+}
+
+
+
+// ----------------- COMPONENTS STYLING...? ----------------- //
+// ----------- layout/navbar ----------- //
+
+// VARIABLES
+$navHeight: 80px;
+
+
+.navbar {
+  background: $dark-bg;
+  height: $navHeight;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @include logoFont;
+  font-size: 1.2rem;
+  position: sticky;
+  top: 0;
+  z-index: 9;
+
+  width: 100%;
+
+  .inner-section {
+
+  }
+
+  ul, li {
+    margin: 0;
+  }  
+}
+
+.navbar-container {
+  height: 100%;
+  width: 90vw;
+  max-width: 2000px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-menu {
+  @include flex-center;
+  justify-content: flex-end;
+  list-style: none;
+  text-align: center;
+  height: $navHeight;
+  position: relative;
+  left: 20px;
+}
+
+.nav-item {
+  height: inherit;
+  @include center-onlyY;
+  position: relative;
+  padding: 0 20px;
+  // background-color: $green03;
+  transition: all 0.25s ease-out;
+  min-width: 140px;
+
+  &:hover {
+    background-color: $white-01;
+    color: $dark-bg;
+    cursor: pointer;
+  }
+}
+
+
+
+// ----------- setLeagueSettings.js ----------- //
+// VARIABLES
+$modalHeight: 90vh;
+$modalWidth: 90vw;
+$modalMaxWidth: 800px;
+
+.MuiBox-root {
+  width: $modalWidth;
+  max-width: $modalMaxWidth;
+  margin: auto;
+}
+
+.ls-modal {
+  height: $modalHeight;
+  margin: calc((100vh - $modalHeight) / 2) auto;
+  width: $modalWidth;
+  max-width: $modalMaxWidth;
+  box-shadow: $shadow01;
+  border-radius: $borderRadius01;
+  // border: 10px solid $dark-overlay-1;
+  background: $grey-01;
+  @include centerAll;
+  place-content: normal;
+  padding: 32px 50px;
+
+}
+.ls-modal-content {
+  height: 100%;
+  width: 100%;
+  @include centerAll;
+  place-content: normal;
+  overflow-y: scroll;
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.ls-form {
+  @include centerAll;
+  padding: 20px 0;
+  // border: 1px solid $grey-05;
+  // border-radius: $borderRadius01;
+
+  h3 {
+    margin: 40px auto 20px;
+    width: fit-content;
+  }
+
+  #section_1 {
+    flex-direction: column;
+
+    .mui_select {
+      margin-top: 24px;
+
+      &:first-child {
+        margin: 0;
+      }
+
+      &.leagueTeamSelect .MuiInputBase-root {
+        width: 80px;
+      }
+    }
+  }
+
+  #section_2 {
+    width: 66vw;
+    max-width: 600px;
+
+    .mui_select {
+      margin: 8px 16px 16px;
+    }
+  }
+
+  #section_3 {
+    .formControlGroup {
+      grid-gap: 32px;
+      margin: 8px 0 16px;
+    }
+  }
+
+}
+
+.form_group_container {
+  @include flex-center;
+  flex-wrap: wrap;
+  margin: auto;
+
+  &.select-container {
+
+    .mui_select {
+      min-width: 70px;
+      margin-right: 24px;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+  }
+
+  // Styling all MUI inputs
+  .mui_select, .mui_textfield, .MuiSelect-select {
+    color: $white-01;
+
+    .MuiInputBase-root {
+      background-color: $dark-overlay-1;
+      border-radius: 5px;
+    }
+
+    label, input, button, svg {
+      color: $white-01 !important;
+    }
+    label { opacity: 0.7; }
+    fieldset {
+      border: 1px solid $grey-02;
+    }
+  }
+
+  .MuiSwitch-track {
+    background-color: $green-03;
+    opacity: 0.75;
+  }
+
+  .MuiFormHelperText-root {
+    color: $red-03;
+    font-style: italic;
+  }
+
+
+  &.cats-container {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-gap: 16px 32px;
+    width: 100%;
+  }
+
+  &.single-col {
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .MuiAutocomplete-root {
+    @include flex-center;
+    justify-content: flex-start;
+  }
+
+  .formControlGroup {
+    @include flex-center;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+      
+    &.checkbox-and-textfield {
+      width: 80%;
+      min-width: 200px;
+      max-width: 350px;
+      display: grid;
+      grid-template-columns: 150px auto;
+      grid-gap: 16px;    
+      margin-bottom: 12px;
+      border-radius: 5px;
+      background-color: $dark-overlay-1;
+      border: 1px solid $grey-02;
+      padding: 8px 16px;
+
+      &.cats-field {
+        width: auto;
+        grid-template-columns: 70px 80px;
+        min-width: unset;
+        max-width: unset;
+
+        .mui_checkbox {
+          span.Mui-checked svg { color: $blue-03 }
+          span svg { color: $grey-04; }
+        }
+      }
+    }
+
+    .mui_checkbox {
+        margin: auto !important;
+        margin-left: 0 !important;
+        text-align: left;
+        width: 100%;
+        word-wrap: normal;
+        display: flex;
+        justify-content: space-between;
+    }
+  }
+
+  .mui_textfield {
+    min-width: 120px;
+    max-width: 240px;
+  }
+
+  .mui_textfield_pts {
+      width: 80px !important;
+      min-width: unset;
+      max-width: unset;
+      visibility: visible;
+      opacity: 1;
+      transition: visibility 0s, opacity 0.3s linear;
+  }
+
+
+}
+
+// MUI styles (these are overlaid outside of the form)
+ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work :(
+  border: 1px solid $grey-01;
+  color: $white-01 !important;
+  background-color: black;
+  opacity: 0.88; // rgba doesn't work here for some reason?
+}
+
+.MuiRadio-root {
+  span {
+    // color: red; // This is the highlight colour of the item
+    color: $white-01;
+
+    svg:last-child {
+      color: $white-01; // inner-circle colour
+    }
+  }
+}
+
+.MuiSelect-select {
+  text-align: left;
+}
+
+.submit-container {
+  margin: 32px auto;
+}
+
+
+// ----------- React-Data-Table Styles ----------- //
+// overall table styles
+.rdt_Table, .rdt_TableHead, .rdt_TableBody, .rdt_TableHeadRow, .rdt_TableRow, .rdt_Pagination {
+  color: $white-01 !important;
+
+}
+
+.rdt_TableHead, .rdt_TableHeadRow {
+  background-color: $grey-02 !important;
+}
+
+.dataTable {
+  max-height: unset !important;
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+      display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+// Not working...
+::-webkit-scrollbar-track {
+  background: $grey-01 !important;
+}
+::-webkit-scrollbar-thumb {
+  background: $dark-overlay-1; 
+}
+
+
+.rdt_TableRow {
+  background-color: $grey-01 !important;
+
+  // Centered Columns
+  // #cell-1-undefined, #cell-3-undefined, #cell-4-undefined {
+  //   div { width: 100%; }
+  // } 
+}
+
+.rdt_Pagination {
+  background-color: $grey-02 !important;
+
+  button {
+    color: $white-01;
+    fill: $white-01;
+  }
+}
+
+.rdt_TableHeader {
+  text-align: left;
+}
+
+.playerDataControlMenu {
+  @include centerAll;
+  justify-content: flex-start;
+}

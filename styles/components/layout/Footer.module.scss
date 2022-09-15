@@ -1,0 +1,57 @@
+@import '../../core';
+
+
+.footer {
+    // background-color: $green02;
+    border-top: 1px solid $grey-05;
+    color: $white-01;
+    margin-top: 50px;
+    height: 100px;
+
+    h2 {
+        @include logoFont
+    }
+    
+    a {
+        font-size: 0.85rem;
+        font-weight: 300;
+        opacity: 0.5;
+        transition: all 0.25s ease-out;
+
+        &:hover {
+            opacity: 8;
+            // font-weight: 600;
+        }
+    }
+
+    h3 {
+        // padding-bottom: 10px;
+        color: $white-01;
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+  
+    .footerLinksContainer {
+        height: inherit;
+        @include flex-center;
+        justify-content: space-between;
+
+        div, ul {
+            margin: 0 32px;
+        }
+    }
+  
+    .footerLinkList {
+        padding: 0;
+        text-align: left;
+        @include flex-center;
+        justify-content: flex-start;
+
+
+        li {
+            margin-right: 32px;
+        }
+    }
+
+
+}

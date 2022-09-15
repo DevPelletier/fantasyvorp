@@ -1,0 +1,664 @@
+{
+    "Category_IDs": {
+        "001": {
+            "G": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "A": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "PTS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "+/-": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PIM": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPP": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SHG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHP": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GWG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOW": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOL": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SOG": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "HIT": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "BLK": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "GS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "W": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "L": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GAA": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SV": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SV%": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SO": {
+                "Status": 0,
+                "Weight": 1
+            }
+        },
+        "002": {
+            "G": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "A": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "PTS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "+/-": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "PIM": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPP": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SHG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHP": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GWG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOW": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOL": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SOG": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "HIT": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "BLK": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "W": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "L": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GAA": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SV": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SV%": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SO": {
+                "Status": 1,
+                "Weight": 1
+            }
+        },
+        "003": {
+            "G": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "A": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "PTS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "+/-": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "PIM": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "PPG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPP": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SHG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHP": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GWG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOW": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOL": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SOG": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "HIT": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "BLK": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "W": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "L": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GAA": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SV": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SV%": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SO": {
+                "Status": 0,
+                "Weight": 1
+            }
+        },
+        "401": {
+            "G": {
+                "Status": 1,
+                "Weight": 2
+            },
+            "A": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "PTS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "+/-": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PIM": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPP": {
+                "Status": 1,
+                "Weight": 0.5
+            },
+            "SHG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHP": {
+                "Status": 1,
+                "Weight": 0.5
+            },
+            "GWG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOW": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOL": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SOG": {
+                "Status": 1,
+                "Weight": 0.1
+            },
+            "HIT": {
+                "Status": 1,
+                "Weight": 0.1
+            },
+            "BLK": {
+                "Status": 1,
+                "Weight": 0.5
+            },
+            "GS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "W": {
+                "Status": 1,
+                "Weight": 4
+            },
+            "L": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GA": {
+                "Status": 1,
+                "Weight": -2
+            },
+            "GAA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SV": {
+                "Status": 1,
+                "Weight": 0.2
+            },
+            "SV%": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SO": {
+                "Status": 1,
+                "Weight": 3
+            }
+        },
+        "402": {
+            "G": {
+                "Status": 1,
+                "Weight": 6
+            },
+            "A": {
+                "Status": 1,
+                "Weight": 4
+            },
+            "PTS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "+/-": {
+                "Status": 1,
+                "Weight": 2
+            },
+            "PIM": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPP": {
+                "Status": 1,
+                "Weight": 2
+            },
+            "SHG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHP": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GWG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOW": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOL": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SOG": {
+                "Status": 1,
+                "Weight": 0.9
+            },
+            "HIT": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "BLK": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "GS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "W": {
+                "Status": 1,
+                "Weight": 5
+            },
+            "L": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GA": {
+                "Status": 1,
+                "Weight": -3
+            },
+            "GAA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SA": {
+                "Status": 0,
+                "Weight": 0
+            },
+            "SV": {
+                "Status": 1,
+                "Weight": 0.6
+            },
+            "SV%": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SO": {
+                "Status": 1,
+                "Weight": 5
+            }
+        },
+        "403": {
+            "G": {
+                "Status": 1,
+                "Weight": 3
+            },
+            "A": {
+                "Status": 1,
+                "Weight": 2
+            },
+            "PTS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "+/-": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "PIM": {
+                "Status": 1,
+                "Weight": 0.5
+            },
+            "PPG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "PPP": {
+                "Status": 1,
+                "Weight": 1
+            },
+            "SHG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SHP": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GWG": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOW": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "FOL": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SOG": {
+                "Status": 1,
+                "Weight": 0.4
+            },
+            "HIT": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "BLK": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GS": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "W": {
+                "Status": 1,
+                "Weight": 4
+            },
+            "L": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "GA": {
+                "Status": 1,
+                "Weight": -1
+            },
+            "GAA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SA": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SV": {
+                "Status": 1,
+                "Weight": 0.2
+            },
+            "SV%": {
+                "Status": 0,
+                "Weight": 1
+            },
+            "SO": {
+                "Status": 1,
+                "Weight": 2
+            }
+        }
+    },
+    "Position_IDs": {
+        "001": {
+            "C": 2,
+            "LW": 2,
+            "RW": 2,
+            "D": 4,
+            "G": 2,
+            "F": 0,
+            "W": 0,
+            "Util": 0,
+            "Bench": 4
+        },
+        "002": {
+            "C": 0,
+            "LW": 0,
+            "RW": 0,
+            "D": 5,
+            "G": 2,
+            "F": 9,
+            "W": 0,
+            "Util": 1,
+            "Bench": 5
+        }
+    }
+}

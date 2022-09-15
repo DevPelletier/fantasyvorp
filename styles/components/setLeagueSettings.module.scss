@@ -1,0 +1,25 @@
+@import '../core';
+
+.form_group_container {
+
+    .form_group {
+        display: grid;
+        grid-template-columns: 100px 80px;
+        grid-gap: 24px;    
+
+        .mui-checkbox {
+            flex-direction: row !important;
+            margin: auto !important;
+            margin-left: 0 !important;
+        }
+    }
+
+    .mui_textfield {
+
+    }
+
+    .mui_textfield_pts {
+        width: 80px !important;
+    }
+
+}

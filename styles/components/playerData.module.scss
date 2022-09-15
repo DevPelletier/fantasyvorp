@@ -1,0 +1,26 @@
+@import '../core';
+
+.playerData {
+    @include centerAll;
+    width: inherit;
+
+    h3 {
+        font-style: italic;
+        font-weight: 400;
+        background: $dark-overlay-4;
+        margin: 0;
+        padding: 12px 20px;
+        border-radius: 5px 5px 0 0;
+        margin-top: 16px;
+    }
+}
+
+.dataTableContainer {
+    @include centerAll;
+    place-content: normal;
+    max-height: 120vh;
+    min-height: 300px;
+    width: 92vw;
+    margin: auto;
+    background: $dark-overlay-1
+}

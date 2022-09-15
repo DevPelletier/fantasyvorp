@@ -1,0 +1,33 @@
+@import '../../core';
+
+// ----------- layout/hero ----------- //
+
+// VARIABLES
+
+// STYLES
+
+.hero {
+    @include centerAll;
+    height: 80vh;
+    min-height: 500px;
+    width: 100%;  
+
+    .logoFont {
+        background-color: $dark-overlay-1;
+        padding: 5px 12px;
+        margin: 0 5px;
+    }
+    
+    .contentContainer {
+        @include centerAll;
+    }
+
+    button {
+        width: fit-content;
+        margin: auto;
+    }
+    
+}
+
+
+  

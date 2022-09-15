@@ -1,0 +1,169 @@
+///////////////////// COLOURS /////////////////////
+//  https://material.io/design/color/the-color-system.html#tools-for-picking-colors
+$white-01: white;
+
+$grey-01: #212121; 
+$grey-02: #424242;
+$grey-03: #616161;
+$grey-04: #9E9E9E;
+$grey-05: #EEEEEE;
+
+$blue-01: #1A237E;
+$blue-02: #304FFE;
+$blue-03: #536DFE;
+
+$green-01: #00C853;
+$green-02: #00E676;
+$green-03: #B9F6CA;
+
+$purple-01: #6A1B9A;
+$purple-02: #AA00FF;
+$purple-03: #EA80FC;
+
+$red-01: #D50000;
+$red-02: #FF1744;
+$red-03: #FF8A80;
+
+$dark-bg: #121212;
+
+$dark-overlay-1: rgba(255,255,255,0.05); // Don't need the others? Just stack this!
+$dark-overlay-2: rgba(255,255,255,0.08);
+$dark-overlay-3: rgba(255,255,255,0.11);
+$dark-overlay-4: rgba(255,255,255,0.14);
+
+///////////////////// FONTS /////////////////////
+@mixin headerFont1 {
+  font-family: 'Source Code Pro', monospace;
+}
+
+@mixin logoFont {
+    font-family: 'Space Mono', monospace;
+  }
+  
+
+@mixin bodyFont1 {
+    font-family: 'Noto Sans', Roboto, Oxygen, Fira Sans, Helvetica Neue, -apple-system, sans-serif;
+      // font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  //   Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+
+///////////////////// BREAK POINTS /////////////////////
+$breakpoint1: 1200px;
+$breakpoint2: 700px;
+
+///////////////////// MISC STYLE VARS /////////////////////
+$borderRadius01: 5px;
+
+$shadow01: 0 3px 10px 2px rgb(0 0 0 / 15%);
+
+ ///////////////////// MIXINS /////////////////////
+
+ @mixin tablet() {
+     @media (max-width: $breakpoint1) {
+         @content;
+     }
+ }
+
+ @mixin mobile() {
+     @media (max-width: $breakpoint2) {
+         @content;
+     }
+ }
+
+ // The below are referenced from here:
+ // https://moderncss.dev/complete-guide-to-centering-in-css/#vertically-and-horizontally-xy
+ @mixin centerAll {
+    display: grid;
+    place-content: center;
+    text-align: center;
+  }
+  
+  @mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  @mixin flex-center-col {
+    @include flex-center;
+    flex-direction: column;
+  }
+  
+  
+  @mixin center-selfAll-inrelativepos {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  @mixin center-selfY-inrelativepos {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  @mixin center-selfX-inrelativepos {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  @mixin center-onlyY {
+    display: grid;
+    align-content: center;
+  }
+  
+  @mixin center-onlyX {
+    display: grid;
+      justify-content: center;
+  }
+  
+  
+  @mixin center-selfX {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  @mixin center-selfY {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  
+  @mixin center-selfXY {
+    margin: auto;
+  }
+  
+  @mixin section-padding-lg-lg {
+    padding-top: 160px;
+    padding-bottom: 160px;
+  }
+  
+  
+  @mixin section-padding-lg-md {
+    padding-top: 120px;
+    padding-bottom: 120px;
+  }
+  
+  @mixin section-padding-lg-sm {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+  
+  @mixin section-padding-sm-lg {
+    padding-top: 120px;
+    padding-bottom: 120px;
+  }
+  
+  @mixin section-padding-sm-sm {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+
+
+  // ///// STYLINGS
+
+  
