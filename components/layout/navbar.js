@@ -26,6 +26,11 @@ export default function Section() {
                             </Link>
                         </li>
                         <li className="nav-item">
+                            <Link href="/raw_stats">
+                                <a className="btn">Raw Stats</a>
+                            </Link>
+                        </li>
+                        <li className="nav-item">
                             <Link href="/draft">
                                 <a className="btn">Draft</a>
                             </Link>

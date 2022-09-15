@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, createRef } from 'react'
 import Link from 'next/link';
 
 // import styles from '../styles/components/setLeagueSettings.module.scss';
 
 import { Controller, useForm } from 'react-hook-form';
+import { supabase } from '../utils/supabaseClient'
+import ReCAPTCHA from "react-google-recaptcha";
 
 import FormControl from '@mui/material/FormControl';
 import Checkbox from '@mui/material/Checkbox';
@@ -22,6 +24,10 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Stack from '@mui/material/Stack';
 import { registerStyles } from '@emotion/utils';
 
+// TODO: Figure out the fucking caching...
+// See 
+// Cache
+// import redis from '../utils/redis';
 
 // React-Hook-Form with MUI tutorial her ==>
 // https://levelup.gitconnected.com/using-react-hook-form-with-material-ui-components-ba42ace9507a
@@ -32,9 +38,14 @@ let leagueSettingFile;
 export default function LeagueSettingsForm(props) {
     const [loading, setLoading] = useState(false);
     const { watch, control, reset, handleSubmit } = useForm();
+    const recaptchaRef = createRef();
 
     let scoringTypeRadio = watch("radioScoringType");
     // console.log(watch());
+
+    const onFormChange = (value) => {
+        console.log("Captcha value:", value);
+    }    
 
     // Get LS Json from public supabase storage file
     let url = 'https://oxkhcrfsekayvbmrpvfj.supabase.co/storage/v1/object/public/site-content/nhl_settings_ID_map.json'
@@ -44,9 +55,8 @@ export default function LeagueSettingsForm(props) {
         .then(res => res.json())
         .then(data =>
             leagueSettingFile = data)
-        .then( console.log('got leaguesetting map'))
+        // .then( console.log('got leaguesetting map'))
         .catch(err => { throw err });
-
     }
 
     const toggleModal = () => {
@@ -62,8 +72,9 @@ export default function LeagueSettingsForm(props) {
     }
 
     const onSubmit = (data) => {
+        recaptchaRef.current.execute();
         // console.log(leagueSettingFile)
-        fakeLoadingTimeout();
+        // fakeLoadingTimeout();
         console.log('submitting league settings...')
 
 
@@ -74,6 +85,11 @@ export default function LeagueSettingsForm(props) {
         let catID = '';
         let posID = '';
         tableCats = [];
+
+        if (!data) {
+            console.log('form data error')
+            return
+        }
 
         for (let x in data) {
             let y = x.slice(0,3);
@@ -262,10 +278,52 @@ export default function LeagueSettingsForm(props) {
         // SET LSID AND TABLE COLUMNS
         let leaguesetid = leagueTeams + '_' + catID + '_' + posID + '_' + scoringType;
         console.log(leaguesetid)
+        if ((leaguesetid.length < 11) || (scoringType == null)) {
+            console.log(categoryJSON)
+            console.log(positionJSON)
+
+            // TODO: Make the lsID descriptive of the specific settings if it's not in the existing settings!
+            // e.g. C1-LW1-RW1-D1-G1_Cats_G1-A2 etc...?
+
+            leaguesetid = ""
+            leaguesetid += leagueTeams
+            leaguesetid += "_"
+
+            for (let pos in positionJSON) {
+                if (positionJSON[pos] > 0) {
+                    leaguesetid += pos
+                    leaguesetid += positionJSON[pos]
+                    leaguesetid += '-'
+                }
+            }
+
+            leaguesetid += "_"
+
+            if (scoringType == 0) {
+                for (let cat in categoryJSON) {
+                    if (categoryJSON[cat]["Status"] == 1) {
+                        leaguesetid += cat
+                        leaguesetid += '-'
+                    }
+                }
+            } else {
+                for (let cat in categoryJSON) {
+                    if (categoryJSON[cat]["Status"] == 1) {
+                        leaguesetid += cat
+                        leaguesetid += categoryJSON[cat]["Weight"]
+                        leaguesetid += '-'
+                    }
+                }
+            }
+            leaguesetid += "_"
+            leaguesetid += scoringType
+        }
+        console.log(leaguesetid)
         props.getLSID(leaguesetid);
-        props.getColData(tableCats);
+        props.getColData(tableCats);          
         // console.log(leaguesetid);
-        // console.log(tableCats);        
+        // console.log(tableCats);   
+        // toggleModal();     
     }   
 
     useEffect(() => {
@@ -2289,6 +2347,13 @@ export default function LeagueSettingsForm(props) {
 
                 <div className="submit-container">
                     <Stack direction="row" spacing={2}>
+                        <ReCAPTCHA
+                            ref={recaptchaRef}
+                            size="invisible"
+                            sitekey="6LetDwAiAAAAAL0NGojEuc3Hi9ZT_TT3GTZjkCjk"
+                            onChange={onFormChange}
+                        />
+
                         <Button 
                         variant="contained" 
                         type="submit" 
@@ -2308,6 +2373,8 @@ export default function LeagueSettingsForm(props) {
                         </Button> */}
                     </Stack>
                 </div>
+                <div className="submit-container">
+                </div>
 
             </form>
         </div>
@@ -2315,3 +2382,17 @@ export default function LeagueSettingsForm(props) {
 
     );
 }
+
+// // Get LS Json from public supabase storage file
+// export async function getServerSideProps() {
+//     let url = 'https://oxkhcrfsekayvbmrpvfj.supabase.co/storage/v1/object/public/site-content/nhl_settings_ID_map.json'
+//     // if (!leagueSettingFile) {
+//         console.log('getting LS map')
+//         const res = await fetch(url)
+//         const data = await res.json()
+//         return { props: { lsFiledata: data }}
+//     // }
+
+// }
+
+// export default LeagueSettingsForm

@@ -31,6 +31,10 @@ ul {
   transition: visibility 0s, opacity 0.5s linear;
 }
 
+.marginAuto {
+  margin: auto;
+}
+
 // ----------------- GENERAL STYLING...? ----------------- //
 
 // ----------- IMAGES ----------- //
@@ -49,6 +53,10 @@ ul {
   @include centerAll;
 }
 
+#dataTableAnchor {
+  position: relative;
+  top: -100px;
+}
 
 
 // ----------------- COMPONENTS STYLING...? ----------------- //
@@ -59,7 +67,7 @@ $navHeight: 80px;
 
 
 .navbar {
-  background: $dark-bg;
+  background: $grey-01;
   height: $navHeight;
   display: flex;
   justify-content: center;
@@ -221,7 +229,7 @@ $modalMaxWidth: 800px;
   }
 
   // Styling all MUI inputs
-  .mui_select, .mui_textfield, .MuiSelect-select {
+  .mui_select, .mui_textfield, .MuiSelect-select, .MuiTextField-root {
     color: $white-01;
 
     .MuiInputBase-root {
@@ -237,6 +245,7 @@ $modalMaxWidth: 800px;
       border: 1px solid $grey-02;
     }
   }
+
 
   .MuiSwitch-track {
     background-color: $green-03;
@@ -412,4 +421,25 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
 .playerDataControlMenu {
   @include centerAll;
   justify-content: flex-start;
+}
+
+.ls-request-form-container {
+  padding: 32px 50px;
+  background-color: $dark-overlay-1;
+}
+.ls-request-form {
+  @include centerAll;
+  color: $white-01;
+  padding: 8px 16px 24px;
+
+  .mui_textfield {
+    max-width: unset;
+    width: 300px;
+  }
+  
+  button {
+    width: fit-content;
+    height: fit-content;
+    margin: auto auto auto 32px !important;
+  }
 }

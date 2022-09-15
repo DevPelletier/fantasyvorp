@@ -18,8 +18,8 @@
 .dataTableContainer {
     @include centerAll;
     place-content: normal;
-    max-height: 120vh;
-    min-height: 300px;
+    // max-height: 120vh;
+    // min-height: 300px;
     width: 92vw;
     margin: auto;
     background: $dark-overlay-1

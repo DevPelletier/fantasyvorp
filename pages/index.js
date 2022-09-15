@@ -22,8 +22,16 @@ export default function Home(props) {
   const handleOpen = () => setLSModal(true);
   const handleClose = () => setLSModal(false);
 
+  const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
+  const scrollToDataTable = async () => {
+    await wait(500)
+    document.getElementById("dataTableAnchor").scrollIntoView({behavior: "smooth"});
+  }
+
   const getLSID = (lsID) => {
     setLSID(lsID);
+    handleClose();
+    scrollToDataTable();
   }
 
   const getColData = (colData) => {
@@ -57,6 +65,7 @@ export default function Home(props) {
           </div>
       </section>
 
+      <div id="dataTableAnchor"></div>
       <PlayerData lsID={lsID} colData={colData} />
 
       </main>

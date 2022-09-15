@@ -1,6 +1,4 @@
-import Head from 'next/head'
-
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { supabase } from '../utils/supabaseClient'
 import DataTable from 'react-data-table-component';
@@ -23,6 +21,8 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 
 import { Controller, useForm } from 'react-hook-form';
@@ -33,39 +33,99 @@ import { customRDTStyles, specificRDTStyles } from '../styles/components/dataTab
 // -------------- Data Table Variables -------------- //
 const dataColWidth01 = "76px";
 const dataColWidth02 = "100px";
-let tableData;
+let tableData = {};
+let finalTableData;
 let columns;
 let dataSource;
 
 // -------------- END of Data Table Variables -------------- //
 
 
-// DEV TODO:
-// USE THIS DATA TABLE 
-// SEEMS WAY MORE SIMPLE & LIGHTWEIGHT THAN MUI
-// https://react-data-table-component.netlify.app/?path=/docs/getting-started-examples--page
-
-export default function PlayerData(props) {
+export default function PlayerVORPData(props) {
   const [playerData, setPlayerData] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState()
   const [hidePosRnk, setHidePosRnk] = useState(false);
   const [hideADP, setHideADP] = useState(true);
   const [showPerGP, setShowPerGP] = useState(false);
   const [adps, setADPs] = useState([]);
   const [newLS, setNewLS] = useState(false)
-
-  let lsID = props.lsID;
-  let colData = props.colData;
-
+  const [email, setEmail] = useState('')
+  const [isValidEmail, setIsValidEmail] = useState()
   // const [statColumns, setStatColumns] = useState([])
 
-  const { watch, control, reset, handleSubmit } = useForm();
+  const { register, watch, control, reset, handleSubmit, errors } = useForm();
   let tablePosFilter = watch("tablePosFilter");
   let season = watch("seasonSelect");
   // console.log(watch());
 
+  let lsID = props.lsID;
+  let colData = props.colData;
+  let seasonID = season;
+  let league = 'NHL';
+
+  // Checks if lsID value is different than previous value
+  const onRefChange = useCallback(
+    (node) => {
+      // console.log(node);
+      return true;
+    },
+    [lsID]
+  );
+
+  const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
+
+  const checkIfNewDataNecessary = () => {
+    // 1. Check if lsID has changed
+    if (onRefChange()) {
+      // 2. Check if lsID is valid, and if seasonID is valid
+      if ((lsID == "") || (lsID.length > 12) || (lsID.length <= 10) || (typeof seasonID == 'undefined')) {
+        return false
+      } else {
+        // 3. Check if that lsID's season data already exists
+        if (tableData[season] == null) {
+          return true
+        } else {
+          setTableData()
+          return false
+        }
+      }
+    } else {
+      return false
+    }
+  }
+
+  // const handleEmailValidation = email => {
+  //   console.log("ValidateEmail was called with", email);
+
+  //   const isValid = isValidEmail(email);
+
+  //   const validityChanged =
+  //     (errors.email && isValid) || (!errors.email && !isValid);
+  //   if (validityChanged) {
+  //     console.log("Fire tracker with", isValid ? "Valid" : "Invalid");
+  //   }
+
+  //   return isValid;
+  // };
+
+  const submitRequestedLSID = async (formData) => {
+    let userEmail = formData.lsRequestEmail
+    let leagueSettingID = lsID
+    const { data, error } = await supabase
+        .from('RequestedLeagueSettings')
+        .insert([{ lsID: leagueSettingID, email: userEmail}])
+    if (error) {
+      console.log('error')
+      console.log(error.message)
+      return // abort
+    }
+    console.log('lsID request submitted')
+    return data;
+  }
+
   useEffect(() => {
-    if (lsID != "") {
+    if (checkIfNewDataNecessary()) {
+      console.log('getting data from api')
       const t0 = new Date().getTime()
       fetchPlayerData()
         .then(data => {
@@ -75,7 +135,7 @@ export default function PlayerData(props) {
             // redis.set(`playerData`, data) 
             setTableData(data)
           } else if (!data) {
-
+            submitRequestedLSID(lsID)
             // User Message and Input Triggered
             setNewLS(true);
           }
@@ -83,6 +143,8 @@ export default function PlayerData(props) {
           // addADP(data)
         })
         .catch(console.error)
+    } else {
+      console.log('NOT getting data from api')
     }
   }, [lsID, season, showPerGP, tablePosFilter ])
 
@@ -91,11 +153,9 @@ export default function PlayerData(props) {
     setShowPerGP(!showPerGP)
   }
   
-  let seasonID = season;
-  let league = 'NHL';
 
   const setTableCols = (colData) => {
-    console.log('setTableCols')
+    // console.log('setTableCols')
     let scoringType;
     let ignoreCols = [
       'Scoring Type', 'Name', 'Rank', 'Rank_pergp', 'VORP', 'VORP_pergp'
@@ -2984,22 +3044,32 @@ export default function PlayerData(props) {
   }
 
 
-  const setTableData = (data) => {
-    console.log('setTableData');
-    tableData = []; // clear specific subset of data to display
-    data.Source = dataSource;
-    console.log('Data was pulled from: ' + data.Source + ' and took ' + data.responseTime)
+  const setTableData = async (data) => {
+    setLoading(true)
+    // console.log('setTableData');
+    console.log(`setting tableData[${season}]`)
+    finalTableData = []; // clear specific subset of data to display
+
+    // data.Source = dataSource;
+    // console.log('Data was pulled from: ' + data.Source + ' and took ' + data.responseTime)
+    
+    // If season data doesn't exist locally yet, set season data
+    if (typeof tableData[season] == 'undefined') {
+      tableData[season] = data
+    }
 
     if (tablePosFilter == 'None') {
-      tableData = data.filter(player => (player.VORPPosition != "Overall") && (player.VORPPosition != "Overall perGP"))
+      finalTableData = tableData[season].filter(player => (player.VORPPosition != "Overall") && (player.VORPPosition != "Overall perGP"))
     } else {
-      tableData = data.filter(player => player.VORPPosition == tablePosFilter);
+      finalTableData = tableData[season].filter(player => player.VORPPosition == tablePosFilter);
     }
+    
+    await wait(1000);
 
     setTableCols(colData)
     setLoading(false);
 
-    console.log(tableData)
+    console.log(finalTableData)
   }
 
   async function fetchPlayerData() {
@@ -3015,7 +3085,6 @@ export default function PlayerData(props) {
       // }
 
       console.log('fetching data from server')
-      setLoading(true)
       let dbFile = league + '__' + lsID + '__' + seasonID;
       console.log("db file = " + dbFile)
 
@@ -3024,7 +3093,7 @@ export default function PlayerData(props) {
       const { data, error } = await supabase
         .from(dbFile)
         .select()
-        .range(0, 200)
+        // .range(0, 200)
         .then( dataSource = 'API' )
         // .then(data => {    // THIS FIRES TOO EARLY - DATA HASN'T BEEN LOADED
         //   setPlayerData(data)
@@ -3032,7 +3101,7 @@ export default function PlayerData(props) {
       if (error) {
         console.log('error')
         console.log(error.message)
-        return // abort
+        return data;// abort
       }
       
       return data;
@@ -3068,30 +3137,6 @@ export default function PlayerData(props) {
       <div className="playerDataControlMenu">
         <div className="form_group_container">
           <Stack direction="row" spacing={2}>
-          <Controller
-            name="seasonSelect"
-            control={control}
-            defaultValue="ProjVORPs"
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <FormControl className="mui_select">
-                    <InputLabel id="seasonSelect-select">Select Season</InputLabel>
-                    <Select
-                    labelId="seasonSelect-select"
-                    label="Select Season"
-                    sx={{ width: 250 }}
-                    value={value}
-                    onChange={onChange}
-                    error={!!error}
-                    // helperText={error ? error.message : null}
-                    >
-                        <MenuItem value={'ProjVORPs'}>22-23 Projection</MenuItem>
-                        <MenuItem value={'1920'}>19-20</MenuItem>
-                        <MenuItem value={'2021'}>20-21</MenuItem>
-                        <MenuItem value={'2122'}>21-22</MenuItem>
-                    </Select>
-                </FormControl>
-              )}
-            />
             <Controller
             name="tablePosFilter"
             control={control}
@@ -3120,6 +3165,30 @@ export default function PlayerData(props) {
                 </FormControl>
             )}
             // rules={{ required: 'Fantasy Site required' }}
+            />
+            <Controller
+            name="seasonSelect"
+            control={control}
+            defaultValue="ProjVORPs"
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="seasonSelect-select">Select Season</InputLabel>
+                    <Select
+                    labelId="seasonSelect-select"
+                    label="Select Season"
+                    sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <MenuItem value={'ProjVORPs'}>22-23 Projection</MenuItem>
+                        <MenuItem value={'19-20'}>19-20</MenuItem>
+                        <MenuItem value={'20-21'}>20-21</MenuItem>
+                        <MenuItem value={'21-22'}>21-22</MenuItem>
+                    </Select>
+                </FormControl>
+              )}
             />
             <FormControl component="fieldset">
               <FormGroup aria-label="position" row>
@@ -3175,9 +3244,40 @@ export default function PlayerData(props) {
       </h3>
 
       { newLS ? (
-        <p>
-          New League Setting! Please enter your email or whatever
-        </p>
+        <div className="ls-request-form-container">
+          <p>
+            New League Setting! Please enter your email or whatever
+          </p>
+          <form className="ls-request-form" onSubmit={handleSubmit(submitRequestedLSID)}>
+            <div className="form_group_container">
+                <Controller
+                name="lsRequestEmail"
+                control={control}
+                defaultValue=""
+                required
+                render={({ field: { onChange, value }, fieldState: { errors } }) => (
+                  <Stack direction="row" spacing={2}>
+                    <TextField 
+                    id="outlined-basic" 
+                    label="Email" 
+                    variant="outlined" 
+                    value={value}
+                    onChange={onChange}
+                    className="mui_textfield"
+                    type="email"
+                    />
+                    <Button 
+                    variant="contained" 
+                    type="submit" 
+                    value="Submit">
+                      Submit
+                    </Button>
+                  </Stack>
+                )}
+                />
+            </div>
+        </form>
+        </div>
       ) : (
         ""
       )}
@@ -3186,7 +3286,7 @@ export default function PlayerData(props) {
         { lsID ? 
           "" : 
           (
-            <p className="warning">Please enter your league settings above to see relevant Fantasy VORP data ☝️</p>
+            <p className="warning marginAuto">Please enter your league settings above to see relevant Fantasy VORP data ☝️</p>
           )
         }
         { loading ? (
@@ -3195,7 +3295,7 @@ export default function PlayerData(props) {
           <DataTable
           title={"Table Title TODO"}
           columns={columns}
-          data={tableData}  // filteredItems
+          data={finalTableData}  // filteredItems
           customStyles={customRDTStyles}
           conditionalRowStyles={specificRDTStyles}
           className="dataTable"
