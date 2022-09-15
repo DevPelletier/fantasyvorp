@@ -31,7 +31,7 @@ import styles from '../styles/components/playerData.module.scss';
 import { customRDTStyles, specificRDTStyles } from '../styles/components/dataTable';
 
 // -------------- Data Table Variables -------------- //
-const dataColWidth01 = "75px";
+const dataColWidth01 = "76px";
 const dataColWidth02 = "100px";
 let tableData;
 let columns;
