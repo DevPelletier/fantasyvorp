@@ -19,7 +19,7 @@ export default function Section() {
                 A fantasy (sport) is a type of game, often played using the Internet, where participants assemble imaginary or virtual teams composed of proxies of real players of a professional sport.
             </p>
             <p>
-                <strong>'VORP':</strong> <br />
+                <strong>&lsquo;VORP&lsquo;: </strong> <br />
                 A fantasy (sport) is a type of game, often played using the Internet, where participants assemble imaginary or virtual teams composed of proxies of real players of a professional sport.
             </p>
             <p>
@@ -84,7 +84,7 @@ export default function Section() {
             </AccordionSummary>
             <AccordionDetails>
                 <p>
-                    <strong>A: </strong>It’s called a <a href="https://www.baseball-reference.com/about/marcels.shtml" target="_blank" rel="noreferrer">"Marcel Projection”</a>, which is supposed to be “the most basic forecasting system you can have, that uses as little intelligence as possible - so basic that Marcel the Monkey could do it”. 
+                    <strong>A: </strong>It’s called a <a href="https://www.baseball-reference.com/about/marcels.shtml" target="_blank" rel="noreferrer">Marcel Projection</a>, which is supposed to be “the most basic forecasting system you can have, that uses as little intelligence as possible - so basic that Marcel the Monkey could do it”. 
 
                 </p>
                 <p>

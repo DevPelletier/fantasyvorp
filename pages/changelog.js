@@ -51,7 +51,7 @@ export default function Page() {
                         </li>
                         <li>
                         <p>
-                        Add Positional Distribution graphs for each custom league setting => Draft Strategy visualization
+                        Add Positional Distribution graphs for each custom league setting --- Draft Strategy visualization
                         </p>
                         </li>
                         <li>

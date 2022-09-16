@@ -20,7 +20,7 @@ function MyApp({ Component, pageProps }) {
     <Component {...pageProps} />
     <div className="buymeacoffee">
         <div className="img-container">
-          <a className="btn" href="https://www.buymeacoffee.com/fantasyvorp" target="_blank">
+          <a className="btn" href="https://www.buymeacoffee.com/fantasyvorp" target="_blank" rel="noreferrer">
             <Image
             src={img_bmc}
             alt="Buy Dev a Coffee!"
