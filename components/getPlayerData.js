@@ -3287,9 +3287,9 @@ export default function PlayerVORPData(props) {
           <div className="content">
 
           <p>
-            Your specific League Setting has been submitted for processing! Your league settings' VORP data will be live within a few hours.</p>
+            Your specific League Setting has been submitted for processing! Your league settings&apos; VORP data will be live within a few hours.</p>
             <p>As this site is still under development, populating the database is still a very manual process, unfortunately. </p>
-             <p>Please enter your email below to be notified the moment your league's VORP data is live.
+             <p>Please enter your email below to be notified the moment your league&apos;s VORP data is live.
             <span className="subtext">I promise not to use your email for anything except this single notification</span></p>
         </div>
 
