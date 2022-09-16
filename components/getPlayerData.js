@@ -225,12 +225,9 @@ export default function PlayerVORPData(props) {
           if (colData[col]['active'] == true) {
             if (rateStats.includes(col)) {
               colData[col]['omitTotal'] = ""
-              colData[col]['dataRef1'] = colData[col]['name'];
             } else {
               colData[col]['omitTotal'] = showPerGP
               colData[col]['omitperGP'] = !showPerGP
-              colData[col]['dataRef1'] = colData[col]['name'];
-              colData[col]['dataRef2'] = colData[col]['name'] + ' perGP';
             }  
           } else {
             colData[col]['omitTotal'] = true
@@ -241,6 +238,11 @@ export default function PlayerVORPData(props) {
     }
 
     console.log(colData)
+
+    let pointsCheck = false;
+    if (colData['Scoring Type'] == 'Points') {
+      pointsCheck = true;
+    }
     
     columns = [
       {
@@ -474,43 +476,43 @@ export default function PlayerVORPData(props) {
         omit: colData[0]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => (row[colData[0]['dataRef1']] >= '3'),
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[0]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -525,43 +527,43 @@ export default function PlayerVORPData(props) {
         omit: colData[0]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[0]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef2']] < '3') && (row[colData[0]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef2']] < '2') && (row[colData[0]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef2']] < '1') && (row[colData[0]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef2']] < '0') && (row[colData[0]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef2']] < '-1') && (row[colData[0]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[0]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -576,43 +578,43 @@ export default function PlayerVORPData(props) {
         omit: colData[1]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[1]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef1']] < '3') && (row[colData[1]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef1']] < '2') && (row[colData[1]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef1']] < '1') && (row[colData[1]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef1']] < '0') && (row[colData[1]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef1']] < '-1') && (row[colData[1]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[1]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -627,48 +629,48 @@ export default function PlayerVORPData(props) {
         omit: colData[1]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[1]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef2']] < '3') && (row[colData[1]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef2']] < '2') && (row[colData[1]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef2']] < '1') && (row[colData[1]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef2']] < '0') && (row[colData[1]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef2']] < '-1') && (row[colData[1]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[1]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]   
+        ]
       },
       {
         name: colData[2]['name'],
@@ -678,43 +680,43 @@ export default function PlayerVORPData(props) {
         omit: colData[2]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[2]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef1']] < '3') && (row[colData[2]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef1']] < '2') && (row[colData[2]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef1']] < '1') && (row[colData[2]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef1']] < '0') && (row[colData[2]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef1']] < '-1') && (row[colData[2]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[2]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -729,48 +731,48 @@ export default function PlayerVORPData(props) {
         omit: colData[2]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[2]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef2']] < '3') && (row[colData[2]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef2']] < '2') && (row[colData[2]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef2']] < '1') && (row[colData[2]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef2']] < '0') && (row[colData[2]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef2']] < '-1') && (row[colData[2]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[2]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[3]['name'],
@@ -780,43 +782,43 @@ export default function PlayerVORPData(props) {
         omit: colData[3]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[3]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef1']] < '3') && (row[colData[3]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef1']] < '2') && (row[colData[3]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef1']] < '1') && (row[colData[3]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef1']] < '0') && (row[colData[3]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef1']] < '-1') && (row[colData[3]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[3]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -831,48 +833,48 @@ export default function PlayerVORPData(props) {
         omit: colData[3]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[3]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef2']] < '3') && (row[colData[3]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef2']] < '2') && (row[colData[3]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef2']] < '1') && (row[colData[3]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef2']] < '0') && (row[colData[3]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef2']] < '-1') && (row[colData[3]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[3]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]    
+        ]
       },
       {
         name: colData[4]['name'],
@@ -882,43 +884,43 @@ export default function PlayerVORPData(props) {
         omit: colData[4]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[4]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef1']] < '3') && (row[colData[4]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef1']] < '2') && (row[colData[4]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef1']] < '1') && (row[colData[4]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef1']] < '0') && (row[colData[4]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef1']] < '-1') && (row[colData[4]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[4]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -933,48 +935,48 @@ export default function PlayerVORPData(props) {
         omit: colData[4]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[4]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef2']] < '3') && (row[colData[4]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef2']] < '2') && (row[colData[4]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef2']] < '1') && (row[colData[4]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef2']] < '0') && (row[colData[4]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef2']] < '-1') && (row[colData[4]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[4]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[5]['name'],
@@ -984,43 +986,43 @@ export default function PlayerVORPData(props) {
         omit: colData[5]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[5]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef1']] < '3') && (row[colData[5]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef1']] < '2') && (row[colData[5]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef1']] < '1') && (row[colData[5]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef1']] < '0') && (row[colData[5]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef1']] < '-1') && (row[colData[5]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[5]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1035,48 +1037,48 @@ export default function PlayerVORPData(props) {
         omit: colData[5]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[5]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef2']] < '3') && (row[colData[5]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef2']] < '2') && (row[colData[5]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef2']] < '1') && (row[colData[5]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef2']] < '0') && (row[colData[5]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef2']] < '-1') && (row[colData[5]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[5]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[6]['name'],
@@ -1086,43 +1088,43 @@ export default function PlayerVORPData(props) {
         omit: colData[6]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[6]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef1']] < '3') && (row[colData[6]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef1']] < '2') && (row[colData[6]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef1']] < '1') && (row[colData[6]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef1']] < '0') && (row[colData[6]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef1']] < '-1') && (row[colData[6]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[6]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1137,48 +1139,48 @@ export default function PlayerVORPData(props) {
         omit: colData[6]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[6]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef2']] < '3') && (row[colData[6]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef2']] < '2') && (row[colData[6]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef2']] < '1') && (row[colData[6]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef2']] < '0') && (row[colData[6]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef2']] < '-1') && (row[colData[6]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[6]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]    
+        ]
       },
       {
         name: colData[7]['name'],
@@ -1188,43 +1190,43 @@ export default function PlayerVORPData(props) {
         omit: colData[7]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[7]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef1']] < '3') && (row[colData[7]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef1']] < '2') && (row[colData[7]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef1']] < '1') && (row[colData[7]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef1']] < '0') && (row[colData[7]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef1']] < '-1') && (row[colData[7]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[7]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1239,48 +1241,48 @@ export default function PlayerVORPData(props) {
         omit: colData[7]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[7]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef2']] < '3') && (row[colData[7]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef2']] < '2') && (row[colData[7]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef2']] < '1') && (row[colData[7]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef2']] < '0') && (row[colData[7]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef2']] < '-1') && (row[colData[7]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[7]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[8]['name'],
@@ -1290,43 +1292,43 @@ export default function PlayerVORPData(props) {
         omit: colData[8]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[8]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef1']] < '3') && (row[colData[8]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef1']] < '2') && (row[colData[8]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef1']] < '1') && (row[colData[8]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef1']] < '0') && (row[colData[8]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef1']] < '-1') && (row[colData[8]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[8]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1341,48 +1343,48 @@ export default function PlayerVORPData(props) {
         omit: colData[8]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[8]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef2']] < '3') && (row[colData[8]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef2']] < '2') && (row[colData[8]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef2']] < '1') && (row[colData[8]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef2']] < '0') && (row[colData[8]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef2']] < '-1') && (row[colData[8]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[8]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[9]['name'],
@@ -1392,43 +1394,43 @@ export default function PlayerVORPData(props) {
         omit: colData[9]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[9]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef1']] < '3') && (row[colData[9]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef1']] < '2') && (row[colData[9]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef1']] < '1') && (row[colData[9]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef1']] < '0') && (row[colData[9]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef1']] < '-1') && (row[colData[9]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[9]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1443,48 +1445,48 @@ export default function PlayerVORPData(props) {
         omit: colData[9]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[9]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef2']] < '3') && (row[colData[9]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef2']] < '2') && (row[colData[9]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef2']] < '1') && (row[colData[9]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef2']] < '0') && (row[colData[9]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef2']] < '-1') && (row[colData[9]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[9]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[10]['name'],
@@ -1494,43 +1496,43 @@ export default function PlayerVORPData(props) {
         omit: colData[10]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[10]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef1']] < '3') && (row[colData[10]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef1']] < '2') && (row[colData[10]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef1']] < '1') && (row[colData[10]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef1']] < '0') && (row[colData[10]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef1']] < '-1') && (row[colData[10]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[10]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1545,48 +1547,48 @@ export default function PlayerVORPData(props) {
         omit: colData[10]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[10]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef2']] < '3') && (row[colData[10]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef2']] < '2') && (row[colData[10]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef2']] < '1') && (row[colData[10]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef2']] < '0') && (row[colData[10]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef2']] < '-1') && (row[colData[10]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[10]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[11]['name'],
@@ -1596,43 +1598,43 @@ export default function PlayerVORPData(props) {
         omit: colData[11]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[11]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef1']] < '3') && (row[colData[11]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef1']] < '2') && (row[colData[11]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef1']] < '1') && (row[colData[11]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef1']] < '0') && (row[colData[11]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef1']] < '-1') && (row[colData[11]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[11]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1647,48 +1649,48 @@ export default function PlayerVORPData(props) {
         omit: colData[11]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[11]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef2']] < '3') && (row[colData[11]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef2']] < '2') && (row[colData[11]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef2']] < '1') && (row[colData[11]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef2']] < '0') && (row[colData[11]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef2']] < '-1') && (row[colData[11]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[11]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[12]['name'],
@@ -1698,43 +1700,43 @@ export default function PlayerVORPData(props) {
         omit: colData[12]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[12]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef1']] < '3') && (row[colData[12]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef1']] < '2') && (row[colData[12]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef1']] < '1') && (row[colData[12]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef1']] < '0') && (row[colData[12]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef1']] < '-1') && (row[colData[12]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[12]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1749,48 +1751,48 @@ export default function PlayerVORPData(props) {
         omit: colData[12]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[12]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef2']] < '3') && (row[colData[12]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef2']] < '2') && (row[colData[12]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef2']] < '1') && (row[colData[12]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef2']] < '0') && (row[colData[12]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef2']] < '-1') && (row[colData[12]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[12]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[13]['name'],
@@ -1800,43 +1802,43 @@ export default function PlayerVORPData(props) {
         omit: colData[13]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[13]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef1']] < '3') && (row[colData[13]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef1']] < '2') && (row[colData[13]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef1']] < '1') && (row[colData[13]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef1']] < '0') && (row[colData[13]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef1']] < '-1') && (row[colData[13]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[13]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1851,48 +1853,48 @@ export default function PlayerVORPData(props) {
         omit: colData[13]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[13]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef2']] < '3') && (row[colData[13]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef2']] < '2') && (row[colData[13]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef2']] < '1') && (row[colData[13]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef2']] < '0') && (row[colData[13]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef2']] < '-1') && (row[colData[13]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[13]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[14]['name'],
@@ -1902,43 +1904,43 @@ export default function PlayerVORPData(props) {
         omit: colData[14]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[14]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef1']] < '3') && (row[colData[14]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef1']] < '2') && (row[colData[14]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef1']] < '1') && (row[colData[14]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef1']] < '0') && (row[colData[14]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef1']] < '-1') && (row[colData[14]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[14]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -1953,48 +1955,48 @@ export default function PlayerVORPData(props) {
         omit: colData[14]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[14]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef2']] < '3') && (row[colData[14]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef2']] < '2') && (row[colData[14]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef2']] < '1') && (row[colData[14]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef2']] < '0') && (row[colData[14]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef2']] < '-1') && (row[colData[14]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[14]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[15]['name'],
@@ -2004,43 +2006,43 @@ export default function PlayerVORPData(props) {
         omit: colData[15]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[15]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef1']] < '3') && (row[colData[15]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef1']] < '2') && (row[colData[15]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef1']] < '1') && (row[colData[15]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef1']] < '0') && (row[colData[15]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef1']] < '-1') && (row[colData[15]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[15]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2055,48 +2057,48 @@ export default function PlayerVORPData(props) {
         omit: colData[15]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[15]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef2']] < '3') && (row[colData[15]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef2']] < '2') && (row[colData[15]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef2']] < '1') && (row[colData[15]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef2']] < '0') && (row[colData[15]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef2']] < '-1') && (row[colData[15]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[15]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[16]['name'],
@@ -2106,43 +2108,43 @@ export default function PlayerVORPData(props) {
         omit: colData[16]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[16]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef1']] < '3') && (row[colData[16]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef1']] < '2') && (row[colData[16]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef1']] < '1') && (row[colData[16]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef1']] < '0') && (row[colData[16]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef1']] < '-1') && (row[colData[16]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[16]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2157,48 +2159,48 @@ export default function PlayerVORPData(props) {
         omit: colData[16]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[16]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef2']] < '3') && (row[colData[16]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef2']] < '2') && (row[colData[16]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef2']] < '1') && (row[colData[16]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef2']] < '0') && (row[colData[16]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef2']] < '-1') && (row[colData[16]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[16]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[17]['name'],
@@ -2208,43 +2210,43 @@ export default function PlayerVORPData(props) {
         omit: colData[17]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[17]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef1']] < '3') && (row[colData[17]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef1']] < '2') && (row[colData[17]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef1']] < '1') && (row[colData[17]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef1']] < '0') && (row[colData[17]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef1']] < '-1') && (row[colData[17]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[17]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2259,48 +2261,48 @@ export default function PlayerVORPData(props) {
         omit: colData[17]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[17]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef2']] < '3') && (row[colData[17]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef2']] < '2') && (row[colData[17]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef2']] < '1') && (row[colData[17]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef2']] < '0') && (row[colData[17]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef2']] < '-1') && (row[colData[17]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[17]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[18]['name'],
@@ -2310,43 +2312,43 @@ export default function PlayerVORPData(props) {
         omit: colData[18]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[18]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef1']] < '3') && (row[colData[18]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef1']] < '2') && (row[colData[18]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef1']] < '1') && (row[colData[18]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef1']] < '0') && (row[colData[18]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef1']] < '-1') && (row[colData[18]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[18]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2361,48 +2363,48 @@ export default function PlayerVORPData(props) {
         omit: colData[18]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[18]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef2']] < '3') && (row[colData[18]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef2']] < '2') && (row[colData[18]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef2']] < '1') && (row[colData[18]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef2']] < '0') && (row[colData[18]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef2']] < '-1') && (row[colData[18]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[18]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[19]['name'],
@@ -2412,43 +2414,43 @@ export default function PlayerVORPData(props) {
         omit: colData[19]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[19]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef1']] < '3') && (row[colData[19]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef1']] < '2') && (row[colData[19]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef1']] < '1') && (row[colData[19]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef1']] < '0') && (row[colData[19]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef1']] < '-1') && (row[colData[19]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[19]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2463,48 +2465,48 @@ export default function PlayerVORPData(props) {
         omit: colData[19]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[19]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef2']] < '3') && (row[colData[19]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef2']] < '2') && (row[colData[19]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef2']] < '1') && (row[colData[19]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef2']] < '0') && (row[colData[19]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef2']] < '-1') && (row[colData[19]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[19]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[20]['name'],
@@ -2514,43 +2516,43 @@ export default function PlayerVORPData(props) {
         omit: colData[20]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[20]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef1']] < '3') && (row[colData[20]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef1']] < '2') && (row[colData[20]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef1']] < '1') && (row[colData[20]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef1']] < '0') && (row[colData[20]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef1']] < '-1') && (row[colData[20]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[20]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2565,48 +2567,48 @@ export default function PlayerVORPData(props) {
         omit: colData[20]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[20]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef2']] < '3') && (row[colData[20]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef2']] < '2') && (row[colData[20]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef2']] < '1') && (row[colData[20]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef2']] < '0') && (row[colData[20]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef2']] < '-1') && (row[colData[20]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[20]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       { // GAA
         name: colData[21]['name'],
@@ -2616,43 +2618,43 @@ export default function PlayerVORPData(props) {
         omit: colData[21]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[21]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[21]['dataRef1']] < '3') && (row[colData[21]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[21]['dataRef1']] < '2') && (row[colData[21]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[21]['dataRef1']] < '1') && (row[colData[21]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[21]['dataRef1']] < '0') && (row[colData[21]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[21]['dataRef1']] < '-1') && (row[colData[21]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[21]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2667,43 +2669,43 @@ export default function PlayerVORPData(props) {
         omit: colData[22]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[22]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef1']] < '3') && (row[colData[22]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef1']] < '2') && (row[colData[22]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef1']] < '1') && (row[colData[22]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef1']] < '0') && (row[colData[22]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef1']] < '-1') && (row[colData[22]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[22]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2718,48 +2720,48 @@ export default function PlayerVORPData(props) {
         omit: colData[22]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[22]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '3') && (row[colData[22]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '2') && (row[colData[22]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '1') && (row[colData[22]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '0') && (row[colData[22]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '-1') && (row[colData[22]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[22]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {
         name: colData[23]['name'],
@@ -2769,43 +2771,43 @@ export default function PlayerVORPData(props) {
         omit: colData[23]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[23]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '3') && (row[colData[23]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '2') && (row[colData[23]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '1') && (row[colData[23]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '0') && (row[colData[23]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '-1') && (row[colData[23]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[23]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2820,48 +2822,48 @@ export default function PlayerVORPData(props) {
         omit: colData[23]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[23]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef2']] < '3') && (row[colData[23]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef2']] < '2') && (row[colData[23]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef2']] < '1') && (row[colData[23]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef2']] < '0') && (row[colData[23]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef2']] < '-1') && (row[colData[23]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[23]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       },
       {  // SV%
         name: colData[24]['name'],
@@ -2871,43 +2873,43 @@ export default function PlayerVORPData(props) {
         omit: colData[24]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[24]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef1']] < '3') && (row[colData[24]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef1']] < '2') && (row[colData[24]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef1']] < '1') && (row[colData[24]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef1']] < '0') && (row[colData[24]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef1']] < '-1') && (row[colData[24]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[24]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2922,43 +2924,43 @@ export default function PlayerVORPData(props) {
         omit: colData[25]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[25]['dataRef1']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef1']] < '3') && (row[colData[25]['dataRef1']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef1']] < '2') && (row[colData[25]['dataRef1']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef1']] < '1') && (row[colData[25]['dataRef1']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef1']] < '0') && (row[colData[25]['dataRef1']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef1']] < '-1') && (row[colData[25]['dataRef1']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[25]['dataRef1']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
@@ -2973,48 +2975,48 @@ export default function PlayerVORPData(props) {
         omit: colData[25]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => row[colData[25]['dataRef2']] >= '3',
+            when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.85)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef2']] < '3') && (row[colData[25]['dataRef2']] >= '2')),
+            when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.65)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef2']] < '2') && (row[colData[25]['dataRef2']] >= '1')),
+            when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.4)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef2']] < '1') && (row[colData[25]['dataRef2']] > '0')),
+            when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(69, 128, 241, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef2']] < '0') && (row[colData[25]['dataRef2']] >= '-1')),
+            when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.1)',
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef2']] < '-1') && (row[colData[25]['dataRef2']] >= '-2')),
+            when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.4)',
             },
           },
           {
-            when: row => (row[colData[25]['dataRef2']] < '-2'),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
             style: {
               backgroundColor: 'rgba(255, 84, 84, 0.8)',
             },
           }
-        ]     
+        ]
       }
     ];
 
@@ -3289,7 +3291,7 @@ export default function PlayerVORPData(props) {
           <p>
             Your specific League Setting has been submitted for processing! Your league settings&apos; VORP data will be live within a few hours.</p>
             <p>As this site is still under development, populating the database is still a very manual process, unfortunately. </p>
-             <p>Please enter your email below to be notified the moment your league&apos;s VORP data is live.
+             <p>Feel free to enter your email below to be notified the moment your league&apos;s VORP data is live.
             <span className="subtext">I promise not to use your email for anything except this single notification</span></p>
         </div>
 

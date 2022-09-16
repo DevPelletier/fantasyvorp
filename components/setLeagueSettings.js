@@ -243,6 +243,8 @@ export default function LeagueSettingsForm(props) {
             tableCats[x] = catColInfo
             x += 1
         }
+
+
         if (scoringType == 0) {
             tableCats['Scoring Type'] = 'Categories'
         } else {
