@@ -37,6 +37,7 @@ let tableData = {};
 let finalTableData;
 let columns;
 let dataSource;
+let lsIDcompare
 
 // -------------- END of Data Table Variables -------------- //
 
@@ -72,25 +73,37 @@ export default function PlayerVORPData(props) {
     [lsID]
   );
 
+  const lsIDChanged = () => {
+    
+    if (lsIDcompare == lsID) {
+      // console.log('no change!')
+    } else {
+      // console.log('changed!')
+    }
+    lsIDcompare = lsID
+  }
+
   const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
 
   const checkIfNewDataNecessary = () => {
     // 1. Check if lsID has changed
-    if (onRefChange()) {
-      // 2. Check if lsID is valid, and if seasonID is valid
+    if (lsIDChanged()) {
+      // 2. Check if lsID is valid, if seasonID is valid
       if ((lsID == "") || (lsID.length > 12) || (lsID.length <= 10) || (typeof seasonID == 'undefined')) {
         return false
       } else {
-        // 3. Check if that lsID's season data already exists
-        if (tableData[season] == null) {
           return true
-        } else {
-          setTableData()
-          return false
-        }
       }
     } else {
-      return false
+      // Check if this season data already exists
+      if (tableData[season] == null) {
+        console.log('need new season data')
+        return true
+      } else {
+        console.log('already have season data')
+        setTableData()
+        return false // you already have this data! don't need to pull it
+      }
     }
   }
 
@@ -125,11 +138,13 @@ export default function PlayerVORPData(props) {
 
   useEffect(() => {
     if (checkIfNewDataNecessary()) {
+      
       console.log('getting data from api')
       const t0 = new Date().getTime()
       fetchPlayerData()
         .then(data => {
           if (data) {
+            setNewLS(false);
             const t1 = new Date().getTime()
             data.responseTime = `${t1-t0} ms`
             // redis.set(`playerData`, data) 
@@ -138,6 +153,9 @@ export default function PlayerVORPData(props) {
             submitRequestedLSID(lsID)
             // User Message and Input Triggered
             setNewLS(true);
+            setLoading(false);
+            tableData = {};
+            finalTableData = [];
           }
           // setPlayerData(data)  // BUG: If you use this setter, and use playerData for setTableData, the table stops showing the correct dataset...
           // addADP(data)
@@ -3052,6 +3070,15 @@ export default function PlayerVORPData(props) {
 
   const setTableData = async (data) => {
     setLoading(true)
+
+    // // Check if this season data already exists
+    // if (tableData[season] == null) {
+    //   // continue on...
+    // } else {
+    //   return tableData[season] // you already have this data! don't need to pull it
+    // }
+    
+    
     // console.log('setTableData');
     console.log(`setting tableData[${season}]`)
     finalTableData = []; // clear specific subset of data to display
@@ -3078,7 +3105,7 @@ export default function PlayerVORPData(props) {
     console.log(finalTableData)
   }
 
-  async function fetchPlayerData() {
+  async function fetchPlayerData() {    
 
       // Check if we have cached data
       // let cacheEntry = await redis.get(`playerData`)

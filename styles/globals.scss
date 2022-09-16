@@ -550,21 +550,21 @@ section.faq {
 }
 
 .MuiAccordion-root {
-  background-color: $dark-overlay-1;
-  color: $white-01;
+  background-color: $dark-overlay-1 !important;
+  color: $white-01 !important;
 }
 
 .MuiAccordionSummary-content {
   @include flex-center;
-  justify-content: flex-start;
-  padding: 0 16px;
+  justify-content: flex-start !important;
+  padding: 0 16px !important;
 
   p {
-    margin: 12px 0;
+    margin: 12px 0 !important;
   }
 }
 
 .MuiAccordionDetails-root {
-  padding-left: 32px;
-  padding-right: 32px;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
 }
