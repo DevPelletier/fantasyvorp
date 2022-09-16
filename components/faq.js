@@ -84,7 +84,7 @@ export default function Section() {
             </AccordionSummary>
             <AccordionDetails>
                 <p>
-                    <strong>A: </strong>It’s called a <a href="https://www.baseball-reference.com/about/marcels.shtml" target="_blank">"Marcel Projection”</a>, which is supposed to be “the most basic forecasting system you can have, that uses as little intelligence as possible - so basic that Marcel the Monkey could do it”. 
+                    <strong>A: </strong>It’s called a <a href="https://www.baseball-reference.com/about/marcels.shtml" target="_blank" rel="noreferrer">"Marcel Projection”</a>, which is supposed to be “the most basic forecasting system you can have, that uses as little intelligence as possible - so basic that Marcel the Monkey could do it”. 
 
                 </p>
                 <p>
