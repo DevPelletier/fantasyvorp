@@ -14,7 +14,54 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    // @include headerFont1;
+    @include headerFont1;
+    letter-spacing: -0.5px;
+    font-weight: 700;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  @include logoFont;
+}
+
+h3 {
+  @include logoFont;
+  text-transform: uppercase;
+  font-weight: 300;
+  font-size: 1rem;
+}
+
+p {
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  font-weight: 300;
+  line-height: 180%;
+  margin: 12px 0 32px;
+}
+
+p > a {
+  background-color: $dark-overlay-3;
+  padding: 2px 6px;
+  font-weight: 500;
+}
+
+ol, ul {
+  margin: 24px 0;
+
+  li {
+    line-height: 200%;
+    font-weight: 300;
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+  }
+}
+
+.MuiTypography-root, .MuiFormLabel-root, .MuiFormControl-root {
+  @include headerFont1;
+  letter-spacing: 0.2px;
 }
 
 a.btn {
@@ -33,6 +80,7 @@ a.btn {
 
 .logoFont {
     @include logoFont;
+    letter-spacing: -0.6px;
 }
 
 .warning {

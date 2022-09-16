@@ -3,6 +3,7 @@ import styles from '../styles/Home.module.scss'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 import Hero from '../components/layout/hero'
 import PlayerData from '../components/getPlayerData'
@@ -12,6 +13,8 @@ import SetLeagueSettings from '../components/setLeagueSettings'
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+
+import img_bmc from '../public/bmc_icon_black.png'
 
 
 export default function Home(props) {
@@ -80,6 +83,7 @@ export default function Home(props) {
           <SetLeagueSettings setLSModal={setLSModal} getLSID={getLSID} getColData={getColData} />
         </Box>
       </Modal>
+
     </div>
   )
 }

@@ -49,7 +49,7 @@ export default function PlayerRawData(props) {
     let tablePosFilter = watch("tablePosFilter");
     let season = watch("seasonSelect");
     let seasonID = season;
-    seasonID = '21-22'  // Default
+    seasonID = '22-23'  // Default
     let league = 'NHL';
 
     const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
@@ -240,7 +240,7 @@ export default function PlayerRawData(props) {
                 sortable: true,
                 width: '80px',
                 style: {
-                    fontSize: '0.9rem',
+                    // fontSize: '0.9rem',
                     justifyContent: 'center',
                     borderRight: "1px dotted #616161"
                 }
@@ -813,7 +813,7 @@ export default function PlayerRawData(props) {
                 <Controller
                 name="seasonSelect"
                 control={control}
-                defaultValue="21-22"
+                defaultValue="22-23"
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                     <FormControl className="mui_select">
                         <InputLabel id="seasonSelect-select">Select Season</InputLabel>
@@ -826,9 +826,10 @@ export default function PlayerRawData(props) {
                         error={!!error}
                         // helperText={error ? error.message : null}
                         >
-                            <MenuItem value={'19-20'}>19-20</MenuItem>
-                            <MenuItem value={'20-21'}>20-21</MenuItem>
+                            <MenuItem value={'22-23'}>22-23</MenuItem>
                             <MenuItem value={'21-22'}>21-22</MenuItem>
+                            <MenuItem value={'20-21'}>20-21</MenuItem>
+                            <MenuItem value={'19-20'}>19-20</MenuItem>
                         </Select>
                     </FormControl>
                     )}

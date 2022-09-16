@@ -1,6 +1,21 @@
 @import './core';
 @import './typography';
 
+.mobileCover {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  z-index: 100;
+  background-color: $grey-01;
+  @include centerAll;
+  display: none;
+}
+
+@media only screen and (max-width: 950px) {
+  .mobileCover {
+    display: grid;
+  }
+}
 
 html,
 body {
@@ -39,12 +54,14 @@ ul {
 
 // ----------- IMAGES ----------- //
 .img-container {
-  @include flex-center;
+  @include centerAll;
   overflow: hidden;
+
   // background-color: $blue01;
 
   img {
     max-width: 120%;
+    height: auto;
     // max-height: 120%;
   }
 }
@@ -56,6 +73,59 @@ ul {
 #dataTableAnchor {
   position: relative;
   top: -100px;
+}
+
+
+.buymeacoffee {
+  @include centerAll;
+  // position: fixed;
+  // bottom: 0;
+  // right: 0;
+  // margin: auto 3% 8% auto;
+  margin: 32px auto 32px auto;
+  
+  border-radius: 100px;
+  background: $dark-overlay-4;
+  height: 65px;
+  width: 65px;
+  padding: 8px;
+  z-index: 99;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+
+  &:hover {
+    background: $grey-02;
+  }
+
+  .img-container {
+    height: calc(65px - 8px*2);
+    width: calc(65px - 8px*2);
+  }
+
+  img {
+    height: inherit;
+    min-width: unset !important;
+    width: auto !important;
+    // width: inherit;
+  }
+}
+.MuiButton-contained {
+  background-color: $blue-01b !important;
+  padding: 12px 16px !important;
+  border: 1px solid $blue-01b !important;
+  transition: all 0.66s ease !important;
+  
+
+  &:hover {
+    border: 1px solid $blue-02 !important;
+    background-color: unset !important;
+  }
+}
+
+section.copySection {
+  width: 60vw;
+  min-width: 300px;
+  max-width: 900px;
 }
 
 
@@ -114,7 +184,9 @@ $navHeight: 80px;
   padding: 0 20px;
   // background-color: $green03;
   transition: all 0.25s ease-out;
-  min-width: 140px;
+  min-width: 120px;
+  font-size: 1.05rem;
+  font-weight: 600;
 
   &:hover {
     background-color: $white-01;
@@ -151,6 +223,25 @@ $modalMaxWidth: 800px;
   padding: 32px 50px;
 
 }
+
+span.closeBtn {
+  position: relative;
+  background: $dark-overlay-1;
+  width: fit-content;
+  right: -94%;
+  padding: 5px;
+  border-radius: 100px;
+  width: 32px;
+  height: 32px;
+  transition: all 0.2s ease-out;
+  cursor: pointer;
+
+  &:hover {
+    background: $dark-overlay-2;
+
+  }
+}
+
 .ls-modal-content {
   height: 100%;
   width: 100%;
@@ -248,8 +339,14 @@ $modalMaxWidth: 800px;
 
 
   .MuiSwitch-track {
-    background-color: $green-03;
-    opacity: 0.75;
+    background-color: $grey-04;
+    opacity: 0.5;
+  }
+
+  .MuiSwitch-thumb {
+    background-color: $blue-01b;
+    // border: 1px solid $blue-02;
+
   }
 
   .MuiFormHelperText-root {
@@ -442,4 +539,32 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
     height: fit-content;
     margin: auto auto auto 32px !important;
   }
+}
+
+
+// ----------- FAQ Styles ----------- //
+section.faq {
+  width: 60vw;
+  min-width: 300px;
+  max-width: 900px;
+}
+
+.MuiAccordion-root {
+  background-color: $dark-overlay-1;
+  color: $white-01;
+}
+
+.MuiAccordionSummary-content {
+  @include flex-center;
+  justify-content: flex-start;
+  padding: 0 16px;
+
+  p {
+    margin: 12px 0;
+  }
+}
+
+.MuiAccordionDetails-root {
+  padding-left: 32px;
+  padding-right: 32px;
 }

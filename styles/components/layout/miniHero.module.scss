@@ -26,6 +26,13 @@
         width: fit-content;
         margin: auto;
     }
+
+    .headline {
+        background-color: $dark-overlay-3;
+        border-radius: $borderRadius01;
+        padding: 5px 12px;
+        margin: 0 5px;
+      }
     
 }
 

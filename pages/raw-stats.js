@@ -6,12 +6,6 @@ import Link from 'next/link'
 
 import MiniHero from '../components/layout/miniHero'
 import RawData from '../components/getRawData'
-import SetLeagueSettings from '../components/setLeagueSettings'
-// import DashGraph from '../components/dashGraph' // To implement later - NON MVP
-
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
 
 
 export default function RawStats(props) {
@@ -42,11 +36,6 @@ export default function RawStats(props) {
             <MiniHero headline={headlineText} />
 
             <div id="dataTableAnchor"></div>
-            {/* <PlayerData 
-            // lsID={lsID} 
-            colData={colData} 
-            /> */}
-
             <RawData />
 
         </main>

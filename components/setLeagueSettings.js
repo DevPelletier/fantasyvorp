@@ -349,6 +349,7 @@ export default function LeagueSettingsForm(props) {
     return (
         <div className="ls-modal">
         <div className="ls-modal-content">
+            <span className="closeBtn" onClick={() => toggleModal()}>X</span>
             {/* <GetleagueSettingFile setleagueSettingFile={setleagueSettingFile}/> */}
 
             <h2>Your League Settings</h2>

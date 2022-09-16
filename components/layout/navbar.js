@@ -16,7 +16,7 @@ export default function Section() {
                 <div className="nav-menu-container">
                     <ul className="nav-menu">
                         <li className="nav-item">
-                            <Link href="/draft">
+                            <Link href="/how-does-this-work">
                                 <a className="btn">How does this work?</a>
                             </Link>
                         </li>
@@ -26,17 +26,17 @@ export default function Section() {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/raw_stats">
+                            <Link href="/raw-stats">
                                 <a className="btn">Raw Stats</a>
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/draft">
+                            <Link href="/coming-soon">
                                 <a className="btn">Draft</a>
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/">
+                            <Link href="/contact">
                                 <a className="btn">Contact</a>
                             </Link>
                         </li>

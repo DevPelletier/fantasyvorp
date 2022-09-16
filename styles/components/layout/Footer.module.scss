@@ -3,9 +3,9 @@
 
 .footer {
     // background-color: $green02;
-    border-top: 1px solid $grey-05;
+    border-top: 1px solid $grey-04;
     color: $white-01;
-    margin-top: 50px;
+    // margin-top: 50px;
     height: 100px;
 
     h2 {
@@ -19,7 +19,7 @@
         transition: all 0.25s ease-out;
 
         &:hover {
-            opacity: 8;
+            opacity: 0.9;
             // font-weight: 600;
         }
     }
@@ -38,6 +38,10 @@
 
         div, ul {
             margin: 0 32px;
+
+            li {
+                margin-bottom: 0;
+            }
         }
     }
   

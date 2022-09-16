@@ -19,28 +19,28 @@ export default function Section() {
                         <h3>FooterTitle</h3>
                     </li> */}
                     <li>
-                        <Link href="/">
+                        <Link href="/how-does-this-work">
                             <a>FAQ & Help</a>
                         </Link>
                     </li>
                     <li>
-                        <Link href="/">
+                        <Link href="/changelog">
                             <a>Changelog</a>
                         </Link>
                     </li>
                     <li>
-                        <Link href="/">
+                        <Link href="/coming-soon">
                             <a>Paid Features</a>
                         </Link>
                     </li>
                     <li>
-                        <Link href="/">
+                        <Link href="https://www.buymeacoffee.com/fantasyvorp" target="_blank">
                             <a>Donate Link</a>
                         </Link>
                     </li>
                     <li>
-                        <Link href="/">
-                            <a>Contact Dev</a>
+                        <Link href="/contact">
+                            <a>Contact</a>
                         </Link>
                     </li>
                 </ul>

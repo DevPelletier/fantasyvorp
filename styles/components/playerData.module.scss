@@ -5,8 +5,6 @@
     width: inherit;
 
     h3 {
-        font-style: italic;
-        font-weight: 400;
         background: $dark-overlay-4;
         margin: 0;
         padding: 12px 20px;
@@ -20,7 +18,10 @@
     place-content: normal;
     // max-height: 120vh;
     // min-height: 300px;
-    width: 92vw;
+    width: auto;
+    min-width: 80vw;
+    max-width: 92vw;
+    min-width: 500px;
     margin: auto;
     background: $dark-overlay-1
 }

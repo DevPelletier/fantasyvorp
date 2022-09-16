@@ -125,6 +125,7 @@
       background-color: $dark-overlay-1;
       padding: 5px 12px;
       margin: 0 5px;
+      @include logoFont;
   }
   
   .contentContainer {

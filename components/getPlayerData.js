@@ -295,13 +295,13 @@ export default function PlayerVORPData(props) {
         },
         conditionalCellStyles: [
           {
-            when: row => row.PositionAll == 'C',
+            when: row => ((row.PositionAll == 'C') || (row.PositionAll == 'F')),
             style: {
               backgroundColor: '#93d274',
             }
           },
           {
-            when: row => row.PositionAll == 'LW',
+            when: row => ((row.PositionAll == 'LW') || (row.PositionAll == 'W')),
             style: {
               backgroundColor: '#f5df72',
             }
@@ -344,40 +344,46 @@ export default function PlayerVORPData(props) {
         },
         conditionalCellStyles: [
           {
-            when: row => row.VORPPosition == 'C',
+            when: row => ((row.VORPPosition == 'C') || (row.VORPPosition == 'F')),
             style: {
               backgroundColor: '#93d274',
+              opacity: '0.9'
             }
           },
           {
-            when: row => row.VORPPosition == 'LW',
+            when: row => ((row.VORPPosition == 'LW') || (row.VORPPosition == 'W')),
             style: {
               backgroundColor: '#f5df72',
+              opacity: '0.9'
             }
           },
           {
-            when: row => row.VORPPosition == 'RW',
+            when: row => (row.VORPPosition == 'RW'),
             style: {
               backgroundColor: '#ff6963',
+              opacity: '0.9'
             }
           },
           {
             when: row => row.VORPPosition == 'D',
             style: {
               backgroundColor: '#7bb3d6',
+              opacity: '0.9'
             }
           },
           {
             when: row => row.VORPPosition == 'G',
             style: {
               backgroundColor: '#b875c8',
+              opacity: '0.9'
             } 
           },
           {
             when: row => (row.VORPPosition == 'Overall' || row.VORPPosition == 'Overall perGP' ),
               style: {
                 backgroundColor: 'rgba(255,255,255,0.14)',
-                color: "white"
+                color: "white",
+                opacity: '0.9'
               } 
           }
         ]
@@ -403,7 +409,7 @@ export default function PlayerVORPData(props) {
         omit: !showPerGP,
         style: {
           fontWeight: '600',
-          fontSize: '14px',
+          fontSize: '1rem',
         }
       },
       {
@@ -432,7 +438,7 @@ export default function PlayerVORPData(props) {
         sortable: true,
         width: '80px',
         style: {
-          fontSize: '0.9rem',
+          // fontSize: '0.9rem',
           justifyContent: 'center'
         }
       },
