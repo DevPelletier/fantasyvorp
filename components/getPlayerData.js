@@ -74,10 +74,16 @@ export default function PlayerVORPData(props) {
   );
 
   const lsIDChanged = () => {
+
+    if (lsID == "") {
+      return true
+    }
     
     if (lsIDcompare == lsID) {
+      return false
       // console.log('no change!')
     } else {
+      return true
       // console.log('changed!')
     }
     lsIDcompare = lsID
@@ -3278,9 +3284,15 @@ export default function PlayerVORPData(props) {
 
       { newLS ? (
         <div className="ls-request-form-container">
+          <div className="content">
+
           <p>
-            New League Setting! Please enter your email or whatever
-          </p>
+            Your specific League Setting has been submitted for processing! Your league settings' VORP data will be live within a few hours.</p>
+            <p>As this site is still under development, populating the database is still a very manual process, unfortunately. </p>
+             <p>Please enter your email below to be notified the moment your league's VORP data is live.
+            <span className="subtext">I promise not to use your email for anything except this single notification</span></p>
+        </div>
+
           <form className="ls-request-form" onSubmit={handleSubmit(submitRequestedLSID)}>
             <div className="form_group_container">
                 <Controller

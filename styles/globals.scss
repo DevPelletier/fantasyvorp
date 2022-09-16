@@ -523,6 +523,13 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
 .ls-request-form-container {
   padding: 32px 50px;
   background-color: $dark-overlay-1;
+  // max-width: 500px;
+  // margin: auto;
+
+  .content {
+    max-width: 500px;
+    margin: auto;
+  }
 }
 .ls-request-form {
   @include centerAll;
