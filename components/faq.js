@@ -12,7 +12,7 @@ export default function Section() {
     return (
         <section className="copySection">
             <h2>An Introduction to FantasyVORP</h2>
-            <h3>What it is and how it works</h3>
+            <h3 className="headingBg">What it is:</h3>
 
             <p>
                 <strong>Fantasy:</strong> <br />
@@ -27,6 +27,23 @@ export default function Section() {
                 A website where you can easily find the VORP data for your specific league settings.
             </p>
             <p>That’s it. That’s what this site is for.</p>
+            <p>&nbsp;</p>
+
+            <h3 className="headingBg">
+                How It Works:
+            </h3>
+            <ol>
+                <li>
+                    <p>Go to the VORP page and input your league settings. </p>
+                </li>
+                <li>
+                    <p>The VORP data is calculated for your league, for the past 3 seasons as well as a weighted average projection for the upcoming 22-23 season.</p>
+                    <p>Note: This site is FIRMLY in beta, and I am by no means an expert app developer, so I have pre-populated this site with a few of the standard settings for fantasy hockey leagues, for common league sizes. If your specific league setting hasn’t been uploaded yet, the dashboard will automatically submit a ticket for your league setting, and give you the option to be notified by email when the data will be available. It’s a bit of a manual process still, so it may take a few hours to appear.</p>
+                </li>
+            </ol>
+            <p>And that’s it!</p>
+
+
 
             <br /><hr /><br />
             
@@ -48,31 +65,44 @@ export default function Section() {
             <p>
                 So, that’s where this tool comes in! 
             </p>
-            <p>
-                Get VORP stats that are accurate to your league settings within seconds, for free.
+            <p className="headingBg centerText">
+                <strong>Get VORP stats that are accurate to your league settings within seconds, for free.</strong>
             </p>
+            <p>&nbsp;</p>
             <p>
                 <strong>NOTE: This website is DEFINITELY in beta!</strong> (what’s further back in development than Beta? Alpha?) - and quite rough around the edges, as I am by no means an expert app developer - just a guy who likes to code and analyze data. I rushed over the past few weeks to get this site up before the NHL season starts, of course, so please forgive the mess (and report any bugs you find here - it’d be a huge help!). 
             </p>
-            <br /><hr /><br />
-            <p>
-                How To Use This Site:
-            </p>
-            <ol>
-                <li>
-                    <p>Go to the VORP page and input your league settings. </p>
-                </li>
-                <li>
-                    <p>The VORP data is calculated for your league, for the past 3 seasons as well as a weighted average projection for the upcoming 22-23 season.</p>
-                    <p>Note: As I said, this site is FIRMLY in beta, and I am by no means an expert app developer, so I have pre-populated this site with a few of the standard settings for fantasy hockey leagues, for common league sizes. If your specific league setting hasn’t been uploaded yet, the dashboard will automatically submit a ticket for your league setting, and give you the option to be notified by email when the data will be available. It’s a bit of a manual process still, so it may take a few hours to appear.</p>
-                </li>
-            </ol>
-
-            <p>And that’s it!</p>
             <p><strong>TL;DR:</strong><br />
                 This is my ‘goldilocks’ fantasy website. Not too complex, not too simple - and useful for ALL fantasy GMs. All you need to know is what the hell a ‘VORP’ is… 😉
             </p>
+            
 
+            <Accordion className="accordion">
+            <AccordionSummary
+            // expandIcon={<ExpandMoreRoundedIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+            >
+                <p><strong>Q:</strong> What is VORP?</p>
+            </AccordionSummary>
+            <AccordionDetails>
+                <p>
+                    <strong>A: </strong>Great question. VORP is a measure of how much a player contributes to your fantasy team in comparison to a replacement-level player. Finding the ‘replacement-level’ depends on how ‘big’ your league is. 
+                </p>
+                <p>
+                    Example: If your league has 12 teams and 20-man rosters, the OVERALL replacement level is the 240th ranked player (12 x 20 = 240). 
+                </p>
+                <p>
+                    A player with 0 VORP is exactly at replacement level - meaning, that player has the minimum fantasy value you could get at that position in your league, before you dip into players that are BELOW replacement-level (meaning there are likely better players available on your waiver wire). (Alternatively, if a player has 0 VORP in a specific category, that means the same thing, but only within that category for that position)
+                </p>
+                <p>
+                    However, calculating “Overall” replacement level doesn’t really make sense in Fantasy, does it? If I can’t put Cale Makar in my C, LW, RW, or G slots in my lineup, then why would I compare him to those positions? Each position in fantasy is a separate group - so each player has a different Value Over Replacement for each position that they are assigned. 
+                </p>
+                <p>
+                    Example 2: Leon Draisaitl is designated (C, LW). In standard leagues, he is probably the most valuable LW (LW-1), but is also probably only the 3rd most valuable C (C-3), behind McDavid and Matthews. His VORP number for C and for LW will be different, because we are only comparing Leon with LWs for his LW VORP, and Cs for his C VORP. This way, you can get a great idea of a players’ ACTUAL value given their positional capabilities. Instead of comparing every position to each other and wondering what the significance of any stat is, the VORP reveals actual, specific value, instantly. The magic of VORP!
+                </p>
+            </AccordionDetails>
+        </Accordion>
 
         <Accordion className="accordion">
             <AccordionSummary
@@ -105,36 +135,10 @@ export default function Section() {
             </AccordionSummary>
             <AccordionDetails>
                 <p>
-                    <strong>A: </strong>Only time will tell! However, after comparing these projections with some of the paid professionals that have released projections in the past few weeks, I can say that there’s not much difference. It’s true, these projections will likely be slightly less accurate than the pros. 
+                    <strong>A: </strong>Only time will tell! However, after comparing these projections with some of the paid professionals that have released projections in the past few weeks, I can say that there’s not <span class="italic">too</span> much difference. It’s true, these projections will likely be slightly less accurate than the pros. 
                 </p>
                 <p>
-                    However, I’d argue that the difference is minimal in the grand scheme of things, and that all projections have a margin of error. This Marcel is most definitely in the same ballpark as the majority of pros for most players - if it wasn’t, that would definitely be a red flag! 
-                </p>
-            </AccordionDetails>
-        </Accordion>
-        <Accordion className="accordion">
-            <AccordionSummary
-            // expandIcon={<ExpandMoreRoundedIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-            >
-                <p><strong>Q:</strong> What is VORP?</p>
-            </AccordionSummary>
-            <AccordionDetails>
-                <p>
-                    <strong>A: </strong>Great question. VORP is a measure of how much a player contributes to your fantasy team in comparison to a replacement-level player. Finding the ‘replacement-level’ depends on how ‘big’ your league is. 
-                </p>
-                <p>
-                    Example: If your league has 12 teams and 20-man rosters, the OVERALL replacement level is the 240th ranked player (12 x 20 = 240). 
-                </p>
-                <p>
-                    A player with 0 VORP is exactly at replacement level - meaning, that player has the minimum fantasy value you could get at that position in your league, before you dip into players that are BELOW replacement-level (meaning there are likely better players available on your waiver wire). (Alternatively, if a player has 0 VORP in a specific category, that means the same thing, but only within that category for that position)
-                </p>
-                <p>
-                    However, calculating “Overall” replacement level doesn’t really make sense in Fantasy, does it? If I can’t put Cale Makar in my C, LW, RW, or G slots in my lineup, then why would I compare him to those positions? Each position in fantasy is a separate group - so each player has a different Value Over Replacement for each position that they are assigned. 
-                </p>
-                <p>
-                    Example 2: Leon Draisaitl is designated (C, LW). In standard leagues, he is probably the most valuable LW (LW-1), but is also probably only the 3rd most valuable C (C-3), behind McDavid and Matthews. His VORP number for C and for LW will be different, because we are only comparing Leon with LWs for his LW VORP, and Cs for his C VORP. This way, you can get a great idea of a players’ ACTUAL value given their positional capabilities. Instead of comparing every position to each other and wondering what the significance of any stat is, the VORP reveals actual, specific value, instantly. The magic of VORP!
+                    However, I’d argue that the difference is minimal, that all projections have SOME margin of error, and should all be taken with a grain of salt. This Marcel is most definitely in the same ballpark as the majority of pros for most players - if it wasn’t, that would definitely be a red flag! 
                 </p>
             </AccordionDetails>
         </Accordion>

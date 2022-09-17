@@ -49,6 +49,22 @@ p > a {
   font-weight: 500;
 }
 
+.headingBg {
+  background-color: $dark-overlay-2;
+  border-radius: 5px;
+  padding: 5px 12px;
+  width: fit-content;
+}
+
+.centerText {
+  margin: auto;
+  text-align: center;
+}
+
+.italic {
+  font-style: italic;
+}
+
 ol, ul {
   margin: 24px 0;
 
