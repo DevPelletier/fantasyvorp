@@ -4120,7 +4120,7 @@ export default function PlayerVORPData(props) {
         { newLS ? (
         <div className="ls-request-form-container">
           <div className="content">
-          <h4 className="warning">Your League's VORP Data is now being calculated...</h4>
+          <h4 className="warning">Your League&apos;s VORP Data is now being calculated...</h4>
             <p>As this site is still under development, populating the database is unfortunately still a very manual process. The live database has been pre-populated with several common league settings, but your specific settings apparently were not included.</p>
             <p>Your specific FHL settings&apos; VORP data will be run through our scripts and pushed live as soon as possible.</p>
              <p>Feel free to enter your email below to be notified the moment your league&apos;s VORP data is live!

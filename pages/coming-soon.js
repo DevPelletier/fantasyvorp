@@ -40,8 +40,8 @@ export default function Page() {
     let form = (
         <form onSubmit={handleSubmit(submitUserEmail)}>
             <div className="form_group_container miniHeroForm">
-            <p><strong>I'm working on adding a ton of new features as quickly as I can to be used in the approaching 22-23 season!</strong><br /><br />
-            If you'd like to be notified of new features going live, submit your email below 🤠
+            <p><strong>I&apos;m working on adding a ton of new features as quickly as I can to be used in the approaching 22-23 season!</strong><br /><br />
+            If you&apos;d like to be notified of new features going live, submit your email below 🤠
             </p>
             <Controller
             name="lsRequestEmail"
