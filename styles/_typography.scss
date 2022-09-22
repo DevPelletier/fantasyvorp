@@ -4,13 +4,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100;0,300;0,400;0,600;1,100;1,300;1,400;1,600&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@200;400;500;700&family=Noto+Sans:ital,wght@0,100;0,300;0,400;0,600;1,100;1,300;1,400;1,600&display=swap');
 
 
 ///////////////////// STYLES /////////////////////
 html, body {
     @include bodyFont1;
     color: $white-01;
+}
+
+::selection {
+  background: $blue-01b; /* WebKit/Blink Browsers */
+}
+::-moz-selection {
+  background: $blue-01b; /* Gecko Browsers */
 }
 
 h1, h2, h3, h4, h5, h6 {

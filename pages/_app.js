@@ -1,6 +1,7 @@
 import '../styles/globals.scss'
 
 // Components
+import Head from 'next/head'
 import Navbar from '../components/layout/navbar'
 import Footer from '../components/layout/footer'
 import Link from 'next/link'
@@ -15,6 +16,11 @@ function MyApp({ Component, pageProps }) {
       <h1>Unfortunately this site is not formatted for mobile yet!</h1>
       <h2>Please view in a larger browser window</h2>
     </div>
+    <Head>
+        <title>FantasyVORP.com (Beta)</title>
+        <meta name="description" content="Fantasy VORP - Value Over Replacement Stats for Fantasy Sports" />
+        <link rel="icon" href="/favicon-vorp.png" />
+    </Head>
 
     <Navbar />
     <Component {...pageProps} />

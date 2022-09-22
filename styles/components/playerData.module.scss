@@ -51,11 +51,12 @@
     place-content: normal;
     // max-height: 120vh;
     // min-height: 300px;
-    // width: 95%;
+    width: 95%;
     max-width: 1500px;
     // min-width: 500px;
     margin: 0 auto;    
     background: $dark-overlay-2;
     box-shadow: $shadow02;
-
+    border: 1px solid $grey-03;
+    border-radius: $borderRadius01;
 }

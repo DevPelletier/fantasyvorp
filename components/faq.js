@@ -11,6 +11,26 @@ export default function Section() {
 
     return (
         <section className="copySection">
+            {/* <div className="faq-nav">
+                <Button 
+                    href="#"
+                    variant="outlined" 
+                    >
+                    What is VORP?
+                </Button>
+                <Button 
+                    href="#"
+                    variant="outlined" 
+                    >
+                    Why is VORP better?
+                </Button>
+                <Button 
+                    href="#"
+                    variant="outlined" 
+                    >
+                    How do I use this site?
+                </Button>
+            </div> */}
             <h2>An Introduction to FantasyVORP</h2>
             <h3 className="headingBg">What it is:</h3>
 
@@ -19,8 +39,7 @@ export default function Section() {
                 A fantasy (sport) is a type of game, often played using the Internet, where participants assemble imaginary or virtual teams composed of proxies of real players of a professional sport.
             </p>
             <p>
-                <strong>&lsquo;VORP&lsquo;: </strong> <br />
-                A fantasy (sport) is a type of game, often played using the Internet, where participants assemble imaginary or virtual teams composed of proxies of real players of a professional sport.
+                <strong>&lsquo;VORP&lsquo;: </strong>Value Over Replacement Player
             </p>
             <p>
                 <strong>FantasyVORP.com:</strong> <br />

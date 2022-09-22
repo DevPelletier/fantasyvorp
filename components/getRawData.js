@@ -25,10 +25,11 @@ import { customRDTStyles, specificRDTStyles } from '../styles/components/dataTab
 // -------------- Data Table Variables -------------- //
 const dataColWidth01 = "76px";
 const dataColWidth02 = "100px";
-let tableData = {};
-let finalTableData;
+let rawData = {};
+let finalTableData_2;
 let columns = [];
 let dataSource;
+let tableTitle = '';
 const allCats = [
     'G', 'A', 'PTS', '+/-', 'PIM', 
     'SOG', 'PPP', 'PPG', 'PPA', 'SHP', 
@@ -49,7 +50,6 @@ export default function PlayerRawData(props) {
     let tablePosFilter = watch("tablePosFilter");
     let season = watch("seasonSelect");
     let seasonID = season;
-    seasonID = '22-23'  // Default
     let league = 'NHL';
 
     const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
@@ -71,10 +71,10 @@ export default function PlayerRawData(props) {
             return false
           } else {
             // 3. Check if that lsID's season data already exists
-            if (tableData[season] == null) {
+            if (rawData[season] == null) {
               return true
             } else {
-              setTableData()
+              setRawData()
               return false
             }
           }
@@ -95,9 +95,9 @@ export default function PlayerRawData(props) {
         //   return cacheData;
         // }
   
-        console.log('fetching data from server')
+        // console.log('fetching data from server')
         let dbFile = league + '_allPlayers_' + seasonID;
-        console.log("db file = " + dbFile)
+        // console.log("db file = " + dbFile)
   
         // ------------- TODO: Add REDIS cache here (or some other simple cache) in order to save on server calls
   
@@ -110,43 +110,63 @@ export default function PlayerRawData(props) {
           //   setPlayerData(data)
           // })
         if (error) {
-          console.log('error')
-          console.log(error.message)
+          // console.log('error')
+          // console.log(error.message)
+          alert('Uh oh, looks there was an issue with submitting your request. Try refreshing the page and submitting again. If the issue persists, please submit the issue to hello@fantasyvorp.com')
           return data;  // abort
         }
         
         return data;
     }
 
-    const setTableData = async (data) => {
+    const setRawData = async (data) => {
         setLoading(true)
         // console.log('setTableData');
-        console.log(`setting tableData[${season}]`)
-        finalTableData = []; // clear specific subset of data to display
+        // console.log(`setting rawData[${seasonID}]`)
+        finalTableData_2 = []; // clear specific subset of data to display
     
         // data.Source = dataSource;
         // console.log('Data was pulled from: ' + data.Source + ' and took ' + data.responseTime)
-        
+        if (seasonID == null) {
+            seasonID = '21-22'  // Default
+        }
         // If season data doesn't exist locally yet, set season data
-        if (typeof tableData[season] == 'undefined') {
-          tableData[season] = data
+        if (typeof rawData[seasonID] == 'undefined') {
+            rawData[seasonID] = data
         }
     
         if (tablePosFilter == 'None') {
-          finalTableData = tableData[season]
+          finalTableData_2 = rawData[seasonID]
         } else {
-          finalTableData = tableData[season].filter(player => player.PositionAll == tablePosFilter);
+          finalTableData_2 = rawData[seasonID].filter(player => player.PositionAll == tablePosFilter);
         }
-        
-        await wait(1000);
-    
+            
         setTableCols()
-        setLoading(false);
+
+        let delayTime = 333
+        await wait(delayTime);
     
-        console.log(finalTableData)
+        setLoading(false);    
+        // console.log(finalTableData_2)
     }
     
     const setTableCols = () => {
+
+        tableTitle = '';
+        tableTitle += 'Raw Stats '
+        tableTitle += '(' + seasonID + '): '
+        if (tablePosFilter == "None") {
+          tableTitle += "All Positions / "
+        } else {
+          tableTitle += tablePosFilter + " / "
+        }
+        if (showPerGP) {
+          tableTitle += 'Per Game'
+        } else {
+          tableTitle += 'Full Season'
+        }
+    
+    
         let columnData = []
         let x = 0;
         for (let cat in allCats) {
@@ -161,17 +181,19 @@ export default function PlayerRawData(props) {
             x += 1
         }
 
-        console.log(columnData)
+        // console.log(columnData)
+
+        let dataTableBorder = "1px dotted #414141"
 
         columns = [
             {
                 name: 'Name',
                 selector: row => row['Full Name'],
                 sortable: false,
-                width: '170px',
+                maxWidth: '200px',
                 style: {
                   justifyContent: 'left',
-                  borderRight: "1px dotted #616161"
+                  borderRight: dataTableBorder
                 }
             },
             {
@@ -181,7 +203,7 @@ export default function PlayerRawData(props) {
                 width: "80px",
                 style: {
                     textTransform: 'uppercase',
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
             },
             {
@@ -191,9 +213,9 @@ export default function PlayerRawData(props) {
                 width: '85px',
                 style: {
                   color: 'black',
-                  fontSize: '14px',
+                  fontSize: '12px',
                   fontWeight: '600',
-                  borderRight: "1px dotted #616161"
+                  borderRight: dataTableBorder
                 },
                 conditionalCellStyles: [
                     {
@@ -242,7 +264,7 @@ export default function PlayerRawData(props) {
                 style: {
                     // fontSize: '0.9rem',
                     justifyContent: 'center',
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
             },
             {
@@ -252,7 +274,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[0]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
             },
             {
@@ -262,7 +284,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[0]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
             },
             {
@@ -272,7 +294,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[1]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
             },
             {
@@ -282,7 +304,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[1]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
             },
             {
@@ -293,7 +315,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[2]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -303,7 +325,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[2]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -313,7 +335,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[3]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -323,7 +345,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[3]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -333,7 +355,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[4]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -343,7 +365,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[4]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -353,7 +375,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[5]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -363,7 +385,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[5]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -373,7 +395,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[6]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -383,7 +405,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[6]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -393,7 +415,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[7]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -403,7 +425,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[7]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -413,7 +435,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[8]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -423,7 +445,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[8]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -433,7 +455,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[9]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -443,7 +465,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[9]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -453,7 +475,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[10]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -463,7 +485,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[10]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -473,7 +495,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[11]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -483,7 +505,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[11]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -493,7 +515,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[12]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -503,7 +525,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[12]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -513,7 +535,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[13]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -523,7 +545,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[13]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -533,7 +555,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[14]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -543,7 +565,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[14]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -553,7 +575,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[15]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -563,7 +585,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[15]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -573,7 +595,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[16]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -583,7 +605,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[16]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -593,7 +615,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[17]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -603,7 +625,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[17]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -613,7 +635,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[18]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -623,7 +645,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[18]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -633,7 +655,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[19]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -643,7 +665,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[19]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -653,7 +675,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[20]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -663,7 +685,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[20]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 { // GAA
@@ -673,7 +695,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[21]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -683,7 +705,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[22]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -693,7 +715,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[22]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -703,7 +725,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[23]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -713,7 +735,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[23]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {  // SV%
@@ -723,7 +745,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[24]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -733,7 +755,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[25]['omitTotal'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 },
                 {
@@ -743,7 +765,7 @@ export default function PlayerRawData(props) {
                 width: dataColWidth01,
                 omit: columnData[25]['omitperGP'],
                 style: {
-                    borderRight: "1px dotted #616161"
+                    borderRight: dataTableBorder
                 }
                 }
         ]
@@ -754,7 +776,7 @@ export default function PlayerRawData(props) {
     
     useEffect(() => {
         if (checkIfNewDataNecessary()) {
-            console.log('getting data from api')
+            // console.log('getting data from api')
             const t0 = new Date().getTime()
             fetchPlayerData()
                 .then(data => {
@@ -762,9 +784,9 @@ export default function PlayerRawData(props) {
                         const t1 = new Date().getTime()
                         data.responseTime = `${t1-t0} ms`
                         // redis.set(`playerData`, data) 
-                        setTableData(data)
+                        setRawData(data)
                     } else if (!data) {
-                        console.log('no data! Uh oh!')
+                        // console.log('no data! Uh oh!')
                     }
                 })
                 .catch(console.error)
@@ -777,125 +799,105 @@ export default function PlayerRawData(props) {
 
     return (
 
-        <section className={styles.playerData}>     
+        <section className={styles.playerData}> 
+            <div className="spacer50"></div>    
+            { loading ? (
+            <div className={styles.playerLoadOverlay}>
+                <h3>VORP Data Loading...</h3>
+            </div>
+            ) : (
+            ""
+            )}
 
-            <h2>NHL Fantasy Raw Data</h2>
             <div className="playerDataControlMenu">
             <div className="form_group_container">
-                <Stack direction="row" spacing={2}>
-                <Controller
-                name="tablePosFilter"
-                control={control}
-                defaultValue="None"
-                render={({ field: { onChange, value }, fieldState: { error } }) => (
-                    <FormControl className="mui_select">
-                        <InputLabel id="tablePosFilter-select">Position Filter</InputLabel>
-                        <Select
-                        labelId="tablePosFilter-select"
-                        label="Position Filter"
-                        sx={{ width: 250 }}
-                        value={value}
-                        onChange={onChange}
-                        error={!!error}
-                        // helperText={error ? error.message : null}
-                        >
-                            <MenuItem value={'None'}>None</MenuItem>
-                            <MenuItem value={'C'}>C</MenuItem>
-                            <MenuItem value={'LW'}>LW</MenuItem>
-                            <MenuItem value={'RW'}>RW</MenuItem>
-                            <MenuItem value={'D'}>D</MenuItem>
-                            <MenuItem value={'G'}>G</MenuItem>
-                        </Select>
-                    </FormControl>
-                )}
-                // rules={{ required: 'Fantasy Site required' }}
-                />
-                <Controller
-                name="seasonSelect"
-                control={control}
-                defaultValue="22-23"
-                render={({ field: { onChange, value }, fieldState: { error } }) => (
-                    <FormControl className="mui_select">
-                        <InputLabel id="seasonSelect-select">Select Season</InputLabel>
-                        <Select
-                        labelId="seasonSelect-select"
-                        label="Select Season"
-                        sx={{ width: 250 }}
-                        value={value}
-                        onChange={onChange}
-                        error={!!error}
-                        // helperText={error ? error.message : null}
-                        >
-                            <MenuItem value={'22-23'}>22-23</MenuItem>
-                            <MenuItem value={'21-22'}>21-22</MenuItem>
-                            <MenuItem value={'20-21'}>20-21</MenuItem>
-                            <MenuItem value={'19-20'}>19-20</MenuItem>
-                        </Select>
-                    </FormControl>
-                    )}
-                />
-                <FormControl component="fieldset">
-                    <FormGroup aria-label="position" row>
-                    {/* <FormLabel component="legend">Table Controls</FormLabel> */}
-                    <FormControlLabel
-                        control={
-                            <Switch 
-                            checked={showPerGP} 
-                            onChange={() => setShowPerGP(!showPerGP)}
-                            name="totals" />
-                        }
-                        label="Totals / perGP"
-                        labelPlacement="top"
-                        />
-                        {/* 
-                        TODO: Add this functionality
-                        Issue rendering using both hidePosRnk AND showPerGP toggles
-                        */}
-                        {/* <FormControlLabel
-                        label="Show Position Ranks"
-                        labelPlacement="top"
-                        control={
-                            <Checkbox 
-                            defaultChecked
-                            checked={!hidePosRnk}
-                            onChange={() => setHidePosRnk(!hidePosRnk)}
-                            inputProps={{ 'aria-label': 'controlled' }}  
-                            />
-                        }
-                        /> */}
-                        {/* <FormControlLabel
-                        label="Show ADP"
-                        labelPlacement="top"
-                        control={
-                            <Checkbox 
-                            checked={!hideADP}
-                            onChange={() => setHideADP(!hideADP)}
-                            inputProps={{ 'aria-label': 'controlled' }}  
-                            />
-                        }
-                        /> */}
-                        {/* <Button variant="contained" onClick={() => setHidePosRnk(!hidePosRnk)}>Toggle Pos-Rank Column</Button>
-                        <Button variant="contained" onClick={() => setHideADP(!hideADP)}>Toggle ADP Columns</Button> */}
-                    </FormGroup>
+            <Controller
+            name="seasonSelect"
+            control={control}
+            defaultValue="21-22"
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="seasonSelect-select">Season Select</InputLabel>
+                    <Select
+                    labelId="seasonSelect-select"
+                    label="Season Select"
+                    // sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <MenuItem value={'21-22'}>21-22</MenuItem>
+                        <MenuItem value={'20-21'}>20-21</MenuItem>
+                        <MenuItem value={'19-20'}>19-20</MenuItem>
+                    </Select>
                 </FormControl>
-    
-                </Stack>
+              )}
+            />
+
+            <Controller
+            name="tablePosFilter"
+            control={control}
+            defaultValue="None"
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="tablePosFilter-select">Position Filter</InputLabel>
+                    <Select
+                    labelId="tablePosFilter-select"
+                    label="Position Filter"
+                    // sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <MenuItem value={'None'}>None</MenuItem>
+                        <MenuItem value={'C'}>C</MenuItem>
+                        <MenuItem value={'LW'}>LW</MenuItem>
+                        <MenuItem value={'RW'}>RW</MenuItem>
+                        <MenuItem value={'D'}>D</MenuItem>
+                        <MenuItem value={'G'}>G</MenuItem>
+                        {/* <MenuItem value={'None'}>None</MenuItem> */}
+                    </Select>
+                </FormControl>
+            )}
+            // rules={{ required: 'Fantasy Site required' }}
+            />
+
+            <Controller
+            name="perGPSelect"
+            control={control}
+            defaultValue='Season'
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="perGP-select">Value Calculated For:</InputLabel>
+                    <Select
+                    labelId="perGPSelect"
+                    label="Value Calculated For:"
+                    // sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <MenuItem value={'Season'}>Full Season</MenuItem>
+                        <MenuItem value={'perGP'}>Per Game</MenuItem>
+                    </Select>
+                </FormControl>
+              )}
+            />
+
             </div>
-            </div>
-            <h3>
-            {showPerGP ? 'Per Game' : 'Totals'}
-            { tablePosFilter == "None" ? " - All Position VORPs" : " - " + tablePosFilter + " VORP"}
-            </h3>
-    
+            </div>    
             <div className={styles.dataTableContainer}>
 
                 { loading ? (
-                    <p className="subtext">DataTable Loading...</p>
+                    ""
                 ) : (
                     <DataTable
-                    title={"Table Title TODO"}
+                    title={tableTitle}
                     columns={columns}
-                    data={finalTableData}  // filteredItems
+                    data={finalTableData_2}  // filteredItems
                     customStyles={customRDTStyles}
                     conditionalRowStyles={specificRDTStyles}
                     className="dataTable"
@@ -905,15 +907,15 @@ export default function PlayerRawData(props) {
                     dense
                     direction="auto"
                     fixedHeader
-                    noHeader
-                    // fixedHeaderScrollHeight="300px"
+                    // noHeader
+                    fixedHeaderScrollHeight="80vh"
                     highlightOnHover
                     pagination
                     paginationPerPage={100}
                     // selectAllRowsItem true
                     // selectableRows
-                    selectableRowsHighlight
-                    selectableRowsRadio="checkbox"
+                    // selectableRowsHighlight
+                    // selectableRowsRadio="checkbox"
                     striped // Not currently working lol
                     // FILTERING  vvv
                     // subHeader

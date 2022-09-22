@@ -116,12 +116,10 @@
 
 ////////// HERO STYLES
 .hero {
-  @include centerAll;
-  // height: 80vh;
-  // min-height: 500px;
-  height: 40vh;
-  min-height: 250px;
-  max-height: 500px;
+  @include flex-center-col;
+  justify-content: flex-start;
+  min-height: 90vh;
+  min-height: 600px;
   width: 100%;  
 
   .logoFont {
@@ -133,14 +131,17 @@
   
   .contentContainer {
       @include centerAll;
-  }
 
-  button {
-      width: fit-content;
-      margin: auto;
-  }
-  
+      .content_1 {
+        @include flex-center;
+        align-content: flex-end;
+        height: 45vh;
+        min-height: 400px;
+      }
+  }  
+
 }
+
 
 
 @media (max-width: 600px) {

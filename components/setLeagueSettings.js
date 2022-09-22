@@ -56,7 +56,11 @@ export default function LeagueSettingsForm(props) {
         .then(data =>
             leagueSettingFile = data)
         // .then( console.log('got leaguesetting map'))
-        .catch(err => { throw err });
+        .catch(err => {
+            console.log(err)
+            console.log(err.message)
+            // alert('Uh oh, looks there was an issue with submitting your request. Try refreshing the page and submitting again. If the issue persists, please submit the issue to hello@fantasyvorp.com')
+    });
     }
 
     const toggleModal = () => {
@@ -77,7 +81,6 @@ export default function LeagueSettingsForm(props) {
         // fakeLoadingTimeout();
         console.log('submitting league settings...')
 
-
         let positionJSON = {}
         let categoryJSON = {}
         let scoringType = '';
@@ -88,6 +91,7 @@ export default function LeagueSettingsForm(props) {
 
         if (!data) {
             console.log('form data error')
+            alert('Uh oh, looks there was an issue with submitting your League Settings. Try refreshing the page and submitting them again. If the issue persists, please submit the issue to hello@fantasyvorp.com. So sorry for the inconvenience!')
             return
         }
 

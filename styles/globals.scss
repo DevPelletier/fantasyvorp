@@ -5,15 +5,21 @@
   height: 100vh;
   width: 100vw;
   position: fixed;
-  z-index: 100;
+  z-index: 200;
   background-color: $grey-01;
   @include centerAll;
   display: none;
+  padding: 20vh 10vw;
 }
 
 @media only screen and (max-width: 950px) {
   .mobileCover {
     display: grid;
+  }
+
+  body {
+    position: fixed;
+    // display: none;
   }
 }
 
@@ -46,8 +52,20 @@ ul {
   transition: visibility 0s, opacity 0.5s linear;
 }
 
+.answerHidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease-out;
+}
+
 .marginAuto {
   margin: auto;
+}
+
+.spacer50 {
+  height: 50px;
+  width: 100%;
 }
 
 // ----------------- GENERAL STYLING...? ----------------- //
@@ -109,21 +127,34 @@ ul {
     // width: inherit;
   }
 }
+.MuiButton-contained, .MuiButton-outlined  {
+  padding: 12px 16px !important;
+  transition: all 0.5s ease !important;
+  min-width: 130px !important;
+  height: 40px !important;
+  font-weight: 400 !important;
+  letter-spacing: 1.2px !important;
+  font-size: 0.75rem !important;
+  color: white !important;
+}
+
 .MuiButton-contained {
   background-color: $blue-01b !important;
-  padding: 12px 16px !important;
   border: 1px solid $blue-01b !important;
-  transition: all 0.66s ease !important;
-  min-width: 130px;
-  height: 40px;
-  font-weight: 400;
-  letter-spacing: 1.2px;
-  font-size: 0.75rem;
-  
 
   &:hover {
-    border: 1px solid $blue-02 !important;
+    // border: 1px solid $blue-02 !important;
     background-color: $dark-overlay-1 !important;
+  }
+}
+
+.MuiButton-outlined {
+  background-color: unset !important;
+  border: 1px solid $grey-04 !important;
+
+  &:hover {
+    background-color: $grey-04 !important;
+    border-color: $grey-04 !important;
   }
 }
 
@@ -136,6 +167,15 @@ section.copySection {
 button.setLSbtn {
   margin-bottom: 32px;
 }
+
+.flexCenterRow {
+  @include flex-center;
+}
+
+.flexCenterCol {
+  @include flex-center-col;
+}
+
 
 
 // ----------------- COMPONENTS STYLING...? ----------------- //
@@ -478,6 +518,7 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
 // overall table styles
 .rdt_Table, .rdt_TableHead, .rdt_TableBody, .rdt_TableHeadRow, .rdt_TableRow, .rdt_Pagination {
   color: $white-01 !important;
+  @include dataFont1;
 }
 
 .rdt_TableBody {
@@ -592,6 +633,7 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
   flex-wrap: wrap;
   margin: 0 auto;
   width: 95%;  
+  max-width: 1500px;
 
   .form_group_container {
     @include flex-center;
@@ -732,6 +774,75 @@ section.faq {
       font-size: 0.8rem;
       text-align: left;
       line-height: 180%;
+    }
+  }
+}
+
+// ----------- Raw Data Styles ----------- //
+.rawDataContainer {
+  padding: 32px 0;
+  background: $dark-overlay-1;
+
+  > section {
+    box-shadow: none !important;
+    background: unset !important;
+    height: 140vh !important;
+  }
+}
+
+.quickLinkContainer {
+  grid-gap: 32px 16px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+
+.content_2 {
+  @include flex-center-col;
+  justify-content: flex-start;
+  width: 60vw;
+  max-width: 600px;
+  min-width: 280px;
+  margin: auto;
+  margin-bottom: 100px;
+  font-size: 0.9rem;
+  
+  .answer {
+    transition: all 0.2s ease-out;
+
+    text-align: left;
+    
+    p {
+      margin: 16px 0;
+      font-size: 0.82rem;
+
+      &:first-child {
+        margin: 0 0 32px;
+        font-size: 1rem;
+      }
+    }
+
+    ul {
+      margin: 8px 0;
+      li {
+        font-size: 0.82rem;
+        margin-bottom: 12px;
+
+        &::before {
+          content: "•";
+          color: white;
+          display: inline-block;
+          width: 1em;
+          margin-left: -1em;
+          font-size: 2rem;
+          position: relative;
+          top: 6px;
+          left: 10px;
+        }
+      }
+    }
+    ol li {
+      font-size: 0.82rem;
     }
   }
 }

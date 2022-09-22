@@ -34,19 +34,26 @@ $dark-overlay-4: rgba(255,255,255,0.14);
 
 ///////////////////// FONTS /////////////////////
 @mixin headerFont1 {
-  font-family: 'Source Code Pro', monospace;
+  font-family: 'Source Code Pro', monospace, Roboto, Open Sans, sans-serif !important;
 }
 
 @mixin logoFont {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Space Mono', monospace, Roboto, Open Sans, sans-serif !important;
   }
   
 
 @mixin bodyFont1 {
-    font-family: 'Noto Sans', Roboto, Oxygen, Fira Sans, Helvetica Neue, -apple-system, sans-serif;
+    font-family: 'Noto Sans', Roboto, Oxygen, Fira Sans, Helvetica Neue, -apple-system, sans-serif !important;
       // font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
   //   Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
+
+@mixin dataFont1 {
+  font-family: 'Noto Sans Mono', monospace, Roboto, Oxygen, Fira Sans, Helvetica Neue, -apple-system, sans-serif !important;
+  letter-spacing: -0.3px;
+  font-weight: 400;
+}
+
 
 
 ///////////////////// BREAK POINTS /////////////////////

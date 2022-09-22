@@ -102,15 +102,12 @@ export default function PlayerVORPData(props) {
     lsID = "12_002_001_0"
 
     if (firstRender.current) {
-      console.log('Setting standard yahoo cats for first load')
+      // console.log('Setting standard yahoo cats for first load')
       standardYahooBool = true;
       tablePosFilter = "Overall"  
     } else {
       // all of the above do not need to be set again
     }
-
-
-
 
     let initColData = []
     let colDataObj = {}
@@ -139,16 +136,16 @@ export default function PlayerVORPData(props) {
     initColData.VORP = { dataRef: 'vorp' }
     initColData.VORP_pergp = { dataRef: 'vorp_pergp' }
 
-    // console.log(initColData)
+    // // console.log(initColData)
     colData = initColData;
     if (seasonID == null) {
       seasonID = 'ProjVORPs'
     }
 
     if (tableData[seasonID] == null) { 
-      console.log('tableData[' + seasonID + '] is null, need new season data for default settings')
+      // console.log('tableData[' + seasonID + '] is null, need new season data for default settings')
       
-      console.log('getting data from api')
+      // console.log('getting data from api')
       const t0 = new Date().getTime()
   
       fetchPlayerData()
@@ -175,7 +172,7 @@ export default function PlayerVORPData(props) {
         })
   
     } else {
-      console.log('already have ' + seasonID + ' data for default settings')
+      // console.log('already have ' + seasonID + ' data for default settings')
       setTableData()
     }
 
@@ -213,16 +210,16 @@ export default function PlayerVORPData(props) {
   let lsIDChanged_Flag = false;   // need this so I can use this state... without calling the function again...seems like I should probably use REACT STATES lol... TODO
   const lsIDChanged = () => {        
     if (lsID.length == 0) {
-      console.log('lsID is unassigned')
+      // console.log('lsID is unassigned')
       lsIDChanged_Flag = false;
       return false
     } else if (lsIDcompare == lsID) {
-      console.log('lsID did not change')
+      // console.log('lsID did not change')
       lsIDcompare = lsID
       lsIDChanged_Flag = false;
       return false
     } else {
-      console.log('lsID changed')
+      // console.log('lsID changed')
       lsIDcompare = lsID
       lsIDChanged_Flag = true;
       tableData = {}          // CLEAR OUT ALL TABLE DATA
@@ -234,13 +231,13 @@ export default function PlayerVORPData(props) {
   const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
 
   const checkIfNewDataNecessary = () => {
-    console.log('lsID: "' +lsID+ '"', typeof lsID)
+    // console.log('lsID: "' +lsID+ '"', typeof lsID)
 
     // 1. Check if lsID has changed
     if (lsIDChanged()) {
       // 2. Check if seasonID is valid
       if ((typeof seasonID == 'undefined')) {
-        console.log('ERROR: seasonID {' + seasonID + '} is not valid')
+        // console.log('ERROR: seasonID {' + seasonID + '} is not valid')
         return false
         // Removed this for now to make it work...
       // } else if (((lsID == "") || (lsID.length > 12) || (lsID.length <= 10)) && lsIDcompare != "12_002_001_0") {
@@ -259,10 +256,10 @@ export default function PlayerVORPData(props) {
       } else {
         // Check if this season data already exists
         if (tableData[seasonID] == null) {
-          console.log('tableData[' + seasonID + '] is null, need new season data')
+          // console.log('tableData[' + seasonID + '] is null, need new season data')
           return true
         } else {
-          console.log('already have ' + seasonID + ' data for lsID: ' + lsID)
+          // console.log('already have ' + seasonID + ' data for lsID: ' + lsID)
           setLoading(true)
           setTableData()
           return false // you already have this data! don't need to pull it
@@ -293,11 +290,15 @@ export default function PlayerVORPData(props) {
         .from('RequestedLeagueSettings')
         .insert([{ lsID: leagueSettingID, email: userEmail, subscribeType: userSubscribe}])
     if (error) {
-      console.log('error')
+      // console.log('error')
       console.log(error.message)
+      alert('Uh oh, looks there was an issue with submitting your request. Try refreshing the page and submitting again. If the issue persists, please submit the issue to hello@fantasyvorp.com')
       return // abort
     }
-    console.log('lsID request submitted')
+    // console.log('lsID request submitted')
+    if (userEmail != null) {
+      alert('Your email has been submitted! You will be notified by email as soon as your specific league data is live (usually within a few hours).')
+    }
     return data;
   }
 
@@ -318,27 +319,27 @@ export default function PlayerVORPData(props) {
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
-      console.log('first render')
+      // console.log('first render')
       defaultYahooStatPull()
       return;
     }
-    console.log('next renders')
+    // console.log('next renders')
 
     if (checkIfNewDataNecessary()) {
       setLoading(true)
-      console.log('Fetching data from API')
+      // console.log('Fetching data from API')
       regVORPDataPull()
     } else {
-      console.log('Getting data locally')
+      // console.log('Getting data locally')
     }
 
-    console.log(newLS)
+    // console.log(newLS)
   }, [props.lsID, season, perGPSelect, tablePosFilter, tableView])  // hidePosRnk, hideAge, 
   
 
   const setTableCols = (colData) => {
     // console.log('setTableCols')
-    console.log(colData)
+    // console.log(colData)
 
     let showPerGP = false;
     if (perGPSelect == "perGP" && showPerGP == false) {
@@ -365,7 +366,7 @@ export default function PlayerVORPData(props) {
       tableTitle += '(' + season + '): '
     }
     if (tablePosFilter == "None") {
-      tableTitle += " - All Positions"
+      tableTitle += "All Positions"
     } else {
       tableTitle += tablePosFilter + " VORP / "
     }
@@ -376,13 +377,16 @@ export default function PlayerVORPData(props) {
     }
 
     tableTitle2 = '';
-    tableTitle3 = '';
+    tableTitle3 = '';    
 
     // Also set League Settings DataTable title
     let catSettings = props.catSettings
     let posSettings = props.posSettings
 
     let teams = lsID.substring(0, 2);   // this is used in ADP Diff col as well
+    if (lsID == null || lsID == "") {
+      teams = '12';
+    }
     tableTitle2 += teams + ' Teams - '
     for (let pos in posSettings) {
       if (posSettings[pos] != 0) {
@@ -615,7 +619,7 @@ export default function PlayerVORPData(props) {
         name: 'Name',
         selector: row => row[colData['Name']['dataRef']],
         sortable: false,
-        // width: '170px',
+        maxWidth: '200px',
         reorder: true,
         style: {
           justifyContent: 'left'
@@ -644,7 +648,7 @@ export default function PlayerVORPData(props) {
         width: '85px',
         style: {
           color: 'black',
-          fontSize: '14px',
+          fontSize: '12px',
           fontWeight: '600',
         },
         conditionalCellStyles: [
@@ -695,7 +699,7 @@ export default function PlayerVORPData(props) {
         style: {
           color: 'black',
           fontWeight: '600',
-          fontSize: '0.8rem',
+          fontSize: '10px',
         },
         conditionalCellStyles: [
           {
@@ -964,31 +968,31 @@ export default function PlayerVORPData(props) {
           {
             when: row => (row.TotalsADPDiff >= (teams*2.5)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)'
+              backgroundColor: columnPosLvl_4
             },
           },
           {
             when: row => (row.TotalsADPDiff >= (teams*1.75) && row.TotalsADPDiff < (teams*2.5)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.45)'
+              backgroundColor: columnPosLvl_3
             },
           },
           {
             when: row => (row.TotalsADPDiff >= (teams*1) && row.TotalsADPDiff < (teams*1.75)),
             style: {
-              backgroundColor: columnPosLvl_1
+              backgroundColor: columnPosLvl_2
             },
           },
           {
             when: row => (row.TotalsADPDiff <= (teams*(-1)) && row.TotalsADPDiff > (teams*(-1.75))),
             style: {
-              backgroundColor: columnNegLvl_1
+              backgroundColor: columnNegLvl_2
             },
           },
           {
             when: row => (row.TotalsADPDiff <= (teams*(-1.75)) && row.TotalsADPDiff > (teams*(-2.5))),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.45)'
+              backgroundColor: columnNegLvl_2
             },
           },
           {
@@ -1024,25 +1028,25 @@ export default function PlayerVORPData(props) {
           {
             when: row => (row.TotalsADPDiff >= (teams*1.75) && row.TotalsADPDiff < (teams*2.5)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.45)'
+              backgroundColor: columnPosLvl_3
             },
           },
           {
             when: row => (row.TotalsADPDiff >= (teams*1) && row.TotalsADPDiff < (teams*1.75)),
             style: {
-              backgroundColor: columnPosLvl_1
+              backgroundColor: columnPosLvl_2
             },
           },
           {
             when: row => (row.TotalsADPDiff <= (teams*(-1)) && row.TotalsADPDiff > (teams*(-1.75))),
             style: {
-              backgroundColor: columnNegLvl_1
+              backgroundColor: columnNegLvl_2
             },
           },
           {
             when: row => (row.TotalsADPDiff <= (teams*(-1.75)) && row.TotalsADPDiff > (teams*(-2.5))),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.45)'
+              backgroundColor: columnNegLvl_3
             },
           },
           {
@@ -3990,7 +3994,7 @@ export default function PlayerVORPData(props) {
     
     // If season data doesn't exist locally yet, or lsID is unset/just changed => set season data
     if ((tableData[seasonID] == null) || (lsIDChanged_Flag == true)) {
-      console.log('incoming data being set in tableData['+seasonID+']')
+      // console.log('incoming data being set in tableData['+seasonID+']')
       tableData[seasonID] = data
     }
     
@@ -3999,12 +4003,12 @@ export default function PlayerVORPData(props) {
       tablePosFilter = "Overall"  
     }
     if (tablePosFilter == 'None') {
-      console.log('setting tableData')
+      // console.log('setting tableData')
       setFinalTableData(
         tableData[seasonID].filter(player => (player.VORPPosition != "Overall") && (player.VORPPosition != "Overall perGP"))
       )
     } else {
-      console.log('setting tableData')
+      // console.log('setting tableData')
       setFinalTableData(
         tableData[seasonID].filter(player => player.VORPPosition == tablePosFilter)
       )
@@ -4013,13 +4017,13 @@ export default function PlayerVORPData(props) {
     // Set Table Cols appropriately
     setTableCols(colData)
 
-    console.log('lsID did not change')
+    // console.log('lsID did not change')
     let delayTime = 333
     await wait(delayTime);
 
     setLoading(false);
-    console.log(tableData[seasonID])
-    console.log(finalTableData)
+    // console.log(tableData[seasonID])
+    // console.log(finalTableData)
   }
 
 
@@ -4042,7 +4046,7 @@ export default function PlayerVORPData(props) {
       }
 
       let dbFile = league + '__' + lsID + '__' + seasonID;
-      console.log("db file = " + dbFile)
+      // console.log("db file = " + dbFile)
 
       // ------------- TODO: Add REDIS cache here (or some other simple cache) in order to save on server calls
 
@@ -4059,6 +4063,7 @@ export default function PlayerVORPData(props) {
         setNewLS(true);
         console.log('Database Error!')
         console.log(error.message)
+        // alert('Uh oh, looks there was an issue with submitting your request. Try refreshing the page and submitting again. If the issue persists, please submit the issue to hello@fantasyvorp.com')
         return data; // abort
       }
       
@@ -4080,7 +4085,7 @@ export default function PlayerVORPData(props) {
 
 		return (
 			<Button key="delete" onClick={handleDelete} variant="contained" >
-				Hide
+				Hide Player(s)
 			</Button>
 		);
 	}, [finalTableData, selectedRows, toggleCleared]);

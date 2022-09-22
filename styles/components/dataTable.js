@@ -86,7 +86,8 @@ export const customRDTStyles = {
     cells: {
       style: {
 		padding: '0 8px',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		fontFamily: "font-family: 'Noto Sans Mono', monospace"
       }
     }
 }
