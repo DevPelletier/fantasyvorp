@@ -25,6 +25,13 @@ export const customRDTStyles = {
 			fontWeight: 500,
 		},
 	},
+	headCells: {
+		style: {
+			justifyContent: 'center',
+			padding: '0 8px',
+			fontWeight: '600',
+		}
+	},
     rows: {
 		style: {
 			fontSize: '13px',

@@ -91,6 +91,8 @@ export default function LeagueSettingsForm(props) {
             return
         }
 
+        console.log(data)
+
         for (let x in data) {
             let y = x.slice(0,3);
             switch(y) {
@@ -158,7 +160,7 @@ export default function LeagueSettingsForm(props) {
                         if (data[x] == "") {
                             categoryJSON[ptsCat]["Weight"] = 0
                         } else {
-                            categoryJSON[ptsCat]["Weight"] = parseInt(data[x])
+                            categoryJSON[ptsCat]["Weight"] = parseFloat(data[x])
                         }
                     }
                     
@@ -180,10 +182,14 @@ export default function LeagueSettingsForm(props) {
         // console.log(positionJSON)
         // console.log('categoryJSON :')
         // console.log(categoryJSON)
+
+        props.getCatSettings(categoryJSON)
+        props.getPosSettings(positionJSON)
+
         
         // Check which Cat ID from leagueSettingFile matches form categoryID
         for (let catSetting in leagueSettingFile["Category_IDs"]) {
-            console.log(catSetting)
+            // console.log(catSetting)
             let catSettingJSON = leagueSettingFile["Category_IDs"][catSetting]
 
             // For some reason comparing (categoryJSON == catSettingJSON) ALWAYS returns false...? So this is the long stupid workaround :'(                
@@ -322,7 +328,7 @@ export default function LeagueSettingsForm(props) {
         }
         console.log(leaguesetid)
         props.getLSID(leaguesetid);
-        props.getColData(tableCats);          
+        props.getColData(tableCats);
         // console.log(leaguesetid);
         // console.log(tableCats);   
         // toggleModal();     
@@ -407,31 +413,18 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             >
                                 <MenuItem value={6}>6</MenuItem>
-                                <MenuItem value={7}>7</MenuItem>
                                 <MenuItem value={8}>8</MenuItem>
-                                <MenuItem value={9}>9</MenuItem>
                                 <MenuItem value={10}>10</MenuItem>
-                                <MenuItem value={11}>11</MenuItem>
                                 <MenuItem value={12}>12</MenuItem>
-                                <MenuItem value={13}>13</MenuItem>
                                 <MenuItem value={14}>14</MenuItem>
-                                <MenuItem value={15}>15</MenuItem>
                                 <MenuItem value={16}>16</MenuItem>
-                                <MenuItem value={17}>17</MenuItem>
                                 <MenuItem value={18}>18</MenuItem>
-                                <MenuItem value={19}>19</MenuItem>
                                 <MenuItem value={20}>20</MenuItem>
-                                <MenuItem value={21}>21</MenuItem>
                                 <MenuItem value={22}>22</MenuItem>
-                                <MenuItem value={23}>23</MenuItem>
                                 <MenuItem value={24}>24</MenuItem>
-                                <MenuItem value={25}>25</MenuItem>
                                 <MenuItem value={26}>26</MenuItem>
-                                <MenuItem value={27}>27</MenuItem>
                                 <MenuItem value={28}>28</MenuItem>
-                                <MenuItem value={29}>29</MenuItem>
                                 <MenuItem value={30}>30</MenuItem>
-                                <MenuItem value={31}>31</MenuItem>
                                 <MenuItem value={32}>32</MenuItem>
                             </Select>
                         </FormControl>

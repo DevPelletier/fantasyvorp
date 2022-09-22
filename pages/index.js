@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.scss'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, StrictMode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -20,6 +20,9 @@ import img_bmc from '../public/bmc_icon_black.png'
 export default function Home(props) {
   const [lsID, setLSID] = useState('');
   const [colData, setColData] = useState({});
+  const [posSettings, setPosSettings] = useState({});
+  const [catSettings, setCatSettings] = useState({});
+
   const [lsModal, setLSModal] = useState(false);
 
   const handleOpen = () => setLSModal(true);
@@ -27,7 +30,7 @@ export default function Home(props) {
 
   const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
   const scrollToDataTable = async () => {
-    await wait(500)
+    // await wait(500)
     document.getElementById("dataTableAnchor").scrollIntoView({behavior: "smooth"});
   }
 
@@ -40,6 +43,15 @@ export default function Home(props) {
   const getColData = (colData) => {
     setColData(colData);
   }
+
+  const getPosSettings = (posData) => {
+    setPosSettings(posData)
+  }
+
+  const getCatSettings = (catData) => {
+    setCatSettings(catData)
+  }
+
 
   return (
     <div className={styles.container}>
@@ -56,20 +68,24 @@ export default function Home(props) {
               <h1>
                   Welcome to the <span className={styles.logoFont}>FantasyVORP.com</span> beta!
               </h1>
-
-              <Button 
-              onClick={handleOpen} 
-              variant="contained" 
-              type="submit" 
-              value="Submit"
-              >
-                Input your League Settings
-              </Button>
           </div>
-      </section>
+        </section>
 
-      <div id="dataTableAnchor"></div>
-      <PlayerData lsID={lsID} colData={colData} />
+
+        <h2>NHL Fantasy VORP Data</h2>
+        <Button 
+          onClick={handleOpen} 
+          variant="contained" 
+          type="submit" 
+          value="Submit"
+          className="setLSbtn"
+          >
+            Input your League Settings
+        </Button>
+        <div id="dataTableAnchor"></div>
+        {/* <StrictMode> */}
+          <PlayerData lsID={lsID} colData={colData} posSettings={posSettings} catSettings={catSettings}/>
+        {/* </StrictMode> */}
 
       </main>
 
@@ -80,7 +96,7 @@ export default function Home(props) {
         aria-describedby="modal-modal-description"
       >
         <Box>
-          <SetLeagueSettings setLSModal={setLSModal} getLSID={getLSID} getColData={getColData} />
+          <SetLeagueSettings setLSModal={setLSModal} getLSID={getLSID} getColData={getColData} getPosSettings={getPosSettings} getCatSettings={getCatSettings}/>
         </Box>
       </Modal>
 

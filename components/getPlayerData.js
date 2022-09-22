@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { supabase } from '../utils/supabaseClient'
 import DataTable from 'react-data-table-component';
@@ -21,23 +21,29 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
+import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 
 
+import { differenceBy } from 'lodash'
 import { Controller, useForm } from 'react-hook-form';
 
 import styles from '../styles/components/playerData.module.scss';
 import { customRDTStyles, specificRDTStyles } from '../styles/components/dataTable';
 
 // -------------- Data Table Variables -------------- //
-const dataColWidth01 = "76px";
+const dataColWidth01 = "66px";
 const dataColWidth02 = "100px";
 let tableData = {};
-let finalTableData;
 let columns;
 let dataSource;
-let lsIDcompare;
+let tableTitle = '';
+let tableTitle2 = '';
+let tableTitle3 = '';
+let lsIDcompare = '';
+
 
 // -------------- END of Data Table Variables -------------- //
 
@@ -45,24 +51,41 @@ let lsIDcompare;
 export default function PlayerVORPData(props) {
   const [playerData, setPlayerData] = useState([])
   const [loading, setLoading] = useState()
-  const [hidePosRnk, setHidePosRnk] = useState(false);
+  const [hidePosRnk, setHidePosRnk] = useState(true);
   const [hideADP, setHideADP] = useState(true);
-  const [showPerGP, setShowPerGP] = useState(false);
+  const [hideAge, setHideAge] = useState(true);
   const [adps, setADPs] = useState([]);
   const [newLS, setNewLS] = useState(false)
   const [email, setEmail] = useState('')
   const [isValidEmail, setIsValidEmail] = useState()
-  // const [statColumns, setStatColumns] = useState([])
+  const [finalTableData, setFinalTableData] = useState([])    // This has to be a useState hook in order to have "Hide Players" feature on DataTable
+  // const [showPerGP, setShowPerGP] = useState(false);
+  // const [draftView, setDraftView] = useState(false)
 
-  const { register, watch, control, reset, handleSubmit, errors } = useForm();
+  const [selectedRows, setSelectedRows] = useState([]);
+	const [toggleCleared, setToggleCleared] = useState(false);
+
+
+  const { register, watch, control, reset, handleSubmit, errors, setValue } = useForm();
   let tablePosFilter = watch("tablePosFilter");
   let season = watch("seasonSelect");
-  // console.log(watch());
-
+  let perGPSelect = watch("perGPSelect");
+  let tableView = watch("tableViewSelect");
+  let draftView = false;
   let lsID = props.lsID;
   let colData = props.colData;
   let seasonID = season;
   let league = 'NHL';
+  let tableColtoSortBy = "Rank";
+
+  // Standard settings to use for data parsing here
+  let group2Filters = ['G']
+  let group2Cats = ['GS', 'W', 'L', 'GA', 'GAA', 'SA', 'SV', 'SV%', 'SO']
+  let leagueCats = ['G', 'A', 'PTS', '+/-', 'PIM', 'PPG', 'PPA', 'PPP', 'SHG', 'SHA', 'SHP', 'GWG', 'SOG', 'FOW', 'FOL', 'HIT', 'BLK', 'GS', 'W', 'L', 'GA', 'GAA', 'SA', 'SV', 'SV%', 'SO']
+  let yahooStandardCats = ['G', 'A', '+/-', 'PPP', 'SOG', 'HIT', 'W', 'GAA', 'SV%', 'SO']
+  let rateStats = ["GAA", "SV%"]
+
+  let standardYahooBool = false;
 
   // Checks if lsID value is different than previous value
   const onRefChange = useCallback(
@@ -73,47 +96,177 @@ export default function PlayerVORPData(props) {
     [lsID]
   );
 
-  const lsIDChanged = () => {
-    // console.log('lsID ' + lsID)
-    // console.log('lsIDcompare ' + lsIDcompare)
-    
-    if (lsID == "") {  // If it hasn't been set yet, don't try to pull data
-      return true
-    }
-    
-    if (lsIDcompare == lsID) {
-      lsIDcompare = lsID
-      return false
-      // console.log('no change!')
+  const defaultYahooStatPull = async () => {
+    setLoading(true)
+
+    lsID = "12_002_001_0"
+
+    if (firstRender.current) {
+      console.log('Setting standard yahoo cats for first load')
+      standardYahooBool = true;
+      tablePosFilter = "Overall"  
     } else {
+      // all of the above do not need to be set again
+    }
+
+
+
+
+    let initColData = []
+    let colDataObj = {}
+
+    for (let cat in leagueCats) {
+      colDataObj = {}
+      colDataObj.name = leagueCats[cat]
+      colDataObj.dataRef1 = leagueCats[cat] + " VORP"
+      colDataObj.dataRef2 = leagueCats[cat] + " perGP VORP"
+      colDataObj.omitTotal = true   // these are set in setTableCols()
+      colDataObj.omitperGP = true   // this is set in setTableCols()
+
+      if (yahooStandardCats.includes(leagueCats[cat])) {
+        colDataObj.active = true
+      } else {
+        colDataObj.active = false
+      }
+      
+      initColData.push(colDataObj)
+    }
+
+    initColData.Name = { dataRef: 'fullName' }
+    initColData.Rank = { dataRef: 'vorp_rank' }
+    initColData.Rank_pergp = { dataRef: 'vorp_pergp_rank' }
+    initColData['Scoring Type'] = 'Categories' 
+    initColData.VORP = { dataRef: 'vorp' }
+    initColData.VORP_pergp = { dataRef: 'vorp_pergp' }
+
+    // console.log(initColData)
+    colData = initColData;
+    if (seasonID == null) {
+      seasonID = 'ProjVORPs'
+    }
+
+    if (tableData[seasonID] == null) { 
+      console.log('tableData[' + seasonID + '] is null, need new season data for default settings')
+      
+      console.log('getting data from api')
+      const t0 = new Date().getTime()
+  
+      fetchPlayerData()
+        .then(data => {
+          if (data) {
+            setNewLS(false);
+            const t1 = new Date().getTime()
+            data.responseTime = `${t1-t0} ms`
+            setTableData(data)
+          } else if (!data) {
+            submitRequestedLSID(lsID)
+              .then(() => {
+                // User Message and Input Triggered
+                setNewLS(true);
+                setLoading(false)
+              })
+            tableData = {};
+            setFinalTableData([])
+          }      
+        })
+        .catch(() => {
+          console.error
+          setNewLS(true);
+        })
+  
+    } else {
+      console.log('already have ' + seasonID + ' data for default settings')
+      setTableData()
+    }
+
+
+
+    // Reset lsID to avoid "lsID changed" error
+    lsID = ""
+  }
+
+  const regVORPDataPull = async() => {
+    const t0 = new Date().getTime()
+    fetchPlayerData()
+      .then(data => {
+        if (data) {
+          newLS = false;
+          const t1 = new Date().getTime()
+          data.responseTime = `${t1-t0} ms`
+          // redis.set(`playerData`, data) 
+          setTableData(data)
+        } else if (!data) {
+          submitRequestedLSID(lsID)
+          // User Message and Input Triggered
+
+          setNewLS(true);
+          setLoading(false);
+          tableData = {};
+          setFinalTableData([])
+        }
+        // setPlayerData(data)  // BUG: If you use this setter, and use playerData for setTableData, the table stops showing the correct dataset...
+        // addADP(data)
+      })
+      .catch(console.error)
+  }
+
+  let lsIDChanged_Flag = false;   // need this so I can use this state... without calling the function again...seems like I should probably use REACT STATES lol... TODO
+  const lsIDChanged = () => {        
+    if (lsID.length == 0) {
+      console.log('lsID is unassigned')
+      lsIDChanged_Flag = false;
+      return false
+    } else if (lsIDcompare == lsID) {
+      console.log('lsID did not change')
       lsIDcompare = lsID
+      lsIDChanged_Flag = false;
+      return false
+    } else {
+      console.log('lsID changed')
+      lsIDcompare = lsID
+      lsIDChanged_Flag = true;
+      tableData = {}          // CLEAR OUT ALL TABLE DATA
+      setFinalTableData([]);  // CLEAR OUT ALL TABLE DATA
       return true
-      // console.log('changed!')
     }
   }
 
   const wait = delay => new Promise(resolve => setTimeout(resolve, delay));
 
   const checkIfNewDataNecessary = () => {
+    console.log('lsID: "' +lsID+ '"', typeof lsID)
+
     // 1. Check if lsID has changed
     if (lsIDChanged()) {
-      console.log('lsID changed')
-      // 2. Check if lsID is valid, if seasonID is valid
-      if ((lsID == "") || (lsID.length > 12) || (lsID.length <= 10) || (typeof seasonID == 'undefined')) {
+      // 2. Check if seasonID is valid
+      if ((typeof seasonID == 'undefined')) {
+        console.log('ERROR: seasonID {' + seasonID + '} is not valid')
         return false
+        // Removed this for now to make it work...
+      // } else if (((lsID == "") || (lsID.length > 12) || (lsID.length <= 10)) && lsIDcompare != "12_002_001_0") {
+      //   // 2b. Check if lsID is valid
+      //   console.log('ERROR: lsID is not valid')
+      //   return false
       } else {
-          return true
+        return true
       }
     } else {
-      console.log('lsID did not change')
-      // Check if this season data already exists
-      if (tableData[season] == null) {
-        console.log('need new season data')
-        return true
+
+      // If this is still Default lsID (has not been set by user yet)
+      if (lsID.length == 0) {
+        defaultYahooStatPull()
+        return false; // don't pull again, and without "default" data
       } else {
-        console.log('already have season data')
-        setTableData()
-        return false // you already have this data! don't need to pull it
+        // Check if this season data already exists
+        if (tableData[seasonID] == null) {
+          console.log('tableData[' + seasonID + '] is null, need new season data')
+          return true
+        } else {
+          console.log('already have ' + seasonID + ' data for lsID: ' + lsID)
+          setLoading(true)
+          setTableData()
+          return false // you already have this data! don't need to pull it
+        }
       }
     }
   }
@@ -134,10 +287,11 @@ export default function PlayerVORPData(props) {
 
   const submitRequestedLSID = async (formData) => {
     let userEmail = formData.lsRequestEmail
+    let userSubscribe = formData.radioSubscribe
     let leagueSettingID = lsID
     const { data, error } = await supabase
         .from('RequestedLeagueSettings')
-        .insert([{ lsID: leagueSettingID, email: userEmail}])
+        .insert([{ lsID: leagueSettingID, email: userEmail, subscribeType: userSubscribe}])
     if (error) {
       console.log('error')
       console.log(error.message)
@@ -147,44 +301,96 @@ export default function PlayerVORPData(props) {
     return data;
   }
 
-  useEffect(() => {
-    if (checkIfNewDataNecessary()) {
-      
-      console.log('getting data from api')
-      const t0 = new Date().getTime()
-      fetchPlayerData()
-        .then(data => {
-          if (data) {
-            setNewLS(false);
-            const t1 = new Date().getTime()
-            data.responseTime = `${t1-t0} ms`
-            // redis.set(`playerData`, data) 
-            setTableData(data)
-          } else if (!data) {
-            submitRequestedLSID(lsID)
-            // User Message and Input Triggered
-            setNewLS(true);
-            setLoading(false);
-            tableData = {};
-            finalTableData = [];
-          }
-          // setPlayerData(data)  // BUG: If you use this setter, and use playerData for setTableData, the table stops showing the correct dataset...
-          // addADP(data)
-        })
-        .catch(console.error)
-    } else {
-      console.log('NOT getting data from api')
+  const ensureDraftViewSettings = () => {
+    if (tableView == "Draft" && draftView == false) {
+      draftView = true;
+    } else if (tableView == "Stats" && draftView == true) {
+      draftView = false;
     }
-  }, [lsID, season, showPerGP, tablePosFilter ])
 
-  // Auto-filter to 'Overall_perGP' if switching to both Overall and PerGP (different dataset)
-  if ((tablePosFilter == 'Overall' && showPerGP) || (tablePosFilter == 'Overall perGP' && !showPerGP)) {
-    setShowPerGP(!showPerGP)
+    if (draftView == true) {
+      seasonID = 'ProjVORPs'
+    }
   }
+
+  const firstRender = useRef(true);
+
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      console.log('first render')
+      defaultYahooStatPull()
+      return;
+    }
+    console.log('next renders')
+
+    if (checkIfNewDataNecessary()) {
+      setLoading(true)
+      console.log('Fetching data from API')
+      regVORPDataPull()
+    } else {
+      console.log('Getting data locally')
+    }
+
+    console.log(newLS)
+  }, [props.lsID, season, perGPSelect, tablePosFilter, tableView])  // hidePosRnk, hideAge, 
   
 
   const setTableCols = (colData) => {
     // console.log('setTableCols')
+    console.log(colData)
+
+    let showPerGP = false;
+    if (perGPSelect == "perGP" && showPerGP == false) {
+      showPerGP = true;
+    } else if (perGPSelect == "Season" && showPerGP == false){
+      showPerGP = false;
+    }
+
+    if (showPerGP == true) {
+      tableColtoSortBy = "RankperGP"
+    } else {
+      tableColtoSortBy = "Rank"
+    }
+
+    tableTitle = '';
+    if (draftView) {
+      tableTitle += 'Draft Data ';
+    } else {
+      tableTitle += 'Stats '
+    }
+    if (seasonID == "ProjVORPs") {
+      tableTitle += '(22-23 Projection): ';
+    } else {
+      tableTitle += '(' + season + '): '
+    }
+    if (tablePosFilter == "None") {
+      tableTitle += " - All Positions"
+    } else {
+      tableTitle += tablePosFilter + " VORP / "
+    }
+    if (showPerGP) {
+      tableTitle += 'Per Game'
+    } else {
+      tableTitle += 'Full Season'
+    }
+
+    tableTitle2 = '';
+    tableTitle3 = '';
+
+    // Also set League Settings DataTable title
+    let catSettings = props.catSettings
+    let posSettings = props.posSettings
+
+    let teams = lsID.substring(0, 2);   // this is used in ADP Diff col as well
+    tableTitle2 += teams + ' Teams - '
+    for (let pos in posSettings) {
+      if (posSettings[pos] != 0) {
+        tableTitle2 += posSettings[pos] + pos + ', '
+      }
+    }
+    tableTitle2 = tableTitle2.slice(0, -2);
+
     let scoringType;
     let ignoreCols = [
       'Scoring Type', 'Name', 'Rank', 'Rank_pergp', 'VORP', 'VORP_pergp'
@@ -194,9 +400,81 @@ export default function PlayerVORPData(props) {
     colData['Name'] = {}
     colData['VORP'] = {}
     colData['VORP_pergp'] = {}
-    let rateStats = ["21", "24"]  // These are mapped to GAA and SV% lol
+
+
+    // Set Column hide/show Bools
+
+    // COL GROUP A (CONSISTENT)
+    // HideCheckbox, Rank, Name, Team, Pos, VORP
+    
+    // COL GROUP B (DRAFT)
+    // ADP, Diff, PS, PosRnk 
+
+    // COL GROUP C (STATS)
+    // AllStats
+
+    // COL GROUP D (individual toggles)
+    // GP, Age?, VPos?, PosRank
+
+    let group2View = false;
+
+    if (group2Filters.includes(tablePosFilter)) {
+      group2View = true;
+    }
+
+    let draftColTotalBool;
+    let draftColperGPBool;
+    let statsCol_1_totals_bool;
+    let statsCol_1_perGP_bool;
+    let statsCol_2_totals_bool;
+    let statsCol_2_perGP_bool;
+
+    if (draftView) {
+      statsCol_1_totals_bool = false;
+      statsCol_1_perGP_bool = false;
+      statsCol_2_totals_bool = false;
+      statsCol_2_perGP_bool = false;
+
+      if (showPerGP) {
+        draftColTotalBool = false;
+        draftColperGPBool = true;
+      } else {
+        draftColTotalBool = true;
+        draftColperGPBool = false;
+      }
+    } else {
+      draftColTotalBool = false;
+      draftColperGPBool = false;
+
+      if (group2View) {
+        statsCol_1_totals_bool = false;
+        statsCol_1_perGP_bool = false;
+
+        if (showPerGP) {
+          statsCol_2_totals_bool = false;
+          statsCol_2_perGP_bool = true;  
+        } else {
+          statsCol_2_totals_bool = true;
+          statsCol_2_perGP_bool = false;  
+        }
+      } else {
+        if (showPerGP) {
+          statsCol_2_totals_bool = false;
+          statsCol_2_perGP_bool = true;  
+          statsCol_1_totals_bool = false;
+          statsCol_1_perGP_bool = true;
+        } else {
+          statsCol_2_totals_bool = true;
+          statsCol_2_perGP_bool = false;  
+          statsCol_1_totals_bool = true;
+          statsCol_1_perGP_bool = false;
+        }
+      }
+    }
+
 
     if (colData["Scoring Type"] == "Categories") {
+      tableTitle3 += "Categories - "
       colData['Rank']['dataRef'] = 'vorp_rank'
       colData['Rank_pergp']['dataRef'] = 'vorp_pergp_rank'
       colData['Name']['dataRef'] = 'fullName'
@@ -206,19 +484,32 @@ export default function PlayerVORPData(props) {
       for (let col in colData) {
         if (!ignoreCols.includes(col)) {
           if (colData[col]['active'] == true) {
-            if (rateStats.includes(col)) {
-              colData[col]['omitTotal'] = ""
+            if (rateStats.includes(colData[col]["name"])) {
+              colData[col]['omitTotal'] = draftView
             } else {
-              colData[col]['omitTotal'] = showPerGP
-              colData[col]['omitperGP'] = !showPerGP
+              if (group2Cats.includes(colData[col]["name"])) {
+                colData[col]['omitTotal'] = !statsCol_2_totals_bool
+                colData[col]['omitperGP'] = !statsCol_2_perGP_bool
+              } else {
+                colData[col]['omitTotal'] = !statsCol_1_totals_bool
+                colData[col]['omitperGP'] = !statsCol_1_perGP_bool
               }
+            }
           } else {
             colData[col]['omitTotal'] = true
             colData[col]['omitperGP'] = true
           }
         }
-      }  
-    } else {  // Points League
+      }
+      for (let cat in catSettings) {
+        if (catSettings[cat]["Status"] == 1) {
+          tableTitle3 += cat + ', '
+        }
+      }
+      tableTitle3 = tableTitle3.slice(0, -2);
+
+    } else if (colData["Scoring Type"] == "Points") {  // Points League
+      tableTitle3 += "Points - "
       colData['Rank']['dataRef'] = 'FanPts Rank'
       colData['Rank_pergp']['dataRef'] = 'FanPts_perGP Rank'
       colData['Name']['dataRef'] = 'Full Name'
@@ -229,82 +520,114 @@ export default function PlayerVORPData(props) {
         if (!ignoreCols.includes(col)) {
           if (colData[col]['active'] == true) {
             if (rateStats.includes(col)) {
-              colData[col]['omitTotal'] = ""
+              colData[col]['omitTotal'] = draftView
             } else {
-              colData[col]['omitTotal'] = showPerGP
-              colData[col]['omitperGP'] = !showPerGP
-            }  
+              if (group2Cats.includes(colData[col]["name"])) {
+                colData[col]['omitTotal'] = !statsCol_2_totals_bool
+                colData[col]['omitperGP'] = !statsCol_2_perGP_bool
+              } else {
+                colData[col]['omitTotal'] = !statsCol_1_totals_bool
+                colData[col]['omitperGP'] = !statsCol_1_perGP_bool
+              }
+            }
           } else {
             colData[col]['omitTotal'] = true
             colData[col]['omitperGP'] = true
           }
         }
       }
+      for (let cat in catSettings) {
+        if (catSettings[cat]["Status"] == 1) {
+          tableTitle3 += cat + ': ' + catSettings[cat]["Weight"] + ', '
+        }
+      }
+      tableTitle3 = tableTitle3.slice(0, -2);
     }
 
-    console.log(colData)
+    if (tableTitle2.length < 10) {
+      tableTitle2 += "- 2C, 2LW, 2RW, 4D, 2G, 4BENCH"
+      tableTitle3 += "- G, A, +/-, SOG, PPP, HIT, W, GAA, SV%, SO"
+    };
 
     let pointsCheck = false;
     if (colData['Scoring Type'] == 'Points') {
       pointsCheck = true;
     }
+
+    let posRankTotalBool = false;
+    let posRankperGPBool = false;
+    if (!hidePosRnk) {
+      // console.log('show pos ranks')
+      if (showPerGP) {
+        posRankTotalBool = false;
+        posRankperGPBool = true;
+      } else {
+        posRankTotalBool = true;
+        posRankperGPBool = false;
+      }
+    }
+
+    let positionScarcityBool = true;
+    let positionScarcityperGPBool = false;
+    if (showPerGP) {
+      positionScarcityBool = false;
+      positionScarcityperGPBool = true;
+    } else {
+      positionScarcityBool = true;
+      positionScarcityperGPBool = false;
+    }
+
+    let columnPosLvl_4 = 'rgba(69, 128, 241, 0.85)'
+    let columnPosLvl_3 = 'rgba(69, 128, 241, 0.65)'
+    let columnPosLvl_2 = 'rgba(69, 128, 241, 0.4)'
+    let columnPosLvl_1 = 'rgba(69, 128, 241, 0.12)'
+    let columnNegLvl_1 = 'rgba(255, 84, 84, 0.12)'
+    let columnNegLvl_2 = 'rgba(255, 84, 84, 0.4)'
+    let columnNegLvl_3 = 'rgba(255, 84, 84, 0.65)'
+    let columnNegLvl_4 = 'rgba(255, 84, 84, 0.85)'
+
     
     columns = [
       {
-      name: 'Rank',
+      name: 'RNK',
+      id: 'Rank',
       selector: row => row[colData['Rank']['dataRef']],
       sortable: true,
       width: '60px',
       omit: showPerGP,
+      reorder: true,
       style: {
       }
       },
       {
-        name: 'Rank',  // perGP
+        name: 'RNK',  // perGP
+        id: 'RankperGP',
         selector: row => row[colData['Rank_pergp']['dataRef']],
         accessor: "age",
         sortable: true,
         width: '60px',
+        reorder: true,
         omit: !showPerGP,
         style: {
         }
       },
-      // TODO:
-      // These columns are driving me insane lol
-      // THey show up AFTER a few refreshes... the data is being added but doesn't appear immediately?!
-      // {
-      //   name: 'ADP',
-      //   selector: row => row.avgPick,
-      //   sortable: true,
-      //   width: '85px',
-      //   // omit: hideADP,
-      //   style: {
-      //   }
-      // },
-      // {
-      //   name: 'Diff',
-      //   selector: row => row.ADP, // TODO
-      //   sortable: true,
-      //   width: '85px',
-      //   omit: hideADP,
-      //   style: {
-      //   }
-      // },
       {
         name: 'Name',
         selector: row => row[colData['Name']['dataRef']],
         sortable: false,
-        width: '170px',
+        // width: '170px',
+        reorder: true,
         style: {
           justifyContent: 'left'
         }
       },
-      {
-        name: 'Age',
-        selector: row => row.Age,
-        sortable: false,
-        width: dataColWidth01,
-      },
+      // {
+      //   name: 'Age',
+      //   selector: row => row.Age,
+      //   sortable: false,
+      //   width: dataColWidth01,
+      //   omit: hideAge,
+      // },
       {
         name: 'Team',
         selector: row => row.Team,
@@ -367,46 +690,47 @@ export default function PlayerVORPData(props) {
         name: 'V Pos',
         selector: row => row.VORPPosition,
         sortable: false,
-        width: '80px',
+        width: dataColWidth01,
+        omit: !draftView,
         style: {
           color: 'black',
           fontWeight: '600',
-          fontSize: '12px',
+          fontSize: '0.8rem',
         },
         conditionalCellStyles: [
           {
             when: row => ((row.VORPPosition == 'C') || (row.VORPPosition == 'F')),
             style: {
               backgroundColor: '#93d274',
-              opacity: '0.9'
+              opacity: '0.8'
             }
           },
           {
             when: row => ((row.VORPPosition == 'LW') || (row.VORPPosition == 'W')),
             style: {
               backgroundColor: '#f5df72',
-              opacity: '0.9'
+              opacity: '0.8'
             }
           },
           {
             when: row => (row.VORPPosition == 'RW'),
             style: {
               backgroundColor: '#ff6963',
-              opacity: '0.9'
+              opacity: '0.8'
             }
           },
           {
             when: row => row.VORPPosition == 'D',
             style: {
               backgroundColor: '#7bb3d6',
-              opacity: '0.9'
+              opacity: '0.8'
             }
           },
           {
             when: row => row.VORPPosition == 'G',
             style: {
               backgroundColor: '#b875c8',
-              opacity: '0.9'
+              opacity: '0.8'
             } 
           },
           {
@@ -414,7 +738,7 @@ export default function PlayerVORPData(props) {
               style: {
                 backgroundColor: 'rgba(255,255,255,0.14)',
                 color: "white",
-                opacity: '0.9'
+                opacity: '0.8'
               } 
           }
         ]
@@ -428,8 +752,17 @@ export default function PlayerVORPData(props) {
         omit: showPerGP,
         style: {
           fontWeight: '600',
-          fontSize: '14px',
-        }
+          fontSize: '1rem',
+          backgroundColor: 'rgba(255,255,255,0.08)'
+        },
+        conditionalCellStyles: [
+          {
+            when: row => (row[colData['VORP']['dataRef']] > -10000),
+            style: {
+              classNames: ['VORPcol', 'anotherclass'],
+            },
+          },
+        ]
       },
       {
         name: 'VORP',  // perGP
@@ -441,14 +774,159 @@ export default function PlayerVORPData(props) {
         style: {
           fontWeight: '600',
           fontSize: '1rem',
+          backgroundColor: 'rgba(255,255,255,0.08)'
         }
+      },
+      {
+        name: 'PS',
+        selector: row => row.PosScarPct_Totals,
+        sortable: true,
+        width: '150px',
+        omit: !draftColTotalBool,
+        style: {
+          backgroundColor: 'rgba(255,255,255,0.04)'
+        },
+        conditionalCellStyles: [
+          {
+            when: row => (row.PosScarPct_Totals >= '90'),
+            classNames: ['psBorder', 'psBorder_90'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_Totals >= '80' && row.PosScarPct_Totals < '90'),
+            classNames: ['psBorder', 'psBorder_80'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_Totals >= '70' && row.PosScarPct_Totals < '80'),
+            classNames: ['psBorder', 'psBorder_70'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_Totals >= '60' && row.PosScarPct_Totals < '70'),
+            classNames: ['psBorder', 'psBorder_60'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_Totals >= '50' && row.PosScarPct_Totals < '60'),
+            classNames: ['psBorder', 'psBorder_50'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_Totals >= '40' && row.PosScarPct_Totals < '50'),
+            classNames: ['psBorder', 'psBorder_40'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_Totals >= '30' && row.PosScarPct_Totals < '40'),
+            classNames: ['psBorder', 'psBorder_30'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_Totals >= '20' && row.PosScarPct_Totals < '30'),
+            classNames: ['psBorder', 'psBorder_20'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_Totals >= '10' && row.PosScarPct_Totals < '20'),
+            classNames: ['psBorder', 'psBorder_10'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_Totals >= '1' && row.PosScarPct_Totals < '10'),
+            classNames: ['psBorder', 'psBorder_05'],
+            style: {
+            },
+          },
+        ]
+      },
+      {
+        name: 'PS',
+        selector: row => row.PosScarPct_perGP,
+        sortable: true,
+        width: '150px',
+        omit: !draftColperGPBool,
+        style: {
+          backgroundColor: 'rgba(255,255,255,0.04)'
+        },
+        conditionalCellStyles: [
+          {
+            when: row => (row.PosScarPct_perGP >= '90'),
+            classNames: ['psBorder', 'psBorder_90'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_perGP >= '80' && row.PosScarPct_perGP < '90'),
+            classNames: ['psBorder', 'psBorder_80'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_perGP >= '70' && row.PosScarPct_perGP < '80'),
+            classNames: ['psBorder', 'psBorder_70'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_perGP >= '60' && row.PosScarPct_perGP < '70'),
+            classNames: ['psBorder', 'psBorder_60'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_perGP >= '50' && row.PosScarPct_perGP < '60'),
+            classNames: ['psBorder', 'psBorder_50'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_perGP >= '40' && row.PosScarPct_perGP < '50'),
+            classNames: ['psBorder', 'psBorder_40'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_perGP >= '30' && row.PosScarPct_perGP < '40'),
+            classNames: ['psBorder', 'psBorder_30'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_perGP >= '20' && row.PosScarPct_perGP < '30'),
+            classNames: ['psBorder', 'psBorder_20'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_perGP >= '10' && row.PosScarPct_perGP < '20'),
+            classNames: ['psBorder', 'psBorder_10'],
+            style: {
+            },
+          },
+          {
+            when: row => (row.PosScarPct_perGP >= '1' && row.PosScarPct_perGP < '10'),
+            classNames: ['psBorder', 'psBorder_05'],
+            style: {
+            },
+          },
+        ]
       },
       {
         name: "Pos RNK",
         selector: row => row.PosRankAll,
         sortable: false,
         width: '140px',
-        omit: showPerGP,  // TODO: Add hidePosRnk =>  Not sure how to have 2 conditions for this... (for "hide/show PosRank" toggle)
+        omit: !draftColTotalBool,  // TODO: Add hidePosRnk =>  Not sure how to have 2 conditions for this... (for "hide/show PosRank" toggle)
         style: {
           fontSize: '0.7rem',
         }
@@ -458,16 +936,136 @@ export default function PlayerVORPData(props) {
         selector: row => row.PosRankAll_perGP,
         sortable: false,
         width: '140px',
-        omit: !showPerGP, // TODO: Add hidePosRnk =>   Not sure how to have 2 conditions for this... (for "hide/show PosRank" toggle)
+        omit: !draftColperGPBool, // TODO: Add hidePosRnk =>   Not sure how to have 2 conditions for this... (for "hide/show PosRank" toggle)
         style: {
           fontSize: '0.7rem',
         }
+      },
+      {
+        name: 'ADP',
+        selector: row => row.playerAvgPick,
+        sortable: true,
+        width: '60px',
+        omit: !draftView,
+        style: {
+          fontSize: '0.7rem',
+          fontWeight: '400',
+        }
+      },
+      {
+        name: 'Diff',
+        selector: row => row.TotalsADPDiff,
+        sortable: true,
+        width: dataColWidth01,
+        omit: !draftColTotalBool,
+        style: {
+        },
+        conditionalCellStyles: [
+          {
+            when: row => (row.TotalsADPDiff >= (teams*2.5)),
+            style: {
+              backgroundColor: 'rgba(69, 128, 241, 0.85)'
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff >= (teams*1.75) && row.TotalsADPDiff < (teams*2.5)),
+            style: {
+              backgroundColor: 'rgba(69, 128, 241, 0.45)'
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff >= (teams*1) && row.TotalsADPDiff < (teams*1.75)),
+            style: {
+              backgroundColor: columnPosLvl_1
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff <= (teams*(-1)) && row.TotalsADPDiff > (teams*(-1.75))),
+            style: {
+              backgroundColor: columnNegLvl_1
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff <= (teams*(-1.75)) && row.TotalsADPDiff > (teams*(-2.5))),
+            style: {
+              backgroundColor: 'rgba(255, 84, 84, 0.45)'
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff <= (teams*(-2.5))),
+            style: {
+              backgroundColor: columnNegLvl_4
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff == null),
+            style: {
+              backgroundColor: 'rgba(0,0,0,0)'
+            },
+          },
+
+        ]
+      },
+      {
+        name: 'Diff',  // PerGP
+        selector: row => row.PerGPADPDiff,
+        sortable: true,
+        width: dataColWidth01,
+        omit: !draftColperGPBool,
+        style: {
+        },
+        conditionalCellStyles: [
+          {
+            when: row => (row.TotalsADPDiff >= (teams*2.5)),
+            style: {
+              backgroundColor: columnPosLvl_4
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff >= (teams*1.75) && row.TotalsADPDiff < (teams*2.5)),
+            style: {
+              backgroundColor: 'rgba(69, 128, 241, 0.45)'
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff >= (teams*1) && row.TotalsADPDiff < (teams*1.75)),
+            style: {
+              backgroundColor: columnPosLvl_1
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff <= (teams*(-1)) && row.TotalsADPDiff > (teams*(-1.75))),
+            style: {
+              backgroundColor: columnNegLvl_1
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff <= (teams*(-1.75)) && row.TotalsADPDiff > (teams*(-2.5))),
+            style: {
+              backgroundColor: 'rgba(255, 84, 84, 0.45)'
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff <= (teams*(-2.5))),
+            style: {
+              backgroundColor: columnNegLvl_4
+            },
+          },
+          {
+            when: row => (row.TotalsADPDiff == null),
+            style: {
+              backgroundColor: 'rgba(0,0,0,0)'
+            },
+          },
+
+        ]
       },
       {
         name: "GP",
         selector: row => row.GP,
         sortable: true,
         width: '80px',
+        omit: draftView,
         style: {
           // fontSize: '0.9rem',
           justifyContent: 'center'
@@ -483,43 +1081,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[0]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef1']] < '3') && (row[colData[0]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef1']] < '2') && (row[colData[0]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef1']] < '1') && (row[colData[0]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef1']] < '0') && (row[colData[0]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef1']] < '-1') && (row[colData[0]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[0]['dataRef1']] < '-2') && (row[colData[0]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[0]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -534,43 +1138,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[0]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef2']] < '3') && (row[colData[0]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef2']] < '2') && (row[colData[0]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef2']] < '1') && (row[colData[0]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef2']] < '0') && (row[colData[0]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[0]['dataRef2']] < '-1') && (row[colData[0]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[0]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[0]['dataRef2']] < '-2') && (row[colData[0]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[0]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -585,43 +1195,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[1]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef1']] < '3') && (row[colData[1]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef1']] < '2') && (row[colData[1]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef1']] < '1') && (row[colData[1]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef1']] < '0') && (row[colData[1]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef1']] < '-1') && (row[colData[1]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[1]['dataRef1']] < '-2') && (row[colData[1]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[1]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -636,43 +1252,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[1]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef2']] < '3') && (row[colData[1]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef2']] < '2') && (row[colData[1]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef2']] < '1') && (row[colData[1]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef2']] < '0') && (row[colData[1]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[1]['dataRef2']] < '-1') && (row[colData[1]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[1]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[1]['dataRef2']] < '-2') && (row[colData[1]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[1]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -687,43 +1309,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[2]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef1']] < '3') && (row[colData[2]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef1']] < '2') && (row[colData[2]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef1']] < '1') && (row[colData[2]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef1']] < '0') && (row[colData[2]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef1']] < '-1') && (row[colData[2]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[2]['dataRef1']] < '-2') && (row[colData[2]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[2]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -738,43 +1366,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[2]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef2']] < '3') && (row[colData[2]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef2']] < '2') && (row[colData[2]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef2']] < '1') && (row[colData[2]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef2']] < '0') && (row[colData[2]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[2]['dataRef2']] < '-1') && (row[colData[2]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[2]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[2]['dataRef2']] < '-2') && (row[colData[2]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[2]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -789,43 +1423,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[3]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef1']] < '3') && (row[colData[3]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef1']] < '2') && (row[colData[3]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef1']] < '1') && (row[colData[3]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef1']] < '0') && (row[colData[3]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef1']] < '-1') && (row[colData[3]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[3]['dataRef1']] < '-2') && (row[colData[3]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[3]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -840,43 +1480,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[3]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef2']] < '3') && (row[colData[3]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef2']] < '2') && (row[colData[3]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef2']] < '1') && (row[colData[3]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef2']] < '0') && (row[colData[3]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[3]['dataRef2']] < '-1') && (row[colData[3]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[3]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[3]['dataRef2']] < '-2') && (row[colData[3]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[3]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -891,43 +1537,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[4]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef1']] < '3') && (row[colData[4]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef1']] < '2') && (row[colData[4]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef1']] < '1') && (row[colData[4]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef1']] < '0') && (row[colData[4]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef1']] < '-1') && (row[colData[4]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[4]['dataRef1']] < '-2') && (row[colData[4]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[4]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -942,43 +1594,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[4]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef2']] < '3') && (row[colData[4]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef2']] < '2') && (row[colData[4]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef2']] < '1') && (row[colData[4]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef2']] < '0') && (row[colData[4]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[4]['dataRef2']] < '-1') && (row[colData[4]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[4]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[4]['dataRef2']] < '-2') && (row[colData[4]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[4]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -993,43 +1651,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[5]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef1']] < '3') && (row[colData[5]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef1']] < '2') && (row[colData[5]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef1']] < '1') && (row[colData[5]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef1']] < '0') && (row[colData[5]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef1']] < '-1') && (row[colData[5]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[5]['dataRef1']] < '-2') && (row[colData[5]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[5]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1044,43 +1708,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[5]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef2']] < '3') && (row[colData[5]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef2']] < '2') && (row[colData[5]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef2']] < '1') && (row[colData[5]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef2']] < '0') && (row[colData[5]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[5]['dataRef2']] < '-1') && (row[colData[5]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[5]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[5]['dataRef2']] < '-2') && (row[colData[5]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[5]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1095,43 +1765,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[6]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef1']] < '3') && (row[colData[6]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef1']] < '2') && (row[colData[6]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef1']] < '1') && (row[colData[6]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef1']] < '0') && (row[colData[6]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef1']] < '-1') && (row[colData[6]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[6]['dataRef1']] < '-2') && (row[colData[6]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[6]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1146,43 +1822,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[6]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef2']] < '3') && (row[colData[6]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef2']] < '2') && (row[colData[6]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef2']] < '1') && (row[colData[6]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef2']] < '0') && (row[colData[6]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[6]['dataRef2']] < '-1') && (row[colData[6]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[6]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[6]['dataRef2']] < '-2') && (row[colData[6]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[6]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1197,43 +1879,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[7]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef1']] < '3') && (row[colData[7]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef1']] < '2') && (row[colData[7]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef1']] < '1') && (row[colData[7]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef1']] < '0') && (row[colData[7]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef1']] < '-1') && (row[colData[7]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[7]['dataRef1']] < '-2') && (row[colData[7]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[7]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1248,43 +1936,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[7]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef2']] < '3') && (row[colData[7]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef2']] < '2') && (row[colData[7]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef2']] < '1') && (row[colData[7]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef2']] < '0') && (row[colData[7]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[7]['dataRef2']] < '-1') && (row[colData[7]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[7]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[7]['dataRef2']] < '-2') && (row[colData[7]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[7]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1299,43 +1993,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[8]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef1']] < '3') && (row[colData[8]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef1']] < '2') && (row[colData[8]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef1']] < '1') && (row[colData[8]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef1']] < '0') && (row[colData[8]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef1']] < '-1') && (row[colData[8]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[8]['dataRef1']] < '-2') && (row[colData[8]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[8]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1350,43 +2050,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[8]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef2']] < '3') && (row[colData[8]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef2']] < '2') && (row[colData[8]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef2']] < '1') && (row[colData[8]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef2']] < '0') && (row[colData[8]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[8]['dataRef2']] < '-1') && (row[colData[8]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[8]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[8]['dataRef2']] < '-2') && (row[colData[8]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[8]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1401,43 +2107,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[9]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef1']] < '3') && (row[colData[9]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef1']] < '2') && (row[colData[9]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef1']] < '1') && (row[colData[9]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef1']] < '0') && (row[colData[9]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef1']] < '-1') && (row[colData[9]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[9]['dataRef1']] < '-2') && (row[colData[9]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[9]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1452,43 +2164,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[9]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef2']] < '3') && (row[colData[9]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef2']] < '2') && (row[colData[9]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef2']] < '1') && (row[colData[9]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef2']] < '0') && (row[colData[9]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[9]['dataRef2']] < '-1') && (row[colData[9]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[9]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[9]['dataRef2']] < '-2') && (row[colData[9]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[9]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1503,43 +2221,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[10]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef1']] < '3') && (row[colData[10]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef1']] < '2') && (row[colData[10]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef1']] < '1') && (row[colData[10]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef1']] < '0') && (row[colData[10]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef1']] < '-1') && (row[colData[10]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[10]['dataRef1']] < '-2') && (row[colData[10]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[10]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1554,43 +2278,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[10]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef2']] < '3') && (row[colData[10]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef2']] < '2') && (row[colData[10]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef2']] < '1') && (row[colData[10]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef2']] < '0') && (row[colData[10]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[10]['dataRef2']] < '-1') && (row[colData[10]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[10]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[10]['dataRef2']] < '-2') && (row[colData[10]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[10]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1605,43 +2335,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[11]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef1']] < '3') && (row[colData[11]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef1']] < '2') && (row[colData[11]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef1']] < '1') && (row[colData[11]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef1']] < '0') && (row[colData[11]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef1']] < '-1') && (row[colData[11]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[11]['dataRef1']] < '-2') && (row[colData[11]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[11]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1656,43 +2392,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[11]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef2']] < '3') && (row[colData[11]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef2']] < '2') && (row[colData[11]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef2']] < '1') && (row[colData[11]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef2']] < '0') && (row[colData[11]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[11]['dataRef2']] < '-1') && (row[colData[11]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[11]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[11]['dataRef2']] < '-2') && (row[colData[11]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[11]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1707,43 +2449,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[12]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef1']] < '3') && (row[colData[12]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef1']] < '2') && (row[colData[12]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef1']] < '1') && (row[colData[12]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef1']] < '0') && (row[colData[12]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef1']] < '-1') && (row[colData[12]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[12]['dataRef1']] < '-2') && (row[colData[12]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[12]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1758,43 +2506,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[12]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef2']] < '3') && (row[colData[12]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef2']] < '2') && (row[colData[12]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef2']] < '1') && (row[colData[12]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef2']] < '0') && (row[colData[12]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[12]['dataRef2']] < '-1') && (row[colData[12]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[12]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[12]['dataRef2']] < '-2') && (row[colData[12]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[12]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1809,43 +2563,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[13]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef1']] < '3') && (row[colData[13]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef1']] < '2') && (row[colData[13]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef1']] < '1') && (row[colData[13]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef1']] < '0') && (row[colData[13]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef1']] < '-1') && (row[colData[13]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[13]['dataRef1']] < '-2') && (row[colData[13]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[13]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1860,43 +2620,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[13]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef2']] < '3') && (row[colData[13]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef2']] < '2') && (row[colData[13]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef2']] < '1') && (row[colData[13]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef2']] < '0') && (row[colData[13]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[13]['dataRef2']] < '-1') && (row[colData[13]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[13]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[13]['dataRef2']] < '-2') && (row[colData[13]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[13]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1911,43 +2677,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[14]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef1']] < '3') && (row[colData[14]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef1']] < '2') && (row[colData[14]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef1']] < '1') && (row[colData[14]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef1']] < '0') && (row[colData[14]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef1']] < '-1') && (row[colData[14]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[14]['dataRef1']] < '-2') && (row[colData[14]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[14]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -1962,43 +2734,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[14]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef2']] < '3') && (row[colData[14]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef2']] < '2') && (row[colData[14]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef2']] < '1') && (row[colData[14]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef2']] < '0') && (row[colData[14]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[14]['dataRef2']] < '-1') && (row[colData[14]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[14]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[14]['dataRef2']] < '-2') && (row[colData[14]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[14]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2013,43 +2791,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[15]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef1']] < '3') && (row[colData[15]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef1']] < '2') && (row[colData[15]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef1']] < '1') && (row[colData[15]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef1']] < '0') && (row[colData[15]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef1']] < '-1') && (row[colData[15]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[15]['dataRef1']] < '-2') && (row[colData[15]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[15]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2064,43 +2848,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[15]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef2']] < '3') && (row[colData[15]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef2']] < '2') && (row[colData[15]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef2']] < '1') && (row[colData[15]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef2']] < '0') && (row[colData[15]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[15]['dataRef2']] < '-1') && (row[colData[15]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[15]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[15]['dataRef2']] < '-2') && (row[colData[15]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[15]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2115,43 +2905,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[16]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef1']] < '3') && (row[colData[16]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef1']] < '2') && (row[colData[16]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef1']] < '1') && (row[colData[16]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef1']] < '0') && (row[colData[16]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef1']] < '-1') && (row[colData[16]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[16]['dataRef1']] < '-2') && (row[colData[16]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[16]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2166,43 +2962,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[16]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef2']] < '3') && (row[colData[16]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef2']] < '2') && (row[colData[16]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef2']] < '1') && (row[colData[16]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef2']] < '0') && (row[colData[16]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[16]['dataRef2']] < '-1') && (row[colData[16]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[16]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[16]['dataRef2']] < '-2') && (row[colData[16]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[16]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2217,43 +3019,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[17]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef1']] < '3') && (row[colData[17]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef1']] < '2') && (row[colData[17]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef1']] < '1') && (row[colData[17]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef1']] < '0') && (row[colData[17]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef1']] < '-1') && (row[colData[17]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[17]['dataRef1']] < '-2') && (row[colData[17]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[17]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2268,43 +3076,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[17]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef2']] < '3') && (row[colData[17]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef2']] < '2') && (row[colData[17]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef2']] < '1') && (row[colData[17]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef2']] < '0') && (row[colData[17]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[17]['dataRef2']] < '-1') && (row[colData[17]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[17]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[17]['dataRef2']] < '-2') && (row[colData[17]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[17]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2319,43 +3133,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[18]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef1']] < '3') && (row[colData[18]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef1']] < '2') && (row[colData[18]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef1']] < '1') && (row[colData[18]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef1']] < '0') && (row[colData[18]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef1']] < '-1') && (row[colData[18]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[18]['dataRef1']] < '-2') && (row[colData[18]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[18]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2370,43 +3190,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[18]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef2']] < '3') && (row[colData[18]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef2']] < '2') && (row[colData[18]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef2']] < '1') && (row[colData[18]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef2']] < '0') && (row[colData[18]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[18]['dataRef2']] < '-1') && (row[colData[18]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[18]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[18]['dataRef2']] < '-2') && (row[colData[18]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[18]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2421,43 +3247,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[19]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef1']] < '3') && (row[colData[19]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef1']] < '2') && (row[colData[19]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef1']] < '1') && (row[colData[19]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef1']] < '0') && (row[colData[19]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef1']] < '-1') && (row[colData[19]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[19]['dataRef1']] < '-2') && (row[colData[19]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[19]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2472,43 +3304,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[19]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef2']] < '3') && (row[colData[19]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef2']] < '2') && (row[colData[19]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef2']] < '1') && (row[colData[19]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef2']] < '0') && (row[colData[19]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[19]['dataRef2']] < '-1') && (row[colData[19]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[19]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[19]['dataRef2']] < '-2') && (row[colData[19]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[19]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2523,43 +3361,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[20]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef1']] < '3') && (row[colData[20]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef1']] < '2') && (row[colData[20]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef1']] < '1') && (row[colData[20]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef1']] < '0') && (row[colData[20]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef1']] < '-1') && (row[colData[20]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[20]['dataRef1']] < '-2') && (row[colData[20]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[20]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2574,43 +3418,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[20]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef2']] < '3') && (row[colData[20]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef2']] < '2') && (row[colData[20]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef2']] < '1') && (row[colData[20]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef2']] < '0') && (row[colData[20]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[20]['dataRef2']] < '-1') && (row[colData[20]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[20]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[20]['dataRef2']] < '-2') && (row[colData[20]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[20]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2625,43 +3475,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[21]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[21]['dataRef1']] < '3') && (row[colData[21]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[21]['dataRef1']] < '2') && (row[colData[21]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[21]['dataRef1']] < '1') && (row[colData[21]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[21]['dataRef1']] < '0') && (row[colData[21]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[21]['dataRef1']] < '-1') && (row[colData[21]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[21]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[21]['dataRef1']] < '-2') && (row[colData[21]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[21]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2674,45 +3530,51 @@ export default function PlayerVORPData(props) {
         omit: colData[22]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => ((row[colData[22]['dataRef2']] >= '3') && (!pointsCheck)),
+            when: row => ((row[colData[22]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '3') && (row[colData[22]['dataRef2']] >= '2') && (!pointsCheck)),
+            when: row => ((row[colData[22]['dataRef1']] < '3') && (row[colData[22]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '2') && (row[colData[22]['dataRef2']] >= '1') && (!pointsCheck)),
+            when: row => ((row[colData[22]['dataRef1']] < '2') && (row[colData[22]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '1') && (row[colData[22]['dataRef2']] > '0') && (!pointsCheck)),
+            when: row => ((row[colData[22]['dataRef1']] < '1') && (row[colData[22]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '0') && (row[colData[22]['dataRef2']] >= '-1') && (!pointsCheck)),
+            when: row => ((row[colData[22]['dataRef1']] < '0') && (row[colData[22]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '-1') && (row[colData[22]['dataRef2']] >= '-2') && (!pointsCheck)),
+            when: row => ((row[colData[22]['dataRef1']] < '-1') && (row[colData[22]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[22]['dataRef1']] < '-2') && (row[colData[22]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[22]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2727,43 +3589,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[22]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[22]['dataRef1']] < '3') && (row[colData[22]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[22]['dataRef1']] < '2') && (row[colData[22]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[22]['dataRef1']] < '1') && (row[colData[22]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[22]['dataRef1']] < '0') && (row[colData[22]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[22]['dataRef1']] < '-1') && (row[colData[22]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[22]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[22]['dataRef2']] < '-2') && (row[colData[22]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[22]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2778,43 +3646,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[23]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[23]['dataRef2']] < '3') && (row[colData[23]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[23]['dataRef2']] < '2') && (row[colData[23]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[23]['dataRef2']] < '1') && (row[colData[23]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[23]['dataRef2']] < '0') && (row[colData[23]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[23]['dataRef2']] < '-1') && (row[colData[23]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[23]['dataRef1']] < '-2') && (row[colData[23]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[23]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2827,96 +3701,108 @@ export default function PlayerVORPData(props) {
         omit: colData[23]['omitperGP'],
         conditionalCellStyles: [
           {
-            when: row => ((row[colData[23]['dataRef1']] >= '3') && (!pointsCheck)),
+            when: row => ((row[colData[23]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '3') && (row[colData[23]['dataRef1']] >= '2') && (!pointsCheck)),
+            when: row => ((row[colData[23]['dataRef2']] < '3') && (row[colData[23]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '2') && (row[colData[23]['dataRef1']] >= '1') && (!pointsCheck)),
+            when: row => ((row[colData[23]['dataRef2']] < '2') && (row[colData[23]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '1') && (row[colData[23]['dataRef1']] > '0') && (!pointsCheck)),
+            when: row => ((row[colData[23]['dataRef2']] < '1') && (row[colData[23]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '0') && (row[colData[23]['dataRef1']] >= '-1') && (!pointsCheck)),
+            when: row => ((row[colData[23]['dataRef2']] < '0') && (row[colData[23]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '-1') && (row[colData[23]['dataRef1']] >= '-2') && (!pointsCheck)),
+            when: row => ((row[colData[23]['dataRef2']] < '-1') && (row[colData[23]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[23]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[23]['dataRef2']] < '-2') && (row[colData[23]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[23]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
       },
       {  // SV%
         name: colData[24]['name'],
-        selector: row => row[colData[24]['dataRef2']],
+        selector: row => row[colData[24]['dataRef1']],
         sortable: true,
         width: dataColWidth01,
         omit: colData[24]['omitTotal'],
         conditionalCellStyles: [
           {
-            when: row => ((row[colData[24]['dataRef2']] >= '3') && (!pointsCheck)),
+            when: row => ((row[colData[24]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef2']] < '3') && (row[colData[24]['dataRef2']] >= '2') && (!pointsCheck)),
+            when: row => ((row[colData[24]['dataRef1']] < '3') && (row[colData[24]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef2']] < '2') && (row[colData[24]['dataRef2']] >= '1') && (!pointsCheck)),
+            when: row => ((row[colData[24]['dataRef1']] < '2') && (row[colData[24]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef2']] < '1') && (row[colData[24]['dataRef2']] > '0') && (!pointsCheck)),
+            when: row => ((row[colData[24]['dataRef1']] < '1') && (row[colData[24]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef2']] < '0') && (row[colData[24]['dataRef2']] >= '-1') && (!pointsCheck)),
+            when: row => ((row[colData[24]['dataRef1']] < '0') && (row[colData[24]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef2']] < '-1') && (row[colData[24]['dataRef2']] >= '-2') && (!pointsCheck)),
+            when: row => ((row[colData[24]['dataRef1']] < '-1') && (row[colData[24]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[24]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[24]['dataRef1']] < '-2') && (row[colData[24]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[24]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2931,43 +3817,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[25]['dataRef1']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef1']] < '3') && (row[colData[25]['dataRef1']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef1']] < '2') && (row[colData[25]['dataRef1']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef1']] < '1') && (row[colData[25]['dataRef1']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef1']] < '0') && (row[colData[25]['dataRef1']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef1']] < '-1') && (row[colData[25]['dataRef1']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef1']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[25]['dataRef1']] < '-2') && (row[colData[25]['dataRef1']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[25]['dataRef1']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -2982,43 +3874,49 @@ export default function PlayerVORPData(props) {
           {
             when: row => ((row[colData[25]['dataRef2']] >= '3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.85)',
+              backgroundColor: columnPosLvl_4,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef2']] < '3') && (row[colData[25]['dataRef2']] >= '2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.65)',
+              backgroundColor: columnPosLvl_3,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef2']] < '2') && (row[colData[25]['dataRef2']] >= '1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.4)',
+              backgroundColor: columnPosLvl_2,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef2']] < '1') && (row[colData[25]['dataRef2']] > '0') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(69, 128, 241, 0.1)',
+              backgroundColor: columnPosLvl_1,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef2']] < '0') && (row[colData[25]['dataRef2']] >= '-1') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.1)',
+              backgroundColor: columnNegLvl_1,
             },
           },
           {
             when: row => ((row[colData[25]['dataRef2']] < '-1') && (row[colData[25]['dataRef2']] >= '-2') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.4)',
+              backgroundColor: columnNegLvl_2,
             },
           },
           {
-            when: row => ((row[colData[25]['dataRef2']] < '-2') && (!pointsCheck)),
+            when: row => ((row[colData[25]['dataRef2']] < '-2') && (row[colData[25]['dataRef2']] >= '-3') && (!pointsCheck)),
             style: {
-              backgroundColor: 'rgba(255, 84, 84, 0.8)',
+              backgroundColor: columnNegLvl_3,
+            },
+          },
+          {
+            when: row => ((row[colData[25]['dataRef2']] < '-3') && (!pointsCheck)),
+            style: {
+              backgroundColor: columnNegLvl_4,
             },
           }
         ]
@@ -3035,82 +3933,95 @@ export default function PlayerVORPData(props) {
 
   }
 
-  // async function fetchADPs() {
-  //   console.log('fetching ADPs')
-  //   let adpSupabaseTable = 'Yahoo_NHL_ADP';
+  // // async function fetchADPs() {
+  // //   console.log('fetching ADPs')
+  // //   let adpSupabaseTable = 'Yahoo_NHL_ADP';
 
-  //   const { data, error } = await supabase
-  //     .from(adpSupabaseTable)
-  //     .select()
-  //   if (error) {
-  //     console.log('error')
-  //     console.log(error.message)
-  //     return // abort
-  //   }    
+  // //   const { data, error } = await supabase
+  // //     .from(adpSupabaseTable)
+  // //     .select()
+  // //   if (error) {
+  // //     console.log('error')
+  // //     console.log(error.message)
+  // //     return // abort
+  // //   }    
 
-  //   return data;
+  // //   return data;
+  // // }
+
+  // const addADP = (mainData) => {
+  //   console.log('addADPs')
+  //   let keyedADPs = {}
+
+  //   fetchADPs()
+  //     .then(data => {
+  //       for (let row in data) {
+  //         keyedADPs[data[row]['playerID']] = {
+  //           avgPick: data[row]['playerAvgPick'],
+  //           avgRd: data[row]['playerAvgRd'],
+  //           pctPicked: data[row]['playerPctPicked']
+  //         }
+  //       }
+
+  //       for (let player in mainData) {
+  //         let id = mainData[player]["PlayerID"];
+  //         if (id in keyedADPs) {
+  //           mainData[player]["avgPick"] = keyedADPs[id]["avgPick"]
+  //         }
+  //       }
+
+  //       // console.log('mainData has ADPs')
+  //     })
+  //     .catch(console.error)
+
+  //   return mainData
+
   // }
-
-  const addADP = (mainData) => {
-    console.log('addADPs')
-    let keyedADPs = {}
-
-    fetchADPs()
-      .then(data => {
-        for (let row in data) {
-          keyedADPs[data[row]['playerID']] = {
-            avgPick: data[row]['playerAvgPick'],
-            avgRd: data[row]['playerAvgRd'],
-            pctPicked: data[row]['playerPctPicked']
-          }
-        }
-
-        for (let player in mainData) {
-          let id = mainData[player]["PlayerID"];
-          if (id in keyedADPs) {
-            mainData[player]["avgPick"] = keyedADPs[id]["avgPick"]
-          }
-        }
-
-        // console.log('mainData has ADPs')
-      })
-      .catch(console.error)
-
-    return mainData
-
-  }
 
 
   const setTableData = async (data) => {
-    setLoading(true)    
-    
-    // console.log('setTableData');
-    console.log(`setting tableData[${season}]`)
-    finalTableData = []; // clear specific subset of data to display
+    setFinalTableData([]);  // clear specific subset of data to display
 
+    ensureDraftViewSettings();
+
+    // NOTE: Below is for API vs Cache
     // data.Source = dataSource;
     // console.log('Data was pulled from: ' + data.Source + ' and took ' + data.responseTime)
     
-    // If season data doesn't exist locally yet, set season data
-    if ((typeof tableData[season] == 'undefined') || (lsIDChanged())) {
-      console.log('incoming data being set')
-      tableData[season] = data
+    // If season data doesn't exist locally yet, or lsID is unset/just changed => set season data
+    if ((tableData[seasonID] == null) || (lsIDChanged_Flag == true)) {
+      console.log('incoming data being set in tableData['+seasonID+']')
+      tableData[seasonID] = data
     }
     
-
+    // Filter data on tablePosFilter setting
+    if (tablePosFilter == null) {
+      tablePosFilter = "Overall"  
+    }
     if (tablePosFilter == 'None') {
-      finalTableData = tableData[season].filter(player => (player.VORPPosition != "Overall") && (player.VORPPosition != "Overall perGP"))
+      console.log('setting tableData')
+      setFinalTableData(
+        tableData[seasonID].filter(player => (player.VORPPosition != "Overall") && (player.VORPPosition != "Overall perGP"))
+      )
     } else {
-      finalTableData = tableData[season].filter(player => player.VORPPosition == tablePosFilter);
+      console.log('setting tableData')
+      setFinalTableData(
+        tableData[seasonID].filter(player => player.VORPPosition == tablePosFilter)
+      )
     }
     
-    await wait(1000);
-
+    // Set Table Cols appropriately
     setTableCols(colData)
-    setLoading(false);
 
+    console.log('lsID did not change')
+    let delayTime = 333
+    await wait(delayTime);
+
+    setLoading(false);
+    console.log(tableData[seasonID])
     console.log(finalTableData)
   }
+
 
   async function fetchPlayerData() {    
 
@@ -3124,7 +4035,12 @@ export default function PlayerVORPData(props) {
       //   return cacheData;
       // }
 
-      console.log('fetching data from server')
+      ensureDraftViewSettings()
+
+      if (lsID == "") {
+        lsID = "12_002_001_0"
+      }
+
       let dbFile = league + '__' + lsID + '__' + seasonID;
       console.log("db file = " + dbFile)
 
@@ -3133,19 +4049,41 @@ export default function PlayerVORPData(props) {
       const { data, error } = await supabase
         .from(dbFile)
         .select()
-        // .range(0, 200)
+        .limit(2500)
+        // .filter('VORPPosition', 'in', '("Overall")')
         .then( dataSource = 'API' )
         // .then(data => {    // THIS FIRES TOO EARLY - DATA HASN'T BEEN LOADED
         //   setPlayerData(data)
         // })
       if (error) {
-        console.log('error')
+        setNewLS(true);
+        console.log('Database Error!')
         console.log(error.message)
-        return data;// abort
+        return data; // abort
       }
       
       return data;
   }
+
+  // React-Data-Table-Component
+  // Managing Selected Rows
+  const handleRowSelected = useCallback(state => {
+		setSelectedRows(state.selectedRows);
+	}, []);
+
+  const contextActions = useMemo(() => {
+		const handleDelete = () => {
+			
+      setToggleCleared(!toggleCleared);
+      setFinalTableData(differenceBy(finalTableData, selectedRows, 'fullName'));
+		};
+
+		return (
+			<Button key="delete" onClick={handleDelete} variant="contained" >
+				Hide
+			</Button>
+		);
+	}, [finalTableData, selectedRows, toggleCleared]);
 
   
     // -------------- Filtering Datatable -------------- // TODO: Add this functionality (Non-MVP)
@@ -3171,36 +4109,153 @@ export default function PlayerVORPData(props) {
 
   return (
 
-    <section className={styles.playerData}>     
+    <section className={styles.playerData}>
+        { loading ? (
+          <div className={styles.playerLoadOverlay}>
+            <h3>VORP Data Loading...</h3>
+          </div>
+        ) : (
+          ""
+        )}
+        { newLS ? (
+        <div className="ls-request-form-container">
+          <div className="content">
+          <h4 className="warning">Your League's VORP Data is now being calculated...</h4>
+            <p>As this site is still under development, populating the database is unfortunately still a very manual process. The live database has been pre-populated with several common league settings, but your specific settings apparently were not included.</p>
+            <p>Your specific FHL settings&apos; VORP data will be run through our scripts and pushed live as soon as possible.</p>
+             <p>Feel free to enter your email below to be notified the moment your league&apos;s VORP data is live!
+             </p>
+             {/* TODO: Add this capability - currently this data isn't available as I am only checking against IDs and not actual pos/cats
+             <h5>Your Settings:</h5>
+             <h5>{tableTitle2}</h5>
+             <h5>{tableTitle3}</h5> */}
 
-      <h2>NHL Fantasy VORP Data</h2>
+            <form className="ls-request-form" onSubmit={handleSubmit(submitRequestedLSID)}>
+            <div className="form_group_container">
+                <Controller
+                name="lsRequestEmail"
+                control={control}
+                defaultValue=""
+                required
+                type="email"
+                render={({ field: { onChange, value }, fieldState: { errors } }) => (
+                    <TextField 
+                    id="outlined-basic" 
+                    label="Email" 
+                    variant="outlined" 
+                    value={value}
+                    onChange={onChange}
+                    className="mui_textfield"
+                    type="email"
+                    />
+                )}
+                />
+                <Controller
+                  // rules={{ required: 'Scoring Type required' }}
+                  name="radioSubscribe"
+                  control={control}
+                  defaultValue="singlenote"
+                  render={({ field: { onChange, value }, fieldState: { error } }) => (
+                      <RadioGroup
+                      aria-labelledby="demo-radio-buttons-group-label"
+                      name="radio-subscribe"
+                      className="formControlGroup radioGroup"
+                      defaultValue='singlenote'
+                      value={value}
+                      onChange={(e) => {
+                          onChange(e);
+                      }}
+                      // error={!!error}
+                      // helperText={error ? error.message : null}
+                      >
+                          <FormControlLabel 
+                          value="singlenote" 
+                          name="singlenote" 
+                          // checked={scoringRadio === "categories"} 
+                          label="Only use this email for THIS notification, and delete all records afterwards."
+                          control={<Radio />} 
+                          />
+
+                          <FormControlLabel 
+                          value="subscribe" 
+                          name="subscribe" 
+                          label="I would like to subscribe to future updates of FantasyVORP.com" 
+                          // checked={scoringRadio === "points"} 
+                          control={<Radio />} 
+                          />
+                      </RadioGroup>
+                  )}
+                  />                
+
+
+                    <Button 
+                    variant="contained" 
+                    type="submit" 
+                    value="Submit">
+                      Submit
+                    </Button>
+
+            </div>
+          </form>
+        </div>
+
+        </div>
+      ) : (
+        ""
+      )}
+
+      <h5>
+        Current Settings:<br />
+        {tableTitle2}<br />
+        {tableTitle3}
+      </h5>
       <div className="playerDataControlMenu">
         <div className="form_group_container">
-          <Stack direction="row" spacing={2}>
-            <Controller
-            name="tablePosFilter"
+          <Controller
+            name="tableViewSelect"
             control={control}
-            defaultValue="None"
+            defaultValue='Stats'
             render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <FormControl className="mui_select">
-                    <InputLabel id="tablePosFilter-select">VORP Position Filter</InputLabel>
+                    <InputLabel id="tableViewSelect-select">Table View</InputLabel>
                     <Select
-                    labelId="tablePosFilter-select"
-                    label="Position Filter"
-                    sx={{ width: 250 }}
+                    labelId="tableViewSelect-select"
+                    label="Table View"
+                    // sx={{ width: 250 }}
                     value={value}
                     onChange={onChange}
                     error={!!error}
                     // helperText={error ? error.message : null}
                     >
-                        <MenuItem value={'None'}>None</MenuItem>
+                        <MenuItem value={'Stats'}>Stats</MenuItem>
+                        <MenuItem value={'Draft'}>Draft</MenuItem>
+                    </Select>
+                </FormControl>
+              )}
+            />
+            <Controller
+            name="tablePosFilter"
+            control={control}
+            defaultValue="Overall"
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="tablePosFilter-select">Position Filter</InputLabel>
+                    <Select
+                    labelId="tablePosFilter-select"
+                    label="Position Filter"
+                    // sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
                         <MenuItem value={'Overall'}>Overall</MenuItem>
                         <MenuItem value={'C'}>C</MenuItem>
                         <MenuItem value={'LW'}>LW</MenuItem>
                         <MenuItem value={'RW'}>RW</MenuItem>
                         <MenuItem value={'D'}>D</MenuItem>
                         <MenuItem value={'G'}>G</MenuItem>
-                        <MenuItem hidden value={'Overall perGP'}>Overall perGP</MenuItem>
+                        {/* <MenuItem value={'None'}>None</MenuItem> */}
                     </Select>
                 </FormControl>
             )}
@@ -3212,54 +4267,63 @@ export default function PlayerVORPData(props) {
             defaultValue="ProjVORPs"
             render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <FormControl className="mui_select">
-                    <InputLabel id="seasonSelect-select">Select Season</InputLabel>
+                    <InputLabel id="seasonSelect-select">Season Select</InputLabel>
                     <Select
                     labelId="seasonSelect-select"
-                    label="Select Season"
-                    sx={{ width: 250 }}
+                    label="Season Select"
+                    // sx={{ width: 250 }}
                     value={value}
                     onChange={onChange}
                     error={!!error}
                     // helperText={error ? error.message : null}
                     >
                         <MenuItem value={'ProjVORPs'}>22-23 Projection</MenuItem>
-                        <MenuItem value={'19-20'}>19-20</MenuItem>
-                        <MenuItem value={'20-21'}>20-21</MenuItem>
                         <MenuItem value={'21-22'}>21-22</MenuItem>
+                        <MenuItem value={'20-21'}>20-21</MenuItem>
+                        <MenuItem value={'19-20'}>19-20</MenuItem>
                     </Select>
                 </FormControl>
               )}
             />
+            <Controller
+            name="perGPSelect"
+            control={control}
+            defaultValue='Season'
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="perGP-select">Value Calculated For:</InputLabel>
+                    <Select
+                    labelId="perGPSelect"
+                    label="Value Calculated For:"
+                    // sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <MenuItem value={'Season'}>Full Season</MenuItem>
+                        <MenuItem value={'perGP'}>Per Game</MenuItem>
+                    </Select>
+                </FormControl>
+              )}
+            />
+            </div>
+          {/* <div className="form_group_container">
             <FormControl component="fieldset">
               <FormGroup aria-label="position" row>
-                {/* <FormLabel component="legend">Table Controls</FormLabel> */}
-                <FormControlLabel
-                    control={
-                      <Switch 
-                      checked={showPerGP} 
-                      onChange={() => setShowPerGP(!showPerGP)}
-                      name="totals" />
-                    }
-                    label="Totals / perGP"
-                    labelPlacement="top"
-                  />
-                  {/* 
-                    TODO: Add this functionality
-                    Issue rendering using both hidePosRnk AND showPerGP toggles
-                  */}
-                  {/* <FormControlLabel
+
+                  <FormControlLabel
                     label="Show Position Ranks"
                     labelPlacement="top"
                     control={
                       <Checkbox 
-                        defaultChecked
                         checked={!hidePosRnk}
                         onChange={() => setHidePosRnk(!hidePosRnk)}
                         inputProps={{ 'aria-label': 'controlled' }}  
                       />
                     }
-                  /> */}
-                  {/* <FormControlLabel
+                  />
+                  <FormControlLabel
                     label="Show ADP"
                     labelPlacement="top"
                     control={
@@ -3269,98 +4333,54 @@ export default function PlayerVORPData(props) {
                         inputProps={{ 'aria-label': 'controlled' }}  
                       />
                     }
-                  /> */}
-                  {/* <Button variant="contained" onClick={() => setHidePosRnk(!hidePosRnk)}>Toggle Pos-Rank Column</Button>
-                  <Button variant="contained" onClick={() => setHideADP(!hideADP)}>Toggle ADP Columns</Button> */}
+                  />
+                  <FormControlLabel
+                    label="Show Age"
+                    labelPlacement="top"
+                    control={
+                      <Checkbox 
+                        checked={!hideAge}
+                        onChange={() => setHideAge(!hideAge)}
+                        inputProps={{ 'aria-label': 'controlled' }}  
+                      />
+                    }
+                  />
+
               </FormGroup>
             </FormControl>
-
-          </Stack>
-        </div>
+        </div> */}
       </div>
-      <h3>
-        {showPerGP ? 'Per Game' : 'Totals'}
-        { tablePosFilter == "None" ? " - All Position VORPs" : " - " + tablePosFilter + " VORP"}
-      </h3>
-
-      { newLS ? (
-        <div className="ls-request-form-container">
-          <div className="content">
-
-          <p>
-            Your specific League Setting has been submitted for processing! Your league settings&apos; VORP data will be live within a few hours.</p>
-            <p>As this site is still under development, populating the database is still a very manual process, unfortunately. </p>
-             <p>Feel free to enter your email below to be notified the moment your league&apos;s VORP data is live.
-            <span className="subtext">I promise not to use your email for anything except this single notification</span></p>
-        </div>
-
-          <form className="ls-request-form" onSubmit={handleSubmit(submitRequestedLSID)}>
-            <div className="form_group_container">
-                <Controller
-                name="lsRequestEmail"
-                control={control}
-                defaultValue=""
-                required
-                render={({ field: { onChange, value }, fieldState: { errors } }) => (
-                  <Stack direction="row" spacing={2}>
-                    <TextField 
-                    id="outlined-basic" 
-                    label="Email" 
-                    variant="outlined" 
-                    value={value}
-                    onChange={onChange}
-                    className="mui_textfield"
-                    type="email"
-                    />
-                    <Button 
-                    variant="contained" 
-                    type="submit" 
-                    value="Submit">
-                      Submit
-                    </Button>
-                  </Stack>
-                )}
-                />
-            </div>
-        </form>
-        </div>
-      ) : (
-        ""
-      )}
 
       <div className={styles.dataTableContainer}>
-        { lsID ? 
-          "" : 
-          (
-            <p className="warning marginAuto">Please enter your league settings above to see relevant Fantasy VORP data ☝️</p>
-          )
-        }
         { loading ? (
-            <p className="subtext">DataTable Loading...</p>
+            ""
           ) : 
           <DataTable
-          title={"Table Title TODO"}
+          title={tableTitle}
           columns={columns}
           data={finalTableData}  // filteredItems
           customStyles={customRDTStyles}
           conditionalRowStyles={specificRDTStyles}
           className="dataTable"
-          defaultSortFieldId="VORP"
-          defaultSortAsc={false}
+          defaultSortFieldId={tableColtoSortBy}
+          defaultSortAsc={true}
           responsive
           dense
           direction="auto"
           fixedHeader
-          noHeader
-          // fixedHeaderScrollHeight="300px"
+          // noHeader
+          fixedHeaderScrollHeight="80vh"
           highlightOnHover
-          pagination
-          paginationPerPage={100}
-          // selectAllRowsItem true
-          // selectableRows
+          pagination={false}
+          // paginationPerPage={400}
+          selectableRowsNoSelectAll
+          selectableRows
           selectableRowsHighlight
           selectableRowsRadio="checkbox"
-          striped // Not currently working lol
+          contextActions={contextActions}
+          onSelectedRowsChange={handleRowSelected}
+          clearSelectedRows={toggleCleared}
+          striped   // Not currently working lol
           // FILTERING  vvv
           // subHeader
           // subHeaderWrap

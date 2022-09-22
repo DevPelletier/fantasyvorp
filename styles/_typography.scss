@@ -27,7 +27,7 @@ h2 {
   @include logoFont;
 }
 
-h3 {
+h3, .rdt_TableHeader {
   @include logoFont;
   text-transform: uppercase;
   font-weight: 300;

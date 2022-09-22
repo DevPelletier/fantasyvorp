@@ -117,8 +117,11 @@
 ////////// HERO STYLES
 .hero {
   @include centerAll;
-  height: 80vh;
-  min-height: 500px;
+  // height: 80vh;
+  // min-height: 500px;
+  height: 40vh;
+  min-height: 250px;
+  max-height: 500px;
   width: 100%;  
 
   .logoFont {

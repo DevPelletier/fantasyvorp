@@ -27,12 +27,12 @@ export default function Section() {
                         </li>
                         <li className="nav-item">
                             <Link href="/raw-stats">
-                                <a className="btn">Raw Stats</a>
+                                <a className="btn">Raw</a>
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link href="/coming-soon">
-                                <a className="btn">Draft</a>
+                                <a className="btn">Live Stats</a>
                             </Link>
                         </li>
                         <li className="nav-item">

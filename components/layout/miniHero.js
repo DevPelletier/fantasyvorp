@@ -13,6 +13,7 @@ export default function Section(props) {
             <h1 className={styles.headline}>
                 {props.headline}
             </h1>
+            {props.form}
         </div>
     </section>
     )

@@ -114,11 +114,16 @@ ul {
   padding: 12px 16px !important;
   border: 1px solid $blue-01b !important;
   transition: all 0.66s ease !important;
+  min-width: 130px;
+  height: 40px;
+  font-weight: 400;
+  letter-spacing: 1.2px;
+  font-size: 0.75rem;
   
 
   &:hover {
     border: 1px solid $blue-02 !important;
-    background-color: unset !important;
+    background-color: $dark-overlay-1 !important;
   }
 }
 
@@ -126,6 +131,10 @@ section.copySection {
   width: 60vw;
   min-width: 300px;
   max-width: 900px;
+}
+
+button.setLSbtn {
+  margin-bottom: 32px;
 }
 
 
@@ -358,7 +367,6 @@ span.closeBtn {
     font-style: italic;
   }
 
-
   &.cats-container {
     display: grid;
     grid-template-columns: repeat(3, auto);
@@ -470,15 +478,82 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
 // overall table styles
 .rdt_Table, .rdt_TableHead, .rdt_TableBody, .rdt_TableHeadRow, .rdt_TableRow, .rdt_Pagination {
   color: $white-01 !important;
+}
 
+.rdt_TableBody {
+  input[type=checkbox] {
+    accent-color: $blue-02;
+    width: 20px;
+    height: 20px;
+  }
+
+  .psBorder {
+    &::after {
+      content: "";
+      // width: 50%;
+      height: 5px;
+      background: $blue-02;
+      position: absolute;
+      bottom: 0px;
+      left: 0;
+    }
+
+    &.psBorder_90::after {
+      width: 90%;
+    }
+    &.psBorder_80::after {
+      width: 80%;
+    }
+    &.psBorder_70::after {
+      width: 70%;
+    }
+    &.psBorder_60::after {
+      width: 60%;
+    }
+    &.psBorder_50::after {
+      width: 50%;
+    }
+    &.psBorder_40::after {
+      width: 40%;
+    }
+    &.psBorder_30::after {
+      width: 30%;
+    }
+    &.psBorder_20::after {
+      width: 20%;
+    }
+    &.psBorder_10::after {
+      width: 10%;
+    }
+    &.psBorder_05::after {
+      width: 3%;
+    }
+
+  }
 }
 
 .rdt_TableHead, .rdt_TableHeadRow {
   background-color: $grey-02 !important;
 }
 
+.rdt_TableHeader {
+  background: $dark-overlay-4;
+  margin: 0;
+  padding: 12px 20px;
+  border-radius: 5px 5px 0 0;
+  text-align: left;
+  font-size: 1rem !important;
+  > div:last-child {
+    background-color: $grey-04;
+    // padding: 12px 20px;
+  }
+}
+
+.MuiInputLabel-root {
+  letter-spacing: -1px;
+}
+
 .dataTable {
-  max-height: unset !important;
   /* Hide scrollbar for Chrome, Safari and Opera */
   &::-webkit-scrollbar {
       display: none;
@@ -496,14 +571,8 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
   background: $dark-overlay-1; 
 }
 
-
 .rdt_TableRow {
   background-color: $grey-01 !important;
-
-  // Centered Columns
-  // #cell-1-undefined, #cell-3-undefined, #cell-4-undefined {
-  //   div { width: 100%; }
-  // } 
 }
 
 .rdt_Pagination {
@@ -515,24 +584,52 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
   }
 }
 
-.rdt_TableHeader {
-  text-align: left;
-}
+
 
 .playerDataControlMenu {
   @include centerAll;
   justify-content: flex-start;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  width: 95%;  
+
+  .form_group_container {
+    @include flex-center;
+    place-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .mui_select {
+    width: 200px;
+    margin-right: 16px;
+    margin-bottom: 16px;
+  }
 }
 
 .ls-request-form-container {
   padding: 32px 40px;
-  background-color: $dark-overlay-1;
+  background-color: $dark-bg;
+  width: inherit;
+  height: inherit;
+  position: absolute;
+  z-index: 100;
   // max-width: 500px;
   // margin: auto;
 
+  .form_group_container {
+    flex-direction: column;
+  }
+
+
   .content {
-    max-width: 500px;
+    width: 60vw;
+    max-width: 600px;
+    min-width: 350px;
     margin: auto;
+    padding: 32px 24px;
+    border-radius: 5px;
+    background: $dark-overlay-2;
+    box-shadow: $shadow02;
   }
 }
 .ls-request-form {
@@ -548,9 +645,33 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
   button {
     width: fit-content;
     height: fit-content;
-    margin: auto auto auto 32px !important;
+    margin: 16px auto !important;
+  }
+
+  .radioGroup {
+    grid-gap: 16px;
+    width: 300px !important;
+    margin: 16px auto;
+
+    .MuiTypography-root {
+      @include bodyFont1;
+      font-size: 0.8rem;
+      text-align: left;
+      line-height: 180%;
+    }
   }
 }
+
+// VORP cell underline thing... was trying to make it dynamic to the value of the VORP col, but proved too difficult
+// #cell-VORP-undefined::after {
+//   content: "";
+//   width: 80%;
+//   height: 3.5px;
+//   background: $blue-02;
+//   position: absolute;
+//   bottom: 0px;
+//   left: 0;
+// }
 
 
 // ----------- FAQ Styles ----------- //
@@ -578,4 +699,39 @@ section.faq {
 .MuiAccordionDetails-root {
   padding-left: 32px !important;
   padding-right: 32px !important;
+}
+
+
+// ----------- Mini Hero Styles ----------- //
+.form_group_container.miniHeroForm {
+  width: 60vw;
+  max-width: 600px;
+  min-width: 350px;
+  margin: auto;
+  padding: 32px 24px;
+  @include flex-center-col;
+  color: $white-01;
+  .mui_textfield {
+    max-width: unset;
+    width: 300px;
+  }
+  
+  button {
+    width: fit-content;
+    height: fit-content;
+    margin: 16px auto !important;
+  }
+
+  .radioGroup {
+    grid-gap: 16px;
+    width: 300px !important;
+    margin: 16px auto;
+
+    .MuiTypography-root {
+      @include bodyFont1;
+      font-size: 0.8rem;
+      text-align: left;
+      line-height: 180%;
+    }
+  }
 }
