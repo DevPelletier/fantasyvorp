@@ -19,8 +19,8 @@ function MyApp({ Component, pageProps }) {
     </div>
 
     {/* Google Analytics Tag */}
-    <Script async src="https://www.googletagmanager.com/gtag/js?id=G-BDV80K8G13"></Script>
-    <Script>
+    <Script id="ga-script-1" async src="https://www.googletagmanager.com/gtag/js?id=G-BDV80K8G13"></Script>
+    <Script id="ga-script-2">
       {`
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
