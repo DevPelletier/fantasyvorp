@@ -43,15 +43,15 @@ export default function Section() {
                 What is VORP?
             </h3>
             <p><strong>VORP: Value Over Replacement Player</strong><br />
-            <em>Def: <strong>A single-number measure of a player&apos;s value, specific to that players' position, and your league settings</strong></em>.</p>
+            <em>Def: <strong>A single-number measure of a player&apos;s value, specific to that players&apos; position, and your league settings</strong></em>.</p>
             <p>The stat was first used in the MLB [of course] as a way to measure the effective value of pitcher [<em>e.g.:"How many runs would a replacement level pitcher have allowed here?"</em>].</p>
-            <p>In Fantasy Sports, though, there are far less variables to consider, and far more structure. This makes VORP is a <em>much</em> more effective and simple way of measuring player values in Fantasy. However, for some reason VORP hasn't been adopted by any of the major fantasy platforms - currently, VORP is only really used within some custom spreadsheets found online which may be difficult to find and/or use...</p>
-            <p>So that's why I created this site 🤠</p>
+            <p>In Fantasy Sports, though, there are far less variables to consider, and far more structure. This makes VORP is a <em>much</em> more effective and simple way of measuring player values in Fantasy. However, for some reason VORP hasn&apos;t been adopted by any of the major fantasy platforms - currently, VORP is only really used within some custom spreadsheets found online which may be difficult to find and/or use...</p>
+            <p>So that&apos;s why I created this site 🤠</p>
             <h3 className="headingBg">
                 Why is VORP better?
             </h3>
             <p><strong>Using VORP is better than your fantasy platform&apos;s existing pre-season / in-season rankings</strong>.</p>
-            <p>The standard fantasy platform rankings are not great - and most fantasy GMs know this. That's why there is an entire cottage industry of <em>custom spreadsheets</em> and <em>insider projections</em>, and so on. Don't get me wrong - these analysts and spreadsheets are undoubtedly very valuable... for users that want to spend the time and effort to find the right analyst/tool and customize their spreadsheet to perfection.</p>
+            <p>The standard fantasy platform rankings are not great - and most fantasy GMs know this. That&apos;s why there is an entire cottage industry of <em>custom spreadsheets</em> and <em>insider projections</em>, and so on. Don&apos;t get me wrong - these analysts and spreadsheets are undoubtedly very valuable... for users that want to spend the time and effort to find the right analyst/tool and customize their spreadsheet to perfection.</p>
             <p>
             <strong>But what if we could just use the existing raw stats to create a better ranking system? </strong>
             </p>
@@ -61,11 +61,11 @@ export default function Section() {
                 Standard fantasy platform pre-season rankings are not great. Even the platforms themselves know this - their business is competently facilitating a fantasy league, not performing complex calculations to provide you custom data insights.
             </li>
             <li>
-                This lack of effort into data extends to the Regular Season, too, of course. In-season rankings are usually calculated with the most simple possible calculation [averages of each category]. This process works to provide rough estimates of overall value, but <strong>doesn't take into account several important factors in fantasy</strong>, such as: the value of a category within that players' position, the value of that position relative to other positions, the scarcity of that position's value, and so much more.
+                This lack of effort into data extends to the Regular Season, too, of course. In-season rankings are usually calculated with the most simple possible calculation [averages of each category]. This process works to provide rough estimates of overall value, but <strong>doesn&apos;t take into account several important factors in fantasy</strong>, such as: the value of a category within that players&apos; position, the value of that position relative to other positions, the scarcity of that position&apos;s value, and so much more.
             </li>
             </ul>
-            <p><strong>Using VORP solves all of these issues - without increasing complexity. It's 1 number, and a better ranking.</strong></p>
-            <p>You can go as deep as you'd like into the complexity, of course, as well. You can calculate VORP within each category, and even VORP within each category within each position 🤯. But we're trying to SAVE time and effort here, though, right? So let's keep it simple - <strong>in fantasy sports, your primary goal is to better understand player values, and VORP makes that easier.</strong> <em>VORP is better</em>.</p>
+            <p><strong>Using VORP solves all of these issues - without increasing complexity. It&apos;s 1 number, and a better ranking.</strong></p>
+            <p>You can go as deep as you&apos;d like into the complexity, of course, as well. You can calculate VORP within each category, and even VORP within each category within each position 🤯. But we&apos;re trying to SAVE time and effort here, though, right? So let&apos;s keep it simple - <strong>in fantasy sports, your primary goal is to better understand player values, and VORP makes that easier.</strong> <em>VORP is better</em>.</p>
 
             <h3 className="headingBg">
                 How do I use this site?
@@ -84,7 +84,7 @@ export default function Section() {
             Feel free to play around with the filters above the datatable as well! The Table View is for a Stats vs. Draft data view, filter the table by Position, select your Season [or projection], and switch between Full Season values vs. Per Game values.
             </p>
             <p>
-            PS - If you're interested in that last feature - Live VORP for In-Season and In-Game stats...<br /><Link href="coming-soon">sign up for feature updates here</Link>.
+            PS - If you&apos;re interested in that last feature - Live VORP for In-Season and In-Game stats...<br /><Link href="coming-soon">sign up for feature updates here</Link>.
             </p>
             <p><strong>PLEASE NOTE:</strong> This site is FIRMLY IN BETA!!!, and I am by no means an expert app developer, so I have pre-populated this site with a few of the standard settings for fantasy hockey leagues, for common league sizes. If your specific league setting hasn’t been uploaded yet, the dashboard will automatically submit a ticket for your league setting, and give you the option to be notified by email when the data will be available. It’s a bit of a manual process still, so it may take a few hours to appear.</p>            
             <p className="headingBg"><strong>TL;DR:</strong><br />
@@ -106,8 +106,8 @@ export default function Section() {
             <AccordionDetails>
             <p>
                     <strong>A: </strong>Ah, right. Ok, so VORP is based on Z-scores, which is derived from Standard Deviations, which is a mathematical tool that makes it possible to compare and more accurately analyze various large datasets. Easy, right? Ha...</p>
-                    <p>Think of all of the player stats within 1 category, let's take Goals and Centers for this example. <a>1 SD</a> [Standard Deviation] is a standard 'slice' of the '# of Goals' within a given group [Centers, in this case]. So let's say <a>1 SD = 10 goals</a>.</p>
-                    <p>This is where <a>Z-Scores</a> come in. A player's Z-Score is the count of <a>SDs</a> that player is in distance from the <a>average</a> of that category. So let's say, for # of Goals amongst Centers, the <a>average = 15</a>. PlayerX is a Center that had <strong>25 Goals</strong> last year.</p><p>Therefore, PlayerX has a <a>Z-Score of 1.0 in Goals, amongst Centers</a>; he is +1.0 SD from the average.</p>
+                    <p>Think of all of the player stats within 1 category, let&apos;s take Goals and Centers for this example. <a>1 SD</a> [Standard Deviation] is a standard &apos;slice&apos; of the &apos;# of Goals&apos; within a given group [Centers, in this case]. So let&apos;s say <a>1 SD = 10 goals</a>.</p>
+                    <p>This is where <a>Z-Scores</a> come in. A player&apos;s Z-Score is the count of <a>SDs</a> that player is in distance from the <a>average</a> of that category. So let&apos;s say, for # of Goals amongst Centers, the <a>average = 15</a>. PlayerX is a Center that had <strong>25 Goals</strong> last year.</p><p>Therefore, PlayerX has a <a>Z-Score of 1.0 in Goals, amongst Centers</a>; he is +1.0 SD from the average.</p>
                     <p>Essentially, the process is:
                 </p>
                 <ol>
@@ -152,11 +152,11 @@ export default function Section() {
             </AccordionSummary>
             <AccordionDetails>
                 <p>
-                    <strong>A: </strong>It’s called a <a href="https://www.baseball-reference.com/about/marcels.shtml" target="_blank" rel="noreferrer">Marcel Projection</a>, which is supposed to be “the most basic forecasting system you can have, that uses as little intelligence as possible - so basic that Marcel the Monkey could do it”. 
+                    <strong>A: </strong>It&apos;s called a <a href="https://www.baseball-reference.com/about/marcels.shtml" target="_blank" rel="noreferrer">Marcel Projection</a>, which is supposed to be “the most basic forecasting system you can have, that uses as little intelligence as possible - so basic that Marcel the Monkey could do it”. 
 
                 </p>
                 <p>
-                    The projection uses 3 years of NHL data, with (1) heavier weighting for more recent seasons, (2) regression towards the mean, and (3) has an age factor. That’s all, folks.
+                    The projection uses 3 years of NHL data, with (1) heavier weighting for more recent seasons, (2) regression towards the mean, and (3) has an age factor. That&apos;s all, folks.
                 </p>
                 <p>
                     I purposefully try to put as LITTLE subjectivity as possible into these projections, for the simple reason that this tool is supposed to be simple and un-opinionated - just some standard calculations that create a clearer picture of the value of each player for your league, without getting into opinions and assumptions and so on. The only stipulation was to only include players’ seasons with a minimum of 10 GP (the rookie limit is 11 GP, so rookies that played the ‘rookie max’ are included)
