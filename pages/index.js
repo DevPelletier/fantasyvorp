@@ -119,13 +119,13 @@ export default function Home(props) {
                   <p className="logoFont">Q: Why is VORP better?</p>
                   <p>Using VORP is better than your fantasy platform&apos;s <strong>pre-season AND in-season rankings</strong>.</p>
                   <p>Most fantasy platform pre-season rankings are garbage - we all know this. However, it&apos;s my opinion that their in-season rankings are actually not that useful, either. This is for a few reasons, including:
-                    <ul>
-                      <li>It takes time and effort to create accurate pre-season rankings. For the big fantasy platforms, it&apos;s easier and cheaper to create rankings that are acceptable, but... have some glaring flaws.</li>
-                      <li>Most fantasy GMs know the above point, and this issues has created an entire industry of custom spreadsheet products across every sport. These spreadsheets are much better than the alternative, but require a lot of time and effort to find the right one for your league.</li>
-                      <li>Most platform&apos;s In-Season Rankings are created from extremely basic calculations that don&apos;t accurately convey a players&apos; value.</li>
-                      <li>It&apos;s especially difficult to use standard platforms when it comes to making decisions between: players in two different positions, or players with different values in differnt categories, or even generally which players are <em>hurting</em> your team more than <em>helping</em>!</li>
-                    </ul>
                   </p>
+                  <ul>
+                    <li>It takes time and effort to create accurate pre-season rankings. For the big fantasy platforms, it&apos;s easier and cheaper to create rankings that are acceptable, but... have some glaring flaws.</li>
+                    <li>Most fantasy GMs know the above point, and this issues has created an entire industry of custom spreadsheet products across every sport. These spreadsheets are much better than the alternative, but require a lot of time and effort to find the right one for your league.</li>
+                    <li>Most platform&apos;s In-Season Rankings are created from extremely basic calculations that don&apos;t accurately convey a players&apos; value.</li>
+                    <li>It&apos;s especially difficult to use standard platforms when it comes to making decisions between: players in two different positions, or players with different values in differnt categories, or even generally which players are <em>hurting</em> your team more than <em>helping</em>!</li>
+                  </ul>
                   <p><strong>Using VORP instantly simplifies all of these issues.</strong></p>
                   <p>Of course, it&apos;s not a silver bullet by any means - but it brings every category and every player onto a level playing field to be compared. For pre-season rankings, you can look at <strong><em>past seasons more accurately</em></strong>, while you can gain an edge by having a <strong><em>more accurate analysis on current stats</em></strong> throughout the year.</p>
                   {/* <p>With VORP, you're compare apples to apples, instead of parsing raw data on your platform and trying to compare the value of a <a>C</a>'s <a>PPP</a> to a <a>D</a>'s <a>BLK</a>s!</p> */}
@@ -140,17 +140,15 @@ export default function Home(props) {
                 </div>
                 <div className="answer answerHidden"  id="answer_3">
                   <p className="logoFont">Q: How do I use this site?</p>
-                  <p>
-                    <ol>
-                      <li>Scroll down 👇 to the <em>Input Your League Settings</em> button - input all of the specific settings for your FHL</li>
-                      <li>The VORP data for your specific league will be calculated for:
-                        <ul>
-                          <li>The past 3 seasons</li>
-                          <li>A bare-bones VORP projection for the upcoming 22-23 season!</li>
-                        </ul>
-                      </li>
-                    </ol>
-                  </p>
+                  <ol>
+                    <li>Scroll down 👇 to the <em>Input Your League Settings</em> button - input all of the specific settings for your FHL</li>
+                    <li>The VORP data for your specific league will be calculated for:
+                      <ul>
+                        <li>The past 3 seasons</li>
+                        <li>A bare-bones VORP projection for the upcoming 22-23 season!</li>
+                      </ul>
+                    </li>
+                  </ol>
                   <p>
                     Feel free to play around with the filters above the datatable as well! The Table View is for a Stats vs. Draft data view, filter the table by Position, select your Season [or projection], and switch between Full Season values vs. Per Game values.
                   </p>

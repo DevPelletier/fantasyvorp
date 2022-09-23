@@ -154,7 +154,7 @@ export default function Section() {
             </AccordionSummary>
             <AccordionDetails>
                 <p>
-                    <strong>A: </strong>Only time will tell! However, after comparing these projections with some of the paid professionals that have released projections in the past few weeks, I can say that there’s not <span class="italic">too</span> much difference. It’s true, these projections will likely be slightly less accurate than the pros. 
+                    <strong>A: </strong>Only time will tell! However, after comparing these projections with some of the paid professionals that have released projections in the past few weeks, I can say that there’s not <em>too</em> much difference. It’s true, these projections will likely be slightly less accurate than the pros. 
                 </p>
                 <p>
                     However, I’d argue that the difference is minimal, that all projections have SOME margin of error, and should all be taken with a grain of salt. This Marcel is most definitely in the same ballpark as the majority of pros for most players - if it wasn’t, that would definitely be a red flag! 

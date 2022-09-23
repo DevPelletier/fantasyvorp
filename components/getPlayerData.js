@@ -25,7 +25,7 @@ import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
-
+import Tooltip from '@mui/material/Tooltip';
 
 import { differenceBy } from 'lodash'
 import { Controller, useForm } from 'react-hook-form';
@@ -581,19 +581,25 @@ export default function PlayerVORPData(props) {
       positionScarcityperGPBool = false;
     }
 
-    let columnPosLvl_4 = 'rgba(69, 128, 241, 0.85)'
-    let columnPosLvl_3 = 'rgba(69, 128, 241, 0.65)'
-    let columnPosLvl_2 = 'rgba(69, 128, 241, 0.4)'
-    let columnPosLvl_1 = 'rgba(69, 128, 241, 0.12)'
-    let columnNegLvl_1 = 'rgba(255, 84, 84, 0.12)'
-    let columnNegLvl_2 = 'rgba(255, 84, 84, 0.4)'
-    let columnNegLvl_3 = 'rgba(255, 84, 84, 0.65)'
-    let columnNegLvl_4 = 'rgba(255, 84, 84, 0.85)'
+    const columnPosLvl_4 = 'rgba(69, 128, 241, 0.85)'
+    const columnPosLvl_3 = 'rgba(69, 128, 241, 0.65)'
+    const columnPosLvl_2 = 'rgba(69, 128, 241, 0.4)'
+    const columnPosLvl_1 = 'rgba(69, 128, 241, 0.12)'
+    const columnNegLvl_1 = 'rgba(255, 84, 84, 0.12)'
+    const columnNegLvl_2 = 'rgba(255, 84, 84, 0.4)'
+    const columnNegLvl_3 = 'rgba(255, 84, 84, 0.65)'
+    const columnNegLvl_4 = 'rgba(255, 84, 84, 0.85)'
 
+    '<Tooltip title="This is rank!">RNK</Tooltip>'
+    let colname_Rank = (
+      <Tooltip title="Rank - Full Season" placement="top" disableFocusListener leaveDelay={200}>
+        <span>RNK</span>
+      </Tooltip>
+    )
     
     columns = [
       {
-      name: 'RNK',
+      name: colname_Rank,
       id: 'Rank',
       selector: row => row[colData['Rank']['dataRef']],
       sortable: true,
