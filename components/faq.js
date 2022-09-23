@@ -44,7 +44,7 @@ export default function Section() {
             </h3>
             <p><strong>VORP: Value Over Replacement Player</strong><br />
             <em>Def: <strong>A single-number measure of a player&apos;s value, specific to that players&apos; position, and your league settings</strong></em>.</p>
-            <p>The stat was first used in the MLB [of course] as a way to measure the effective value of pitcher [<em>e.g.:"How many runs would a replacement level pitcher have allowed here?"</em>].</p>
+            <p>The stat was first used in the MLB [of course] as a way to measure the effective value of pitcher [<em>e.g.:&quot;How many runs would a replacement level pitcher have allowed here?&quot;</em>].</p>
             <p>In Fantasy Sports, though, there are far less variables to consider, and far more structure. This makes VORP is a <em>much</em> more effective and simple way of measuring player values in Fantasy. However, for some reason VORP hasn&apos;t been adopted by any of the major fantasy platforms - currently, VORP is only really used within some custom spreadsheets found online which may be difficult to find and/or use...</p>
             <p>So that&apos;s why I created this site 🤠</p>
             <h3 className="headingBg">
