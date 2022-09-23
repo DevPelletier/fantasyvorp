@@ -368,7 +368,7 @@ export default function LeagueSettingsForm(props) {
             <span className="closeBtn" onClick={() => toggleModal()}>X</span>
             {/* <GetleagueSettingFile setleagueSettingFile={setleagueSettingFile}/> */}
 
-            <h2>Input Your League's Settings</h2>
+            <h2>Input Your League&apos;s Settings</h2>
             <p>
                 Please input your league settings below. <br />
                 {/* <span className="subtext"> */}
@@ -448,7 +448,7 @@ export default function LeagueSettingsForm(props) {
                 </div>
 
                 <h3>Roster Settings</h3>
-                <p>Your league's roster slots. (e.g. 2 C, 2 LW, 2 RW, 4 D, 4 Bench (Only input F, W, or Util slots if those specific slots apply to your league))</p>
+                <p>Your league&apos;s roster slots. (e.g. 2 C, 2 LW, 2 RW, 4 D, 4 Bench (Only input F, W, or Util slots if those specific slots apply to your league))</p>
                 <div className="form_group_container select-container" id="section_2">
                     <Controller
                     name="roster-c"
