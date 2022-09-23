@@ -356,7 +356,11 @@ export default function LeagueSettingsForm(props) {
                 field.classList.add('hidden');
             }
         }
-    }    
+    }
+    
+    // const highlightActiveSelect = () => {
+    // TODO: do this... so it's less confusing UX
+    // }
 
     return (
         <div className="ls-modal">
@@ -364,16 +368,18 @@ export default function LeagueSettingsForm(props) {
             <span className="closeBtn" onClick={() => toggleModal()}>X</span>
             {/* <GetleagueSettingFile setleagueSettingFile={setleagueSettingFile}/> */}
 
-            <h2>Your League Settings</h2>
+            <h2>Input Your League's Settings</h2>
             <p>
                 Please input your league settings below. <br />
-                <span className="subtext">Form is set to standard <strong>Yahoo! H2H Categories</strong> by default</span>
+                {/* <span className="subtext"> */}
+                    <em>Form is set to standard <strong>Yahoo! H2H Categories</strong> by default</em>
+                {/* </span> */}
             </p>
 
             <form className="ls-form" onSubmit={handleSubmit(onSubmit)}>
 
                 <div className="form_group_container" id="section_1">
-                    <Controller
+                    {/* <Controller
                     name="fantasySite"
                     control={control}
                     defaultValue="yahoo"
@@ -398,7 +404,8 @@ export default function LeagueSettingsForm(props) {
                     )}
                     // rules={{ required: 'Fantasy Site required' }}
                     />
-                    <FormHelperText>Only YAHOO available in Beta</FormHelperText>
+                    <FormHelperText>Only YAHOO available in Beta</FormHelperText> */}
+                    <h3># of Teams</h3>
 
                     <Controller
                     name="leagueTeams"
@@ -406,7 +413,7 @@ export default function LeagueSettingsForm(props) {
                     defaultValue={16}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select leagueTeamSelect">
-                            <InputLabel id="leagueTeams-select"># of Teams</InputLabel>
+                            <InputLabel id="leagueTeams-select">Teams</InputLabel>
                             <Select
                             labelId="leagueTeams-select"
                             label="# of Teams"
@@ -441,6 +448,7 @@ export default function LeagueSettingsForm(props) {
                 </div>
 
                 <h3>Roster Settings</h3>
+                <p>Your league's roster slots. (e.g. 2 C, 2 LW, 2 RW, 4 D, 4 Bench (Only input F, W, or Util slots if those specific slots apply to your league))</p>
                 <div className="form_group_container select-container" id="section_2">
                     <Controller
                     name="roster-c"
@@ -526,8 +534,65 @@ export default function LeagueSettingsForm(props) {
                             </Select>
                         </FormControl>
                     )}
-                    />                
+                    />         
 
+                    <Controller
+                    name="roster-d"
+                    control={control}
+                    defaultValue={4}
+                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        <FormControl className="mui_select">
+                            <InputLabel id="roster-select">D</InputLabel>
+                            <Select
+                                labelId="roster-select"
+                                label="D"
+                                value={value}
+                                onChange={onChange}
+                                // error={!!error}
+                                // helperText={error ? error.message : null}
+                                // defaultValue={2} // Removed for UX / psych
+                            >
+                                <MenuItem value={1}>1</MenuItem>
+                                <MenuItem value={2}>2</MenuItem>
+                                <MenuItem value={3}>3</MenuItem>
+                                <MenuItem value={4}>4</MenuItem>
+                                <MenuItem value={5}>5</MenuItem>
+                                <MenuItem value={6}>6</MenuItem>
+                                <MenuItem value={7}>7</MenuItem>
+                                <MenuItem value={8}>8</MenuItem>
+                            </Select>
+                        </FormControl>
+                    )}
+                    />                
+       
+                    <Controller
+                    name="roster-g"
+                    control={control}
+                    defaultValue={2}
+                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        <FormControl className="mui_select">
+                            <InputLabel id="roster-select">G</InputLabel>
+                            <Select
+                                labelId="roster-select"
+                                label="G"
+                                value={value}
+                                onChange={onChange}
+                                // error={!!error}
+                                // helperText={error ? error.message : null}
+                                // defaultValue={2} // Removed for UX / psych
+                            >
+                                <MenuItem value={1}>1</MenuItem>
+                                <MenuItem value={2}>2</MenuItem>
+                                <MenuItem value={3}>3</MenuItem>
+                                <MenuItem value={4}>4</MenuItem>
+                                <MenuItem value={5}>5</MenuItem>
+                                <MenuItem value={6}>6</MenuItem>
+                                <MenuItem value={7}>7</MenuItem>
+                                <MenuItem value={8}>8</MenuItem>
+                            </Select>
+                        </FormControl>
+                    )}
+                    />                
                     
                     <Controller
                     name="roster-w"
@@ -587,34 +652,6 @@ export default function LeagueSettingsForm(props) {
                     )}
                     />                
 
-                    <Controller
-                    name="roster-d"
-                    control={control}
-                    defaultValue={4}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                        <FormControl className="mui_select">
-                            <InputLabel id="roster-select">D</InputLabel>
-                            <Select
-                                labelId="roster-select"
-                                label="D"
-                                value={value}
-                                onChange={onChange}
-                                // error={!!error}
-                                // helperText={error ? error.message : null}
-                                // defaultValue={2} // Removed for UX / psych
-                            >
-                                <MenuItem value={1}>1</MenuItem>
-                                <MenuItem value={2}>2</MenuItem>
-                                <MenuItem value={3}>3</MenuItem>
-                                <MenuItem value={4}>4</MenuItem>
-                                <MenuItem value={5}>5</MenuItem>
-                                <MenuItem value={6}>6</MenuItem>
-                                <MenuItem value={7}>7</MenuItem>
-                                <MenuItem value={8}>8</MenuItem>
-                            </Select>
-                        </FormControl>
-                    )}
-                    />                
 
                     <Controller
                     name="roster-util"
@@ -645,34 +682,6 @@ export default function LeagueSettingsForm(props) {
                     )}
                     />                
 
-                    <Controller
-                    name="roster-g"
-                    control={control}
-                    defaultValue={2}
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                        <FormControl className="mui_select">
-                            <InputLabel id="roster-select">G</InputLabel>
-                            <Select
-                                labelId="roster-select"
-                                label="G"
-                                value={value}
-                                onChange={onChange}
-                                // error={!!error}
-                                // helperText={error ? error.message : null}
-                                // defaultValue={2} // Removed for UX / psych
-                            >
-                                <MenuItem value={1}>1</MenuItem>
-                                <MenuItem value={2}>2</MenuItem>
-                                <MenuItem value={3}>3</MenuItem>
-                                <MenuItem value={4}>4</MenuItem>
-                                <MenuItem value={5}>5</MenuItem>
-                                <MenuItem value={6}>6</MenuItem>
-                                <MenuItem value={7}>7</MenuItem>
-                                <MenuItem value={8}>8</MenuItem>
-                            </Select>
-                        </FormControl>
-                    )}
-                    />                
 
                     <Controller
                     name="roster-bn"
@@ -745,6 +754,7 @@ export default function LeagueSettingsForm(props) {
                 </div>
                 
                 <h3>Skater Categories</h3>
+                <p>Check all active categories in your league (and ensure inactive categories are un-checked)</p>
                 <div className="form_group_container cats-container" id="section_4">
                     <FormControl className="formControlGroup checkbox-and-textfield cats-field">
                         <Controller
@@ -1540,6 +1550,7 @@ export default function LeagueSettingsForm(props) {
                 </div>
                 
                 <h3>Goalie Categories</h3>
+                <p>Check all active categories in your league (and ensure inactive categories are un-checked!)</p>
                 <div className="form_group_container cats-container" id="section_5">
                     <FormControl className="formControlGroup checkbox-and-textfield cats-field">
                         <Controller

@@ -32,6 +32,8 @@
     }
   
     .footerLinksContainer {
+        max-width: $maxPageWidth;
+        margin: 0 auto;
         height: inherit;
         @include flex-center;
         justify-content: space-between;

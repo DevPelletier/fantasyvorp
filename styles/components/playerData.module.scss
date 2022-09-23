@@ -7,6 +7,7 @@
     // min-height: 50vh;
     padding: 0 16px 32px;
     width: 95vw;
+    max-width: $maxPageWidth;
     box-shadow: $shadow01;
     border-radius: 5px;
     background: $dark-overlay-1;

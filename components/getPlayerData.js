@@ -710,7 +710,7 @@ export default function PlayerVORPData(props) {
         name: colname_Name,
         selector: row => row[colData['Name']['dataRef']],
         sortable: false,
-        maxwidth: '200px',
+        maxWidth: '200px',
         reorder: true,
         style: {
           justifyContent: 'left'

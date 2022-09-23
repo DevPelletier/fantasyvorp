@@ -11,7 +11,7 @@ export default function Section() {
             <div className={styles.footerLinksContainer}>
                 <div className="">
                     <Link href="/">
-                        <h2>FantasyVORP</h2>
+                        <h2>fantasyVORP</h2>
                     </Link>
                 </div>
                 <ul className={styles.footerLinkList}>

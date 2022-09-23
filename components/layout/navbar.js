@@ -10,7 +10,7 @@ export default function Section() {
             <div className="inner-section navbar-container">
                 <div className="text-logo-container img-width-sm-02">
                     <Link href="/">
-                        <h1 className="logoFont">FantasyVORP</h1>
+                        <h1 className="logoFont">fantasyVORP</h1>
                     </Link>
                 </div>
                 <div className="nav-menu-container">

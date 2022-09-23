@@ -196,9 +196,11 @@ $navHeight: 80px;
   top: 0;
   z-index: 9;
 
-  width: 100%;
+  width: 100vw;
 
   .inner-section {
+    max-width: $maxPageWidth;
+    margin: 0 auto;
 
   }
 
@@ -248,6 +250,8 @@ h1.logoFont {
 }
 
 .tableLegend {
+  max-width: 1000px;
+
   p {
     font-size: 0.8rem;
     margin: 0;
@@ -288,6 +292,12 @@ $modalMaxWidth: 800px;
   place-content: normal;
   padding: 32px 50px;
 
+  p {
+    font-size: 0.8rem;
+    width: 60%;
+    margin: 0 auto 20px;
+  }
+
 }
 
 span.closeBtn {
@@ -327,13 +337,17 @@ span.closeBtn {
 
 .ls-form {
   @include centerAll;
-  padding: 20px 0;
+  padding: 0 0 20px;
   // border: 1px solid $grey-05;
   // border-radius: $borderRadius01;
 
   h3 {
     margin: 40px auto 20px;
     width: fit-content;
+
+    &:first-child {
+      margin-top: 0;
+    }
   }
 
   #section_1 {
