@@ -74,11 +74,11 @@ ul {
 .img-container {
   @include centerAll;
   overflow: hidden;
-
   // background-color: $blue01;
 
   img {
-    max-width: 120%;
+    width: 100%;
+    // max-width: 120%;
     height: auto;
     // max-height: 120%;
   }

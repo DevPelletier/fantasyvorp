@@ -7,6 +7,8 @@ import Footer from '../components/layout/footer'
 import Link from 'next/link'
 import Image from 'next/image'
 import img_bmc from '../public/bmc_icon_black.png'
+import img_weblink from '../public/fantasyVORP-main-1.jpg'
+
 import Script from 'next/script';
 
 
@@ -34,6 +36,7 @@ function MyApp({ Component, pageProps }) {
         <title>FantasyVORP.com (Beta)</title>
         <meta name="description" content="Fantasy VORP - Value Over Replacement Stats for Fantasy Sports" />
         <link rel="icon" href="/favicon-vorp.png" />
+        <meta property="og:image" content={img_weblink} title="FantasyVORP.com"/>
     </Head>
 
     <Navbar />
