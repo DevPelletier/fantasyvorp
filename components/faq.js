@@ -10,7 +10,7 @@ export default function Section() {
 
 
     return (
-        <section className="copySection">
+        <section className="faq copySection">
             {/* <div className="faq-nav">
                 <Button 
                     href="#"
@@ -32,68 +32,67 @@ export default function Section() {
                 </Button>
             </div> */}
             <h2>An Introduction to FantasyVORP</h2>
-            <h3 className="headingBg">What it is:</h3>
-
-            <p>
-                <strong>Fantasy:</strong> <br />
-                A fantasy (sport) is a type of game, often played using the Internet, where participants assemble imaginary or virtual teams composed of proxies of real players of a professional sport.
+            <p className="headingBg">
+                <strong>FantasyVORP.com: Get VORP stats that are accurate to your league settings within seconds.</strong> <br /><br />
+                Save time and energy trying to compare fantasy players by comparing a million different raw numbers - use VORP, and get back to winning your league!
             </p>
+            <br />
+            <hr />
+            <br />
+            <h3 className="headingBg">
+                What is VORP?
+            </h3>
+            <p><strong>VORP: Value Over Replacement Player</strong><br />
+            <em>Def: <strong>A single-number measure of a player&apos;s value, specific to that players' position, and your league settings</strong></em>.</p>
+            <p>The stat was first used in the MLB [of course] as a way to measure the effective value of pitcher [<em>e.g.:"How many runs would a replacement level pitcher have allowed here?"</em>].</p>
+            <p>In Fantasy Sports, though, there are far less variables to consider, and far more structure. This makes VORP is a <em>much</em> more effective and simple way of measuring player values in Fantasy. However, for some reason VORP hasn't been adopted by any of the major fantasy platforms - currently, VORP is only really used within some custom spreadsheets found online which may be difficult to find and/or use...</p>
+            <p>So that's why I created this site 🤠</p>
+            <h3 className="headingBg">
+                Why is VORP better?
+            </h3>
+            <p><strong>Using VORP is better than your fantasy platform&apos;s existing pre-season / in-season rankings</strong>.</p>
+            <p>The standard fantasy platform rankings are not great - and most fantasy GMs know this. That's why there is an entire cottage industry of <em>custom spreadsheets</em> and <em>insider projections</em>, and so on. Don't get me wrong - these analysts and spreadsheets are undoubtedly very valuable... for users that want to spend the time and effort to find the right analyst/tool and customize their spreadsheet to perfection.</p>
             <p>
-                <strong>&lsquo;VORP&lsquo;: </strong>Value Over Replacement Player
+            <strong>But what if we could just use the existing raw stats to create a better ranking system? </strong>
             </p>
-            <p>
-                <strong>FantasyVORP.com:</strong> <br />
-                A website where you can easily find the VORP data for your specific league settings.
-            </p>
-            <p>That’s it. That’s what this site is for.</p>
-            <p>&nbsp;</p>
+            <p>The facts of the case:</p>
+            <ul className="withDots">
+            <li>
+                Standard fantasy platform pre-season rankings are not great. Even the platforms themselves know this - their business is competently facilitating a fantasy league, not performing complex calculations to provide you custom data insights.
+            </li>
+            <li>
+                This lack of effort into data extends to the Regular Season, too, of course. In-season rankings are usually calculated with the most simple possible calculation [averages of each category]. This process works to provide rough estimates of overall value, but <strong>doesn't take into account several important factors in fantasy</strong>, such as: the value of a category within that players' position, the value of that position relative to other positions, the scarcity of that position's value, and so much more.
+            </li>
+            </ul>
+            <p><strong>Using VORP solves all of these issues - without increasing complexity. It's 1 number, and a better ranking.</strong></p>
+            <p>You can go as deep as you'd like into the complexity, of course, as well. You can calculate VORP within each category, and even VORP within each category within each position 🤯. But we're trying to SAVE time and effort here, though, right? So let's keep it simple - <strong>in fantasy sports, your primary goal is to better understand player values, and VORP makes that easier.</strong> <em>VORP is better</em>.</p>
 
             <h3 className="headingBg">
-                How It Works:
+                How do I use this site?
             </h3>
             <ol>
-                <li>
-                    <p>Go to the VORP page and input your league settings. </p>
-                </li>
-                <li>
-                    <p>The VORP data is calculated for your league, for the past 3 seasons as well as a weighted average projection for the upcoming 22-23 season.</p>
-                    <p>Note: This site is FIRMLY in beta, and I am by no means an expert app developer, so I have pre-populated this site with a few of the standard settings for fantasy hockey leagues, for common league sizes. If your specific league setting hasn’t been uploaded yet, the dashboard will automatically submit a ticket for your league setting, and give you the option to be notified by email when the data will be available. It’s a bit of a manual process still, so it may take a few hours to appear.</p>
+                <li>Scroll down 👇 to the <em>Input Your League Settings</em> button - input all of the specific settings for your FHL</li>
+                <li>The VORP data for your specific league will be calculated for:
+                    <ul>
+                    <li>The past 3 seasons</li>
+                    <li>A bare-bones VORP projection for the upcoming 22-23 season!</li>
+                    <li><em>and coming soon... Live VORP calculations for In-Season and In-Game stats </em>😮</li>
+                    </ul>
                 </li>
             </ol>
-            <p>And that’s it!</p>
-
-
+            <p>
+            Feel free to play around with the filters above the datatable as well! The Table View is for a Stats vs. Draft data view, filter the table by Position, select your Season [or projection], and switch between Full Season values vs. Per Game values.
+            </p>
+            <p>
+            PS - If you're interested in that last feature - Live VORP for In-Season and In-Game stats...<br /><Link href="coming-soon">sign up for feature updates here</Link>.
+            </p>
+            <p><strong>PLEASE NOTE:</strong> This site is FIRMLY IN BETA!!!, and I am by no means an expert app developer, so I have pre-populated this site with a few of the standard settings for fantasy hockey leagues, for common league sizes. If your specific league setting hasn’t been uploaded yet, the dashboard will automatically submit a ticket for your league setting, and give you the option to be notified by email when the data will be available. It’s a bit of a manual process still, so it may take a few hours to appear.</p>            
+            <p className="headingBg"><strong>TL;DR:</strong><br />
+                This is my ‘goldilocks’ fantasy website. Not too complex, not too simple - and hopefully very useful for all levels of fantasy GM. All you need to know is what the hell a ‘VORP’ is… 🥴
+            </p>
 
             <br /><hr /><br />
-            
-            <p>
-                Alright alright, I can get into the details of it all. The process of building this - even just the process of getting VORP data - is all a bit complicated. But the simplicity of the end result is specifically why I love VORP - it distills all of the stats, categories, points and weights, every position, every average and standard deviation, and the work of trying to compare all of those factors in fantasy sports... into an easy-to-understand (and surprisingly accurate) number - VORP.
-            </p>
-            <p>
-                Luckily, to help you get to the VORP number, or at least to make sense of the impending tsunami of fantasy data coming at you before your draft (and throughout the season), there’s professionals who can help. Each year there’s more analysts and hobbyists alike who create the all-important PROJECTIONS. There’s draft packages, spreadsheets, blog posts, newsletters and more to help you destroy your draft, scour the waiver wire, and be the best fantasy GM you’ve always wanted to be!... but it’s a lot of work. 
-            </p>
-            <p>
-                Every year I find myself spending an equal amount of time researching which analyst’s projections I should listen to, or how to amalgamate a handful of projection sheets into my one perfect projection sheet. It’s a labour of love, to be sure, but… I felt like there should be an easier way. 
-            </p>
-            <p>
-                Not to mention, hopefully you can find the right projections and spreadsheet that’s applicable to <strong>YOUR league settings</strong> - otherwise all of this has been a complete waste of time! If you’re using a Points-only projection for a Banger league, you might as well start reading up on a different sport entirely!
-            </p>
-            <p>
-                The other end of the spectrum would be to simply draft by last seasons’ raw stats in your chosen fantasy app, check out publicly available ADPs, and hope for the best. Sigh. That barely puts you above your friend who “forgot the draft was today” and might ghost the league after week 4.
-            </p>
-            <p>
-                So, that’s where this tool comes in! 
-            </p>
-            <p className="headingBg centerText">
-                <strong>Get VORP stats that are accurate to your league settings within seconds, for free.</strong>
-            </p>
-            <p>&nbsp;</p>
-            <p>
-                <strong>NOTE: This website is DEFINITELY in beta!</strong> (what’s further back in development than Beta? Alpha?) - and quite rough around the edges, as I am by no means an expert app developer - just a guy who likes to code and analyze data. I rushed over the past few weeks to get this site up before the NHL season starts, of course, so please forgive the mess (and report any bugs you find here - it’d be a huge help!). 
-            </p>
-            <p><strong>TL;DR:</strong><br />
-                This is my ‘goldilocks’ fantasy website. Not too complex, not too simple - and useful for ALL fantasy GMs. All you need to know is what the hell a ‘VORP’ is… 😉
-            </p>
+
             
 
             <Accordion className="accordion">
@@ -102,10 +101,30 @@ export default function Section() {
             aria-controls="panel1a-content"
             id="panel1a-header"
             >
-                <p><strong>Q:</strong> What is VORP?</p>
+                <p><strong>Q: Ok but what <em>IS</em> VORP!? How is it calculated?</strong></p>
             </AccordionSummary>
             <AccordionDetails>
+            <p>
+                    <strong>A: </strong>Ah, right. Ok, so VORP is based on Z-scores, which is derived from Standard Deviations, which is a mathematical tool that makes it possible to compare and more accurately analyze various large datasets. Easy, right? Ha...</p>
+                    <p>Think of all of the player stats within 1 category, let's take Goals and Centers for this example. <a>1 SD</a> [Standard Deviation] is a standard 'slice' of the '# of Goals' within a given group [Centers, in this case]. So let's say <a>1 SD = 10 goals</a>.</p>
+                    <p>This is where <a>Z-Scores</a> come in. A player's Z-Score is the count of <a>SDs</a> that player is in distance from the <a>average</a> of that category. So let's say, for # of Goals amongst Centers, the <a>average = 15</a>. PlayerX is a Center that had <strong>25 Goals</strong> last year.</p><p>Therefore, PlayerX has a <a>Z-Score of 1.0 in Goals, amongst Centers</a>; he is +1.0 SD from the average.</p>
+                    <p>Essentially, the process is:
+                </p>
+                <ol>
+                    <li>
+                        Take your league settings (and league size) to calculate the replacement level and relevant population, as well as relevant categories and point values
+                    </li>
+                    <li>
+                        Separate the population into relevant clusters and calculate Averages, Standard Deviations, and Z-Scores for every category, for every player, for every position.
+                    </li>
+                    <li>
+                        Adjust the Z-scores to the league-specific replacement level (so that “0” VORP is exactly at the replacement level for each category, for each position, and for the league overall.
+                    </li>
+                </ol>
                 <p>
+                    If you’re a fantasy nerd like myself, Z-Scores are the holy grail of fantasy sports, and have been for quite some time. VORP is just a way to normalize Z-Scores into a number that is more relevant to the dataset 👌.
+                </p>
+                {/* <p>
                     <strong>A: </strong>Great question. VORP is a measure of how much a player contributes to your fantasy team in comparison to a replacement-level player. Finding the ‘replacement-level’ depends on how ‘big’ your league is. 
                 </p>
                 <p>
@@ -119,7 +138,7 @@ export default function Section() {
                 </p>
                 <p>
                     Example 2: Leon Draisaitl is designated (C, LW). In standard leagues, he is probably the most valuable LW (LW-1), but is also probably only the 3rd most valuable C (C-3), behind McDavid and Matthews. His VORP number for C and for LW will be different, because we are only comparing Leon with LWs for his LW VORP, and Cs for his C VORP. This way, you can get a great idea of a players’ ACTUAL value given their positional capabilities. Instead of comparing every position to each other and wondering what the significance of any stat is, the VORP reveals actual, specific value, instantly. The magic of VORP!
-                </p>
+                </p> */}
             </AccordionDetails>
         </Accordion>
 
@@ -129,7 +148,7 @@ export default function Section() {
             aria-controls="panel1a-content"
             id="panel1a-header"
             >
-                <p><strong>Q:</strong> How do you calculate the projections?</p>
+                <p><strong>Q: How do you calculate the projections?</strong></p>
             </AccordionSummary>
             <AccordionDetails>
                 <p>
@@ -150,7 +169,7 @@ export default function Section() {
             aria-controls="panel1a-content"
             id="panel1a-header"
             >
-                <p><strong>Q:</strong> How accurate are these projections, then?</p>
+                <p><strong>Q: How accurate are these projections, then?</strong></p>
             </AccordionSummary>
             <AccordionDetails>
                 <p>
@@ -167,42 +186,15 @@ export default function Section() {
             aria-controls="panel1a-content"
             id="panel1a-header"
             >
-                <p><strong>Q:</strong> Okay, but what really <strong>IS</strong> VORP?! (How is VORP calculated?)</p>
-            </AccordionSummary>
-            <AccordionDetails>
-                <p>
-                    <strong>A: </strong>Ah, right. Ok, so VORP is based on Z-scores, which is based on Standard Deviations, which is a mathematical tool that makes it possible to compare and more accurately analyze various large datasets. Essentially, the process is:
-                </p>
-                <ol>
-                    <li>
-                        Take your league settings (and league size) to calculate the replacement level and relevant population, as well as relevant categories and point values
-                    </li>
-                    <li>
-                        Separate the population into relevant clusters and calculate Averages and Z-Scores for every category, for every player, for every position.
-                    </li>
-                    <li>
-                        Adjust the Z-scores to the league-specific replacement level (so that “0” VORP is exactly at the replacement level for each category, for each position, and for the league overall.
-                    </li>
-                </ol>
-                <p>
-                    If you’re a fantasy nerd like myself, Z-Scores are the holy grail of fantasy sports, and have been for quite some time. VORP is just a way to normalize Z-Scores into a number that is more relevant to the dataset 👌.
-                </p>
-            </AccordionDetails>
-        </Accordion>
-        <Accordion className="accordion">
-            <AccordionSummary
-            // expandIcon={<ExpandMoreRoundedIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-            >
-                <p><strong>Q:</strong>  Why is X player ranked so high? Why are Y positions ranked so low? What is this!?</p>
+                <p><strong>Q: Why is X player ranked so high? Why are Y positions ranked so low? What is this!?</strong></p>
             </AccordionSummary>
             <AccordionDetails>
                 <p>
                     <strong>A: </strong>I don’t know, man, I  just crunch the numbers.
                 </p>
                 <p>
-                    In all seriousness, VORP usually reveals a few trends in the rankings that you may not have seen previously. For example, Defence may be much MORE valuable than you thought, Goalies could be much LESS valuable than you thought, and so on. This all depends on your league settings. If you disagree with the projections, that’s fair! Simply take the projections and make your changes as you see fit - that’s the fun part! 
+                    In all seriousness, VORP usually reveals a few trends in the rankings that you may not have seen previously. For example, Defence may be much MORE valuable than you thought, Goalies could be much LESS valuable than you thought, and so on. Often, Goalies are less valuable than expected, simply because they apply to fewer categories. However, the PS [Positional Scarcity] column gives context to each position as well, so hopefully that will help you adjust in your drafts.</p>
+                    <p>This all depends on your league settings, of course. If you disagree with the projections, that’s fair! Simply take the projections and make your changes as you see fit - that’s the fun part! 
                 </p>
             </AccordionDetails>
         </Accordion>
@@ -212,7 +204,7 @@ export default function Section() {
             aria-controls="panel1a-content"
             id="panel1a-header"
             >
-                <p><strong>Q:</strong> Why doesn’t your site have X feature? Can you add it?</p>
+                <p><strong>Q: Why doesn’t your site have X feature? Can you add it?</strong></p>
             </AccordionSummary>
             <AccordionDetails>
                 <p>
@@ -229,7 +221,7 @@ export default function Section() {
             aria-controls="panel1a-content"
             id="panel1a-header"
             >
-                <p><strong>Q:</strong> Will this be available for other sports?</p>
+                <p><strong>Q: Will this be available for other sports?</strong></p>
             </AccordionSummary>
             <AccordionDetails>
                 <p>

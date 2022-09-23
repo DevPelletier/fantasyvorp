@@ -608,66 +608,65 @@ export default function PlayerVORPData(props) {
     const columnNegLvl_3 = 'rgba(255, 84, 84, 0.65)';
     const columnNegLvl_4 = 'rgba(255, 84, 84, 0.9)';
 
-    '<Tooltip title="This is rank!">RNK</Tooltip>'
     const colname_Rank_full = (
-      <Tooltip title="Rank - Full Season" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Rank - Full Season" placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>RNK</span>
       </Tooltip>
     );
     const colname_Rank_pergp = (
-      <Tooltip title="Rank - perGP" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Rank - perGP" placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>RNK</span>
       </Tooltip>
     );
     const colname_Name = (
-      <Tooltip title="Name (Red = Injury)" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Name (Red = Injury)" placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>Name</span>
       </Tooltip>
     );
     const colname_Pos = (
-      <Tooltip title="Positions (Yahoo)" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Positions (Yahoo)" placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>Pos</span>
       </Tooltip>
     );
     const colname_VPos = (
       <Tooltip 
       title="VORP Position: Position for which VORP is calculated. If a player has multi-position capability, then they will have a unique VORP value calculated for each position." 
-        placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>V-Pos</span>
       </Tooltip>
     );
     const colname_VORP_full = (
-      <Tooltip title="Value Over Replacement Player/Position (Full Season). If a player has multi-position capability, then they will have a unique VORP calculated for each position. For 'Overall' VORP Position, the players' position with the greatest VORP is used. Read more about VORP calcs on the 'How Does This Work?' page!" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Value Over Replacement Player/Position (Full Season). If a player has multi-position capability, then they will have a unique VORP calculated for each position. For 'Overall' VORP Position, the players' position with the greatest VORP is used. Read more about VORP calcs on the 'How Does This Work?' page!" placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>VORP</span>
       </Tooltip>
     );
     const colname_VORP_perGP = (
-      <Tooltip title="Value Over Replacement Player (per GP). If a player has multi-position capability, then they will have a unique VORP calculated for each position. For 'Overall' VORP Position, the players' position with the greatest VORP is used. Read more about VORP calcs on the 'How Does This Work?' page!" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Value Over Replacement Player (per GP). If a player has multi-position capability, then they will have a unique VORP calculated for each position. For 'Overall' VORP Position, the players' position with the greatest VORP is used. Read more about VORP calcs on the 'How Does This Work?' page!" placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>VORP</span>
       </Tooltip>
     );
     const colname_PS_full = (
-      <Tooltip title="Positional Scarcity: The percentage of 'positive remaining value' in the position after that player is taken. This is useful to visualize how much value is remaining at each position for your draft." placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Positional Scarcity: The percentage of 'positive remaining value' in the position after that player is taken. This is useful to visualize how much value is remaining at each position for your draft." placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>PS</span>
       </Tooltip>
     );
     const colname_PS_perGP = (
-      <Tooltip title="Positional Scarcity: The percentage of 'positive remaining value' in the position after that player is taken. This is useful to visualize how much value is remaining at each position for your draft." placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Positional Scarcity: The percentage of 'positive remaining value' in the position after that player is taken. This is useful to visualize how much value is remaining at each position for your draft." placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>PS</span>
       </Tooltip>
     );    
     const colname_PosRNK_full = (
-      <Tooltip title="Positional Ranks - Full Season" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Positional Ranks - Full Season" placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>Pos RNK</span>
       </Tooltip>
     );
     const colname_PosRNK_perGP = (
-      <Tooltip title="Positional Ranks - perGP" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="Positional Ranks - perGP" placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>Pos RNK</span>
       </Tooltip>
     );
     const colname_ADP = (
-      <Tooltip title="ADP (Yahoo)" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+      <Tooltip title="ADP (Yahoo)" placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
         <span>ADP</span>
       </Tooltip>
     );
@@ -676,7 +675,7 @@ export default function PlayerVORPData(props) {
     );
     if (seasonID == 'ProjVORPs') {
       colname_GP = (
-        <Tooltip title="Projected GP: Based on % of GP of Team's Total GP in past 3 seasons, then calculated using the same projection method as other data." placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <Tooltip title="Projected GP: Based on % of GP of Team's Total GP in past 3 seasons, then calculated using the same projection method as other data." placement="top" disableFocusListener leaveDelay={200} maxwidth={200}>
           <span>GP</span>
         </Tooltip>
       );
@@ -711,7 +710,7 @@ export default function PlayerVORPData(props) {
         name: colname_Name,
         selector: row => row[colData['Name']['dataRef']],
         sortable: false,
-        maxWidth: '200px',
+        maxwidth: '200px',
         reorder: true,
         style: {
           justifyContent: 'left'

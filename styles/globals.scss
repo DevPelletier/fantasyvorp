@@ -95,19 +95,17 @@ ul {
 
 
 .buymeacoffee {
-  @include centerAll;
-  // position: fixed;
-  // bottom: 0;
-  // right: 0;
-  // margin: auto 3% 8% auto;
-  margin: 32px auto 32px auto;
+  // @include centerAll;
+  position: fixed;
+  bottom: 2vw;
+  right: 2vw;
   
   border-radius: 100px;
   background: $dark-overlay-4;
-  height: 65px;
-  width: 65px;
+  height: 50px;
+  width: 50px;
   padding: 8px;
-  z-index: 99;
+  z-index: 9;
   cursor: pointer;
   transition: all 0.2s ease-out;
 
@@ -116,8 +114,9 @@ ul {
   }
 
   .img-container {
-    height: calc(65px - 8px*2);
-    width: calc(65px - 8px*2);
+    height: 40px;
+    position: relative;
+    top: -2px;
   }
 
   img {
@@ -246,6 +245,20 @@ $navHeight: 80px;
 
 h1.logoFont {
   cursor: pointer;
+}
+
+.tableLegend {
+  p {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+  ul li {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+  }
+  ul {
+    margin: 0 0 16px;
+  }
 }
 
 
@@ -486,6 +499,8 @@ span.closeBtn {
 
 }
 
+
+
 // MUI styles (these are overlaid outside of the form)
 ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work :(
   border: 1px solid $grey-01;
@@ -720,12 +735,21 @@ ul.MuiList-root, .MuiAutocomplete-popper { // Autocomplete styling doesn't work 
 section.faq {
   width: 60vw;
   min-width: 300px;
-  max-width: 900px;
+  max-width: 800px;
+
+  h3.headingBg {
+    margin-top: 70px;
+  }
 }
 
 .MuiAccordion-root {
-  background-color: $dark-overlay-1 !important;
+  background-color: $dark-overlay-3 !important;
   color: $white-01 !important;
+}
+
+.MuiCollapse-root {
+  background-color: $dark-bg;
+  border: 1px solid $grey-01;
 }
 
 .MuiAccordionSummary-content {
@@ -827,18 +851,6 @@ section.faq {
       li {
         font-size: 0.82rem;
         margin-bottom: 12px;
-
-        &::before {
-          content: "•";
-          color: white;
-          display: inline-block;
-          width: 1em;
-          margin-left: -1em;
-          font-size: 2rem;
-          position: relative;
-          top: 6px;
-          left: 10px;
-        }
       }
     }
     ol li {

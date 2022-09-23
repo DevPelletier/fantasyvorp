@@ -12,7 +12,7 @@ import FAQs from '../components/faq'
 
 export default function Page() {
 
-    let headlineText = "How does this work?"
+    let headlineText = "FAQs and less-F-AQs"
 
     return (
         <div className={styles.container}>

@@ -108,33 +108,43 @@ export default function Home(props) {
               <div className="content_2" id="content_2">
                 <div className="answer answerHidden" id="answer_1">
                   <p className="logoFont">Q: What is VORP?</p>
-                  <p><strong>VORP</strong>: Value Over Replacement Player</p>
-                  <p>VORP is a measure of <strong><em>a player&apos;s value to your fantasy team, specific to your league settings</em></strong>.</p>
-                  <p>This means that the same player will have different VORP values in different leagues. For example: if a league uses HITs and BLKs, a &apos;rough&apos; defenceman will, of course, have a higher value (and a higher <strong>VORP</strong>) than he would in a league that does not use HITs and BLKs.</p>
-                  <p></p>
-                  <p></p>
-                  <p>A specific player contributes to your fantasy team in comparison to a replacement-level player. Finding the &apos;replacement-level&apos; depends on how &apos;big&apos; your league is. These factors include: # of teams, # of players in each position, and chosen categories [with category weights if applicable].</p>
-                </div>
-                <div className="answer answerHidden"  id="answer_2">
-                  <p className="logoFont">Q: Why is VORP better?</p>
-                  <p>Using VORP is better than your fantasy platform&apos;s <strong>pre-season AND in-season rankings</strong>.</p>
-                  <p>Most fantasy platform pre-season rankings are garbage - we all know this. However, it&apos;s my opinion that their in-season rankings are actually not that useful, either. This is for a few reasons, including:
-                  </p>
-                  <ul>
-                    <li>It takes time and effort to create accurate pre-season rankings. For the big fantasy platforms, it&apos;s easier and cheaper to create rankings that are acceptable, but... have some glaring flaws.</li>
-                    <li>Most fantasy GMs know the above point, and this issues has created an entire industry of custom spreadsheet products across every sport. These spreadsheets are much better than the alternative, but require a lot of time and effort to find the right one for your league.</li>
-                    <li>Most platform&apos;s In-Season Rankings are created from extremely basic calculations that don&apos;t accurately convey a players&apos; value.</li>
-                    <li>It&apos;s especially difficult to use standard platforms when it comes to making decisions between: players in two different positions, or players with different values in differnt categories, or even generally which players are <em>hurting</em> your team more than <em>helping</em>!</li>
-                  </ul>
-                  <p><strong>Using VORP instantly simplifies all of these issues.</strong></p>
-                  <p>Of course, it&apos;s not a silver bullet by any means - but it brings every category and every player onto a level playing field to be compared. For pre-season rankings, you can look at <strong><em>past seasons more accurately</em></strong>, while you can gain an edge by having a <strong><em>more accurate analysis on current stats</em></strong> throughout the year.</p>
-                  {/* <p>With VORP, you're compare apples to apples, instead of parsing raw data on your platform and trying to compare the value of a <a>C</a>'s <a>PPP</a> to a <a>D</a>'s <a>BLK</a>s!</p> */}
-                  {/* <p>For pre-season rankings, you can look at <strong><em>past seasons more accurately</em></strong>, while you can gain an edge by having a <strong><em>more accurate analysis on current stats</em></strong> throughout the year.</p> */}
+                  <p><strong>VORP: Value Over Replacement Player</strong><br />
+                  <em>Def: <strong>A single-number measure of a player&apos;s value, specific to that players' position, and your league settings</strong></em>.</p>
+                  <p>The stat was first used in the MLB [of course] as a way to measure the effective value of pitcher [<em>e.g.:"How many runs would a replacement level pitcher have allowed here?"</em>].</p>
+                  <p>In Fantasy Sports, though, there are far less variables to consider, and far more structure. This makes VORP is a <em>much</em> more effective and simple way of measuring player values in Fantasy. However, for some reason VORP hasn't been adopted by any of the major fantasy platforms - currently, VORP is only really used within some custom spreadsheets found online which may be difficult to find and/or use...</p>
+                  <p>So that's why I created this site 🤠</p>
                   <Button
                     variant="outlined"
                     >
                       <Link href="how-does-this-work">
-                        Learn more about VORP here 👉
+                        Learn more about VORP 👉
+                      </Link>
+                  </Button>
+
+                </div>
+                <div className="answer answerHidden"  id="answer_2">
+                  <p className="logoFont">Q: Why is VORP better?</p>
+                  <p><strong>Using VORP is better than your fantasy platform&apos;s existing pre-season / in-season rankings</strong>.</p>
+                  <p>The standard fantasy platform rankings are not great - and most fantasy GMs know this. That's why there is an entire cottage industry of <em>custom spreadsheets</em> and <em>insider projections</em>, and so on. Don't get me wrong - these analysts and spreadsheets are undoubtedly very valuable... for users that want to spend the time and effort to find the right analyst/tool and customize their spreadsheet to perfection.</p>
+                  <p>
+                    <strong>But what if we could just use the existing raw stats to create a better ranking system? </strong>
+                  </p>
+                  <p>The facts of the case:</p>
+                  <ul className="withDots">
+                    <li>
+                      Standard fantasy platform pre-season rankings are not great. Even the platforms themselves know this - their business is competently facilitating a fantasy league, not performing complex calculations to provide you custom data insights.
+                    </li>
+                    <li>
+                      This lack of effort into data extends to the Regular Season, too, of course. In-season rankings are usually calculated with the most simple possible calculation [averages of each category]. This process works to provide rough estimates of overall value, but <strong>doesn't take into account several important factors in fantasy</strong>, such as: the value of a category within that players' position, the value of that position relative to other positions, the scarcity of that position's value, and so much more.
+                    </li>
+                  </ul>
+                  <p><strong>Using VORP solves all of these issues - without increasing complexity. It's 1 number, and a better ranking.</strong></p>
+                  <p>You can go as deep as you'd like into the complexity, of course, as well. You can calculate VORP within each category, and even VORP within each category within each position 🤯. But we're trying to SAVE time and effort here, though, right? So let's keep it simple - <strong>in fantasy sports, your primary goal is to better understand player values, and VORP makes that easier.</strong> <em>VORP is better</em>.</p>
+                  <Button
+                    variant="outlined"
+                    >
+                      <Link href="how-does-this-work">
+                        Learn how VORP is actually calculated 👉
                       </Link>
                   </Button>
                 </div>
@@ -146,11 +156,15 @@ export default function Home(props) {
                       <ul>
                         <li>The past 3 seasons</li>
                         <li>A bare-bones VORP projection for the upcoming 22-23 season!</li>
+                        <li><em>and coming soon... Live VORP calculations for In-Season and In-Game stats </em>😮</li>
                       </ul>
                     </li>
                   </ol>
                   <p>
                     Feel free to play around with the filters above the datatable as well! The Table View is for a Stats vs. Draft data view, filter the table by Position, select your Season [or projection], and switch between Full Season values vs. Per Game values.
+                  </p>
+                  <p>
+                    PS - If you're interested in that last feature - Live VORP for In-Season and In-Game stats...<br /><Link href="coming-soon">sign up for feature updates here</Link>.
                   </p>
                 </div>
               </div>
@@ -171,6 +185,18 @@ export default function Home(props) {
           >
             Input your League Settings
         </Button>
+        <div className="tableLegend">
+        <p>Notes:</p>
+        <ul className="withDots">
+          <li>
+            All VORPs are adjusted to your League's replacement levels [A VORP of 0 means they are exactly at the replacement level].
+          </li>
+          <li>
+            Category VORPs may not sum to overall VORP or positional VORP. This is because each VORP is a silo - only compared to relevant comparators, and finally adjusted to replacement levels. [e.g. PlayerX having "2.3" value for 'G' means that's how valuable they are in that category <em>relative to other players at their position</em>, <strong>not</strong> relative to the entire league.]
+          </li>
+          <li>Please take these projections with a <strong>large grain of salt!</strong> They are ONLY supposed to give a general idea of potential value, based entirely on raw stats with zero adjustments. <a href="faqs">Learn about how I made these projections here.</a></li>
+        </ul>
+        </div>
         <div id="dataTableAnchor"></div>
         {/* <StrictMode> */}
           <PlayerData lsID={lsID} colData={colData} posSettings={posSettings} catSettings={catSettings}/>

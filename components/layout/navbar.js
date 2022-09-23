@@ -16,23 +16,23 @@ export default function Section() {
                 <div className="nav-menu-container">
                     <ul className="nav-menu">
                         <li className="nav-item">
-                            <Link href="/how-does-this-work">
-                                <a className="btn">How does this work?</a>
-                            </Link>
-                        </li>
-                        <li className="nav-item">
                             <Link href="/">
                                 <a className="btn">VORP</a>
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link href="/raw-stats">
-                                <a className="btn">Raw</a>
+                                <a className="btn">Raw Stats</a>
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link href="/coming-soon">
                                 <a className="btn">Live Stats</a>
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link href="/how-does-this-work">
+                                <a className="btn">FAQ</a>
                             </Link>
                         </li>
                         <li className="nav-item">
