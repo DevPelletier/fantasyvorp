@@ -47,6 +47,24 @@ let lsIDcompare = '';
 
 // -------------- END of Data Table Variables -------------- //
 
+const flaggedPlayers = [
+  6814,   // cirelli
+  5363,   // landeskog
+  5152,   // Stone
+  4261,   // pacioretty
+  7554,   // jason robertson
+  7115,   // keller
+  7528,   // suzuki
+  5369,   // couturier
+  6083,   // copp
+  4351,   // marchand
+  3982,   // backstrom
+  6060,   // duclair
+  5696,   // wilson
+  7122,   // mcavoy
+  4762,   // lehner
+  3231,   // smith
+]
 
 export default function PlayerVORPData(props) {
   const [playerData, setPlayerData] = useState([])
@@ -581,25 +599,93 @@ export default function PlayerVORPData(props) {
       positionScarcityperGPBool = false;
     }
 
-    const columnPosLvl_4 = 'rgba(69, 128, 241, 0.85)'
-    const columnPosLvl_3 = 'rgba(69, 128, 241, 0.65)'
-    const columnPosLvl_2 = 'rgba(69, 128, 241, 0.4)'
-    const columnPosLvl_1 = 'rgba(69, 128, 241, 0.12)'
-    const columnNegLvl_1 = 'rgba(255, 84, 84, 0.12)'
-    const columnNegLvl_2 = 'rgba(255, 84, 84, 0.4)'
-    const columnNegLvl_3 = 'rgba(255, 84, 84, 0.65)'
-    const columnNegLvl_4 = 'rgba(255, 84, 84, 0.85)'
+    const columnPosLvl_4 = 'rgba(69, 128, 241, 0.9)';
+    const columnPosLvl_3 = 'rgba(69, 128, 241, 0.65)';
+    const columnPosLvl_2 = 'rgba(69, 128, 241, 0.4)';
+    const columnPosLvl_1 = 'rgba(69, 128, 241, 0.15)';
+    const columnNegLvl_1 = 'rgba(255, 84, 84, 0.15)';
+    const columnNegLvl_2 = 'rgba(255, 84, 84, 0.4)';
+    const columnNegLvl_3 = 'rgba(255, 84, 84, 0.65)';
+    const columnNegLvl_4 = 'rgba(255, 84, 84, 0.9)';
 
     '<Tooltip title="This is rank!">RNK</Tooltip>'
-    let colname_Rank = (
-      <Tooltip title="Rank - Full Season" placement="top" disableFocusListener leaveDelay={200}>
+    const colname_Rank_full = (
+      <Tooltip title="Rank - Full Season" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
         <span>RNK</span>
       </Tooltip>
-    )
+    );
+    const colname_Rank_pergp = (
+      <Tooltip title="Rank - perGP" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>RNK</span>
+      </Tooltip>
+    );
+    const colname_Name = (
+      <Tooltip title="Name (Red = Injury)" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>Name</span>
+      </Tooltip>
+    );
+    const colname_Pos = (
+      <Tooltip title="Positions (Yahoo)" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>Pos</span>
+      </Tooltip>
+    );
+    const colname_VPos = (
+      <Tooltip 
+      title="VORP Position: Position for which VORP is calculated. If a player has multi-position capability, then they will have a unique VORP value calculated for each position." 
+        placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>V-Pos</span>
+      </Tooltip>
+    );
+    const colname_VORP_full = (
+      <Tooltip title="Value Over Replacement Player/Position (Full Season). If a player has multi-position capability, then they will have a unique VORP calculated for each position. For 'Overall' VORP Position, the players' position with the greatest VORP is used. Read more about VORP calcs on the 'How Does This Work?' page!" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>VORP</span>
+      </Tooltip>
+    );
+    const colname_VORP_perGP = (
+      <Tooltip title="Value Over Replacement Player (per GP). If a player has multi-position capability, then they will have a unique VORP calculated for each position. For 'Overall' VORP Position, the players' position with the greatest VORP is used. Read more about VORP calcs on the 'How Does This Work?' page!" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>VORP</span>
+      </Tooltip>
+    );
+    const colname_PS_full = (
+      <Tooltip title="Positional Scarcity: The percentage of 'positive remaining value' in the position after that player is taken. This is useful to visualize how much value is remaining at each position for your draft." placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>PS</span>
+      </Tooltip>
+    );
+    const colname_PS_perGP = (
+      <Tooltip title="Positional Scarcity: The percentage of 'positive remaining value' in the position after that player is taken. This is useful to visualize how much value is remaining at each position for your draft." placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>PS</span>
+      </Tooltip>
+    );    
+    const colname_PosRNK_full = (
+      <Tooltip title="Positional Ranks - Full Season" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>Pos RNK</span>
+      </Tooltip>
+    );
+    const colname_PosRNK_perGP = (
+      <Tooltip title="Positional Ranks - perGP" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>Pos RNK</span>
+      </Tooltip>
+    );
+    const colname_ADP = (
+      <Tooltip title="ADP (Yahoo)" placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+        <span>ADP</span>
+      </Tooltip>
+    );
+    let colname_GP = (
+      <span>GP</span>
+    );
+    if (seasonID == 'ProjVORPs') {
+      colname_GP = (
+        <Tooltip title="Projected GP: Based on % of GP of Team's Total GP in past 3 seasons, then calculated using the same projection method as other data." placement="top" disableFocusListener leaveDelay={200} maxWidth={200}>
+          <span>GP</span>
+        </Tooltip>
+      );
+    }
+
     
     columns = [
       {
-      name: colname_Rank,
+      name: colname_Rank_full,
       id: 'Rank',
       selector: row => row[colData['Rank']['dataRef']],
       sortable: true,
@@ -610,7 +696,7 @@ export default function PlayerVORPData(props) {
       }
       },
       {
-        name: 'RNK',  // perGP
+        name: colname_Rank_pergp,
         id: 'RankperGP',
         selector: row => row[colData['Rank_pergp']['dataRef']],
         accessor: "age",
@@ -622,14 +708,22 @@ export default function PlayerVORPData(props) {
         }
       },
       {
-        name: 'Name',
+        name: colname_Name,
         selector: row => row[colData['Name']['dataRef']],
         sortable: false,
         maxWidth: '200px',
         reorder: true,
         style: {
           justifyContent: 'left'
-        }
+        },
+        conditionalCellStyles: [
+          {
+            when: row => (flaggedPlayers.includes(row.PlayerID)),
+            style: {
+              backgroundColor: '#D50000',
+            }
+          },
+        ]
       },
       // {
       //   name: 'Age',
@@ -648,7 +742,7 @@ export default function PlayerVORPData(props) {
         }
       },
       {
-        name: 'Pos',
+        name: colname_Pos,
         selector: row => row.PositionAll,
         sortable: false,
         width: '85px',
@@ -697,7 +791,7 @@ export default function PlayerVORPData(props) {
         ]
       },
       {
-        name: 'V Pos',
+        name: colname_VPos,
         selector: row => row.VORPPosition,
         sortable: false,
         width: dataColWidth01,
@@ -754,7 +848,7 @@ export default function PlayerVORPData(props) {
         ]
       },
       {
-        name: 'VORP',
+        name: colname_VORP_full,
         id: 'VORP',
         selector: row => row[colData['VORP']['dataRef']],
         sortable: true,
@@ -775,7 +869,7 @@ export default function PlayerVORPData(props) {
         ]
       },
       {
-        name: 'VORP',  // perGP
+        name: colname_VORP_perGP, 
         id: 'VORP_perGP',
         selector: row => row[colData['VORP_pergp']['dataRef']],
         sortable: true,
@@ -788,7 +882,7 @@ export default function PlayerVORPData(props) {
         }
       },
       {
-        name: 'PS',
+        name: colname_PS_full,
         selector: row => row.PosScarPct_Totals,
         sortable: true,
         width: '150px',
@@ -860,7 +954,7 @@ export default function PlayerVORPData(props) {
         ]
       },
       {
-        name: 'PS',
+        name: colname_PS_perGP,
         selector: row => row.PosScarPct_perGP,
         sortable: true,
         width: '150px',
@@ -932,7 +1026,7 @@ export default function PlayerVORPData(props) {
         ]
       },
       {
-        name: "Pos RNK",
+        name: colname_PosRNK_full,
         selector: row => row.PosRankAll,
         sortable: false,
         width: '140px',
@@ -942,7 +1036,7 @@ export default function PlayerVORPData(props) {
         }
       },
       {
-        name: "Pos RNK",  // perGP
+        name: colname_PosRNK_perGP,  // perGP
         selector: row => row.PosRankAll_perGP,
         sortable: false,
         width: '140px',
@@ -952,7 +1046,7 @@ export default function PlayerVORPData(props) {
         }
       },
       {
-        name: 'ADP',
+        name: colname_ADP,
         selector: row => row.playerAvgPick,
         sortable: true,
         width: '60px',
@@ -1071,7 +1165,7 @@ export default function PlayerVORPData(props) {
         ]
       },
       {
-        name: "GP",
+        name: colname_GP,
         selector: row => row.GP,
         sortable: true,
         width: '80px',
