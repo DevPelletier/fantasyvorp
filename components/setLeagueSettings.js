@@ -465,7 +465,8 @@ export default function LeagueSettingsForm(props) {
                                 // error={!!error}
                                 // helperText={error ? error.message : null}
                             >
-                                <MenuItem className="mui_menuitem" value={1}>1</MenuItem>
+                                <MenuItem value={0}>0</MenuItem>
+                                <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
                                 <MenuItem value={4}>4</MenuItem>
@@ -494,6 +495,7 @@ export default function LeagueSettingsForm(props) {
                                 // helperText={error ? error.message : null}
                                 // defaultValue={2} // Removed for UX / psych
                             >
+                                <MenuItem value={0}>0</MenuItem>
                                 <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
@@ -523,6 +525,7 @@ export default function LeagueSettingsForm(props) {
                                 // helperText={error ? error.message : null}
                                 // defaultValue={2} // Removed for UX / psych
                             >
+                                <MenuItem value={0}>0</MenuItem>
                                 <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
@@ -552,6 +555,7 @@ export default function LeagueSettingsForm(props) {
                                 // helperText={error ? error.message : null}
                                 // defaultValue={2} // Removed for UX / psych
                             >
+                                <MenuItem value={0}>0</MenuItem>
                                 <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
@@ -581,6 +585,7 @@ export default function LeagueSettingsForm(props) {
                                 // helperText={error ? error.message : null}
                                 // defaultValue={2} // Removed for UX / psych
                             >
+                                <MenuItem value={0}>0</MenuItem>
                                 <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
@@ -610,6 +615,7 @@ export default function LeagueSettingsForm(props) {
                                 // helperText={error ? error.message : null}
                                 // defaultValue={2} // Removed for UX / psych
                             >
+                                <MenuItem value={0}>0</MenuItem>
                                 <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
@@ -639,6 +645,7 @@ export default function LeagueSettingsForm(props) {
                                 // helperText={error ? error.message : null}
                                 // defaultValue={2} // Removed for UX / psych
                             >
+                                <MenuItem value={0}>0</MenuItem>
                                 <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
@@ -669,6 +676,7 @@ export default function LeagueSettingsForm(props) {
                                 // helperText={error ? error.message : null}
                                 // defaultValue={2} // Removed for UX / psych
                             >
+                                <MenuItem value={0}>0</MenuItem>
                                 <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
@@ -699,6 +707,7 @@ export default function LeagueSettingsForm(props) {
                                 // helperText={error ? error.message : null}
                                 // defaultValue={2} // Removed for UX / psych
                             >
+                                <MenuItem value={0}>0</MenuItem>
                                 <MenuItem value={1}>1</MenuItem>
                                 <MenuItem value={2}>2</MenuItem>
                                 <MenuItem value={3}>3</MenuItem>
