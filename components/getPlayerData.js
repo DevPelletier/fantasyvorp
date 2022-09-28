@@ -117,7 +117,7 @@ export default function PlayerVORPData(props) {
   const defaultYahooStatPull = async () => {
     setLoading(true)
 
-    lsID = "12_002_001_0"
+    lsID = "12_102_101_0"
 
     if (firstRender.current) {
       // console.log('Setting standard yahoo cats for first load')
@@ -4141,7 +4141,7 @@ export default function PlayerVORPData(props) {
       ensureDraftViewSettings()
 
       if (lsID == "") {
-        lsID = "12_002_001_0"
+        lsID = "12_102_101_0"
       }
 
       let dbFile = league + '__' + lsID + '__' + seasonID;
