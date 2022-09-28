@@ -50,13 +50,13 @@ export default function LeagueSettingsForm(props) {
     // Get LS Json from public supabase storage file
     let url = 'https://oxkhcrfsekayvbmrpvfj.supabase.co/storage/v1/object/public/site-content/nhl_settings_ID_map.json'
     leagueSettingFile = {};
-    if (!leagueSettingFile) {
-
+    if (Object.keys(leagueSettingFile).length == 0) {
+        console.log('grabbing new LS Map')
         fetch(url)
         .then(res => res.json())
         .then(data =>
             leagueSettingFile = data)
-        // .then( console.log('got leaguesetting map'))
+        .then( console.log('got leaguesetting map' + leagueSettingFile))
         .catch(err => {
             console.log(err)
             console.log(err.message)
@@ -183,18 +183,20 @@ export default function LeagueSettingsForm(props) {
             }
         }
 
-        // console.log('positionJSON :')
-        // console.log(positionJSON)
-        // console.log('categoryJSON :')
-        // console.log(categoryJSON)
+        console.log('positionJSON :')
+        console.log(positionJSON)
+        console.log('categoryJSON :')
+        console.log(categoryJSON)
 
         props.getCatSettings(categoryJSON)
         props.getPosSettings(positionJSON)
 
+        console.log(leagueSettingFile)
+
         
         // Check which Cat ID from leagueSettingFile matches form categoryID
         for (let catSetting in leagueSettingFile["Category_IDs"]) {
-            // console.log(catSetting)
+            console.log('checking: ' + catSetting)
             let catSettingJSON = leagueSettingFile["Category_IDs"][catSetting]
 
             // For some reason comparing (categoryJSON == catSettingJSON) ALWAYS returns false...? So this is the long stupid workaround :'(                
