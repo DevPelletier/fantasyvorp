@@ -218,7 +218,7 @@ export default function LeagueSettingsForm(props) {
                     let settingCatWeight = catSettingJSON[cat]["Weight"];
                     let formCatWeight = categoryJSON[cat]["Weight"];
 
-                    if ((settingCatStatus != formCatStatus) || (settingCatStatus != formCatStatus))  {
+                    if ((settingCatStatus != formCatStatus) || (settingCatWeight != formCatWeight))  {
                         matchCheck = false
                     }
                     if (formCatStatus == 1) {
@@ -290,6 +290,7 @@ export default function LeagueSettingsForm(props) {
 
         }
 
+        // IF LSID is not found in LS ID Map, then serialize the settings and send the prop to be submitted to LSIDSubmissions
         // SET LSID AND TABLE COLUMNS
         let leaguesetid = leagueTeams + '_' + catID + '_' + posID + '_' + scoringType;
         console.log(leaguesetid)
@@ -297,40 +298,36 @@ export default function LeagueSettingsForm(props) {
             console.log(categoryJSON)
             console.log(positionJSON)
 
-            // TODO: Make the lsID descriptive of the specific settings if it's not in the existing settings!
-            // e.g. C1-LW1-RW1-D1-G1_Cats_G1-A2 etc...?
-
             leaguesetid = ""
             leaguesetid += leagueTeams
-            leaguesetid += "_"
+            leaguesetid += "___"
 
             for (let pos in positionJSON) {
-                if (positionJSON[pos] > 0) {
-                    leaguesetid += pos
-                    leaguesetid += positionJSON[pos]
-                    leaguesetid += '-'
-                }
+                // leaguesetid += pos
+                leaguesetid += positionJSON[pos]
+                leaguesetid += '_'
             }
 
-            leaguesetid += "_"
+            leaguesetid += "___"
 
             if (scoringType == 0) {
                 for (let cat in categoryJSON) {
-                    if (categoryJSON[cat]["Status"] == 1) {
-                        leaguesetid += cat
-                        leaguesetid += '-'
-                    }
+                    // leaguesetid += cat
+                    leaguesetid += categoryJSON[cat]["Status"]
+                    leaguesetid += '_'
                 }
             } else {
                 for (let cat in categoryJSON) {
+                    // leaguesetid += cat
                     if (categoryJSON[cat]["Status"] == 1) {
-                        leaguesetid += cat
                         leaguesetid += categoryJSON[cat]["Weight"]
-                        leaguesetid += '-'
+                        leaguesetid += '_'
+                    } else {
+                        leaguesetid += '0_'
                     }
                 }
             }
-            leaguesetid += "_"
+            leaguesetid += "___"
             leaguesetid += scoringType
         }
         console.log(leaguesetid)
@@ -603,36 +600,6 @@ export default function LeagueSettingsForm(props) {
                     />                
                     
                     <Controller
-                    name="roster-w"
-                    control={control}
-                    defaultValue=""
-                    render={({ field: { onChange, value }, fieldState: { error } }) => (
-                        <FormControl className="mui_select">
-                            <InputLabel id="roster-select">W</InputLabel>
-                            <Select
-                                labelId="roster-select"
-                                label="W"
-                                value={value}
-                                onChange={onChange}
-                                // error={!!error}
-                                // helperText={error ? error.message : null}
-                                // defaultValue={2} // Removed for UX / psych
-                            >
-                                <MenuItem value={0}>0</MenuItem>
-                                <MenuItem value={1}>1</MenuItem>
-                                <MenuItem value={2}>2</MenuItem>
-                                <MenuItem value={3}>3</MenuItem>
-                                <MenuItem value={4}>4</MenuItem>
-                                <MenuItem value={5}>5</MenuItem>
-                                <MenuItem value={6}>6</MenuItem>
-                                <MenuItem value={7}>7</MenuItem>
-                                <MenuItem value={8}>8</MenuItem>
-                            </Select>
-                        </FormControl>
-                    )}
-                    />                
-
-                    <Controller
                     name="roster-f"
                     control={control}
                     defaultValue=""
@@ -661,7 +628,35 @@ export default function LeagueSettingsForm(props) {
                         </FormControl>
                     )}
                     />                
-
+                    <Controller
+                    name="roster-w"
+                    control={control}
+                    defaultValue=""
+                    render={({ field: { onChange, value }, fieldState: { error } }) => (
+                        <FormControl className="mui_select">
+                            <InputLabel id="roster-select">W</InputLabel>
+                            <Select
+                                labelId="roster-select"
+                                label="W"
+                                value={value}
+                                onChange={onChange}
+                                // error={!!error}
+                                // helperText={error ? error.message : null}
+                                // defaultValue={2} // Removed for UX / psych
+                            >
+                                <MenuItem value={0}>0</MenuItem>
+                                <MenuItem value={1}>1</MenuItem>
+                                <MenuItem value={2}>2</MenuItem>
+                                <MenuItem value={3}>3</MenuItem>
+                                <MenuItem value={4}>4</MenuItem>
+                                <MenuItem value={5}>5</MenuItem>
+                                <MenuItem value={6}>6</MenuItem>
+                                <MenuItem value={7}>7</MenuItem>
+                                <MenuItem value={8}>8</MenuItem>
+                            </Select>
+                        </FormControl>
+                    )}
+                    />                
 
                     <Controller
                     name="roster-util"
@@ -1049,53 +1044,6 @@ export default function LeagueSettingsForm(props) {
                         />
                     </FormControl>
                     <FormControl className="formControlGroup checkbox-and-textfield cats-field">
-                        <Controller
-                        name="cat_ppp"
-                        control={control}
-                        defaultValue={true}
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
-                            <FormControlLabel 
-                            className="mui_checkbox" 
-                            labelPlacement="start" 
-                            label="PPP"
-                            name="PPP"
-                            // defaultValue={false}
-                            value={value}
-                            onChange={onChange}
-                            // error={!!error}
-                            // helperText={error ? error.message : null}
-                            control={
-                                <Checkbox 
-                                defaultChecked 
-                                value="PPP"
-                                name="PPP"
-                                label="PPP"
-                                />} 
-                            />
-                        )}
-                        />
-                        <Controller
-                        name="pts_ppp"
-                        control={control}
-                        defaultValue=""
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
-                            <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
-                            size="small" 
-                            // fullwidth 
-                            // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
-                            id="outlined-basic" 
-                            label="pts" 
-                            variant="outlined" 
-                            value={value}
-                            onChange={onChange}
-                            // error={!!error}
-                            // helperText={error ? error.message : null}
-                            /> 
-                        )}
-                        />
-                    </FormControl>
-                    <FormControl className="formControlGroup checkbox-and-textfield cats-field">
                     <Controller
                         name="cat_ppg"
                         control={control}
@@ -1189,15 +1137,15 @@ export default function LeagueSettingsForm(props) {
                     </FormControl>
                     <FormControl className="formControlGroup checkbox-and-textfield cats-field">
                         <Controller
-                        name="cat_shp"
+                        name="cat_ppp"
                         control={control}
-                        defaultValue={false}
+                        defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
-                            label="SHP"
-                            name="SHP"
+                            label="PPP"
+                            name="PPP"
                             // defaultValue={false}
                             value={value}
                             onChange={onChange}
@@ -1205,15 +1153,16 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
-                                value="SHP"
-                                name="SHP"
-                                label="SHP"
+                                defaultChecked 
+                                value="PPP"
+                                name="PPP"
+                                label="PPP"
                                 />} 
                             />
                         )}
                         />
                         <Controller
-                        name="pts_shp"
+                        name="pts_ppp"
                         control={control}
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -1233,6 +1182,7 @@ export default function LeagueSettingsForm(props) {
                         )}
                         />
                     </FormControl>
+
                     <FormControl className="formControlGroup checkbox-and-textfield cats-field">
                         <Controller
                         name="cat_shg"
@@ -1327,6 +1277,99 @@ export default function LeagueSettingsForm(props) {
                     </FormControl>
                     <FormControl className="formControlGroup checkbox-and-textfield cats-field">
                         <Controller
+                        name="cat_shp"
+                        control={control}
+                        defaultValue={false}
+                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <FormControlLabel 
+                            className="mui_checkbox" 
+                            labelPlacement="start" 
+                            label="SHP"
+                            name="SHP"
+                            // defaultValue={false}
+                            value={value}
+                            onChange={onChange}
+                            // error={!!error}
+                            // helperText={error ? error.message : null}
+                            control={
+                                <Checkbox 
+                                value="SHP"
+                                name="SHP"
+                                label="SHP"
+                                />} 
+                            />
+                        )}
+                        />
+                        <Controller
+                        name="pts_shp"
+                        control={control}
+                        defaultValue=""
+                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <TextField 
+                            className="mui_textfield mui_textfield_pts hidden" 
+                            size="small" 
+                            // fullwidth 
+                            // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
+                            id="outlined-basic" 
+                            label="pts" 
+                            variant="outlined" 
+                            value={value}
+                            onChange={onChange}
+                            // error={!!error}
+                            // helperText={error ? error.message : null}
+                            /> 
+                        )}
+                        />
+                    </FormControl>
+                    <FormControl className="formControlGroup checkbox-and-textfield cats-field">
+                        <Controller
+                        name="cat_gwg"
+                        control={control}
+                        defaultValue={false}
+                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <FormControlLabel 
+                            className="mui_checkbox" 
+                            labelPlacement="start" 
+                            label="GWG"
+                            name="GWG"
+                            // defaultValue={false}
+                            value={value}
+                            onChange={onChange}
+                            // error={!!error}
+                            // helperText={error ? error.message : null}
+                            control={
+                                <Checkbox 
+                                value="GWG"
+                                name="GWG"
+                                label="GWG"
+                                />} 
+                            />
+                        )}
+                        />
+                        <Controller
+                        name="pts_gwg"
+                        control={control}
+                        defaultValue=""
+                        render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <TextField 
+                            className="mui_textfield mui_textfield_pts hidden" 
+                            size="small" 
+                            // fullwidth 
+                            // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
+                            id="outlined-basic" 
+                            label="pts" 
+                            variant="outlined" 
+                            value={value}
+                            onChange={onChange}
+                            // error={!!error}
+                            // helperText={error ? error.message : null}
+                            /> 
+                        )}
+                        />
+                    </FormControl>
+
+                    <FormControl className="formControlGroup checkbox-and-textfield cats-field">
+                        <Controller
                         name="cat_fow"
                         control={control}
                         defaultValue={false}
@@ -1398,52 +1441,6 @@ export default function LeagueSettingsForm(props) {
                         />
                         <Controller
                         name="pts_fol"
-                        control={control}
-                        defaultValue=""
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
-                            <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
-                            size="small" 
-                            // fullwidth 
-                            // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
-                            id="outlined-basic" 
-                            label="pts" 
-                            variant="outlined" 
-                            value={value}
-                            onChange={onChange}
-                            // error={!!error}
-                            // helperText={error ? error.message : null}
-                            /> 
-                        )}
-                        />
-                    </FormControl>
-                    <FormControl className="formControlGroup checkbox-and-textfield cats-field">
-                        <Controller
-                        name="cat_gwg"
-                        control={control}
-                        defaultValue={false}
-                        render={({ field: { onChange, value }, fieldState: { error } }) => (
-                            <FormControlLabel 
-                            className="mui_checkbox" 
-                            labelPlacement="start" 
-                            label="GWG"
-                            name="GWG"
-                            // defaultValue={false}
-                            value={value}
-                            onChange={onChange}
-                            // error={!!error}
-                            // helperText={error ? error.message : null}
-                            control={
-                                <Checkbox 
-                                value="GWG"
-                                name="GWG"
-                                label="GWG"
-                                />} 
-                            />
-                        )}
-                        />
-                        <Controller
-                        name="pts_gwg"
                         control={control}
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
