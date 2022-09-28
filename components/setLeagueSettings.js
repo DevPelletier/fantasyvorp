@@ -49,6 +49,7 @@ export default function LeagueSettingsForm(props) {
 
     // Get LS Json from public supabase storage file
     let url = 'https://oxkhcrfsekayvbmrpvfj.supabase.co/storage/v1/object/public/site-content/nhl_settings_ID_map.json'
+    leagueSettingFile = {};
     if (!leagueSettingFile) {
 
         fetch(url)

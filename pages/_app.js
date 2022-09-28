@@ -15,10 +15,15 @@ import Script from 'next/script';
 function MyApp({ Component, pageProps }) {
   return (
     <>
-    <div className="mobileCover">
+    <div className="underConstruction">
+      <h1>Undergoing Maintenance!</h1>
+      <h2>Apologies for the inconvenience - we'll be back shortly!</h2>
+    </div>
+    {/* <div className="mobileCover">
       <h1>Unfortunately this site is not formatted for mobile yet!</h1>
       <h2>Please view in a larger browser window</h2>
-    </div>
+    </div> */}
+
 
     {/* Google Analytics Tag */}
     <Script id="ga-script-1" async src="https://www.googletagmanager.com/gtag/js?id=G-BDV80K8G13"></Script>

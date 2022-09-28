@@ -1,7 +1,7 @@
 @import './core';
 @import './typography';
 
-.mobileCover {
+.mobileCover, .underConstruction {
   height: 100vh;
   width: 100vw;
   position: fixed;
@@ -10,6 +10,10 @@
   @include centerAll;
   display: none;
   padding: 20vh 10vw;
+}
+
+.underConstruction {
+  display: grid;
 }
 
 @media only screen and (max-width: 950px) {
