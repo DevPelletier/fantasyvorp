@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }) {
     <>
     <div className="underConstruction">
       <h1>Undergoing Maintenance!</h1>
-      <h2>Apologies for the inconvenience - we'll be back shortly!</h2>
+      <h2>Apologies for the inconvenience - we&apos;ll be back shortly!</h2>
     </div>
     {/* <div className="mobileCover">
       <h1>Unfortunately this site is not formatted for mobile yet!</h1>
