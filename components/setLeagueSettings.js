@@ -45,13 +45,13 @@ export default function LeagueSettingsForm(props) {
 
     const onFormChange = (value) => {
         console.log("Captcha value:", value);
-    }    
+    }
 
     // Get LS Json from public supabase storage file
     let url = 'https://oxkhcrfsekayvbmrpvfj.supabase.co/storage/v1/object/public/site-content/nhl_settings_ID_map.json'
     leagueSettingFile = {};
     if (Object.keys(leagueSettingFile).length == 0) {
-        console.log('grabbing new LS Map')
+        console.log('grabbing new LS Map from ' + url)
         fetch(url)
         .then(res => res.json())
         .then(data =>
