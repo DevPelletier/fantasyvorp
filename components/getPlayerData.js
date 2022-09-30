@@ -4225,7 +4225,7 @@ export default function PlayerVORPData(props) {
         <div className="ls-request-form-container">
           <div className="content">
           <h4 className="warning">Your League&apos;s VORP Data isn&apos;t in our database yet 😥!</h4>
-            <p>As this site is still under development, populating the database is - unfortunately - still a very manual process. Based on user requests, we're adding calculations to our database every day. However, your specific settings have not been added yet.</p>
+            <p>As this site is still under development, populating the database is - unfortunately - still a very manual process. Based on user requests, we&apos;re adding calculations to our database every day. However, your specific settings have not been added yet.</p>
             <p><strong>Please enter your email below to submit your League Settings for calculation. We will notify you the moment your league&apos; VORP data is live ⏰!</strong></p>
              {/* TODO: Add this capability
              <h5>Your Settings:</h5>
