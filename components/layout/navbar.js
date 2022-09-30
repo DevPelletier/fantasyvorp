@@ -21,7 +21,7 @@ export default function Section() {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/raw-stats">
+                            <Link href="/coming-soon">
                                 <a className="btn">Raw Stats</a>
                             </Link>
                         </li>
@@ -31,7 +31,7 @@ export default function Section() {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/how-does-this-work">
+                            <Link href="/faqs-and-tutorial">
                                 <a className="btn">FAQ</a>
                             </Link>
                         </li>

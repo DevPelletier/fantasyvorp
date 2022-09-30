@@ -116,7 +116,7 @@ export default function Home(props) {
                   <Button
                     variant="outlined"
                     >
-                      <Link href="how-does-this-work">
+                      <Link href="faqs-and-tutorial">
                         Learn more about VORP 👉
                       </Link>
                   </Button>
@@ -143,7 +143,7 @@ export default function Home(props) {
                   <Button
                     variant="outlined"
                     >
-                      <Link href="how-does-this-work">
+                      <Link href="faqs-and-tutorial">
                         Learn how VORP is actually calculated 👉
                       </Link>
                   </Button>

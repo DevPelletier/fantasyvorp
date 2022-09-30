@@ -357,7 +357,7 @@ export default function PlayerVORPData(props) {
 
   const setTableCols = (colData) => {
     // console.log('setTableCols')
-    // console.log(colData)
+    console.log(colData)
 
     let showPerGP = false;
     if (perGPSelect == "perGP" && showPerGP == false) {
@@ -851,7 +851,7 @@ export default function PlayerVORPData(props) {
         id: 'VORP',
         selector: row => row[colData['VORP']['dataRef']],
         sortable: true,
-        width: '80px',
+        width: '90px',
         omit: showPerGP,
         style: {
           fontWeight: '600',
@@ -872,7 +872,7 @@ export default function PlayerVORPData(props) {
         id: 'VORP_perGP',
         selector: row => row[colData['VORP_pergp']['dataRef']],
         sortable: true,
-        width: '80px',
+        width: '90px',
         omit: !showPerGP,
         style: {
           fontWeight: '600',
@@ -4224,12 +4224,10 @@ export default function PlayerVORPData(props) {
         { newLS ? (
         <div className="ls-request-form-container">
           <div className="content">
-          <h4 className="warning">Your League&apos;s VORP Data is now being calculated...</h4>
-            <p>As this site is still under development, populating the database is unfortunately still a very manual process. The live database has been pre-populated with several common league settings, but your specific settings apparently were not included.</p>
-            <p>Your specific FHL settings&apos; VORP data will be run through our scripts and pushed live as soon as possible.</p>
-             <p>Feel free to enter your email below to be notified the moment your league&apos;s VORP data is live!
-             </p>
-             {/* TODO: Add this capability - currently this data isn't available as I am only checking against IDs and not actual pos/cats
+          <h4 className="warning">Your League&apos;s VORP Data isn&apos;t in our database yet 😥!</h4>
+            <p>As this site is still under development, populating the database is - unfortunately - still a very manual process. Based on user requests, we're adding calculations to our database every day. However, your specific settings have not been added yet.</p>
+            <p><strong>Please enter your email below to submit your League Settings for calculation. We will notify you the moment your league&apos; VORP data is live ⏰!</strong></p>
+             {/* TODO: Add this capability
              <h5>Your Settings:</h5>
              <h5>{tableTitle2}</h5>
              <h5>{tableTitle3}</h5> */}
@@ -4308,7 +4306,7 @@ export default function PlayerVORPData(props) {
         ""
       )}
 
-      <h5>
+      <h5 className="headingBg">
         Current Settings:<br />
         {tableTitle2}<br />
         {tableTitle3}

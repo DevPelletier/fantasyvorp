@@ -101,13 +101,14 @@ ul {
 .buymeacoffee {
   // @include centerAll;
   position: fixed;
-  bottom: 2vw;
+  bottom: 3vw;
   right: 2vw;
   
   border-radius: 100px;
-  background: $dark-overlay-4;
-  height: 50px;
-  width: 50px;
+  background: $white-bg;
+  border: 1px solid #f5da2c;
+  height: 60px;
+  width: 60px;
   padding: 8px;
   z-index: 9;
   cursor: pointer;
@@ -118,7 +119,7 @@ ul {
   }
 
   .img-container {
-    height: 40px;
+    height: 47px;
     position: relative;
     top: -2px;
   }
@@ -281,6 +282,10 @@ $modalMaxWidth: 800px;
   width: $modalWidth;
   max-width: $modalMaxWidth;
   margin: auto;
+}
+
+.MuiBackdrop-root {
+  background-color: rgba(0,0,0,0.9);
 }
 
 .ls-modal {
@@ -754,6 +759,7 @@ section.faq {
   width: 60vw;
   min-width: 300px;
   max-width: 800px;
+  margin: 40px auto 80px;
 
   h3.headingBg {
     margin-top: 70px;
@@ -767,7 +773,9 @@ section.faq {
 
 .MuiCollapse-root {
   background-color: $dark-bg;
-  border: 1px solid $grey-01;
+  border: 1px solid $grey-03;
+  border-top: none;
+  border-radius: 0 0 $borderRadius01 $borderRadius01;
 }
 
 .MuiAccordionSummary-content {

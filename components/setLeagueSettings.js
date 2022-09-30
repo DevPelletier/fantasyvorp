@@ -20,6 +20,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
+import Tooltip from '@mui/material/Tooltip';
 
 import Stack from '@mui/material/Stack';
 import { registerStyles } from '@emotion/utils';
@@ -56,7 +57,7 @@ export default function LeagueSettingsForm(props) {
         .then(res => res.json())
         .then(data =>
             leagueSettingFile = data)
-        .then( console.log('got leaguesetting map' + leagueSettingFile))
+        // .then( console.log('got leaguesetting map' + leagueSettingFile))
         .catch(err => {
             console.log(err)
             console.log(err.message)
@@ -80,7 +81,7 @@ export default function LeagueSettingsForm(props) {
         recaptchaRef.current.execute();
         // console.log(leagueSettingFile)
         // fakeLoadingTimeout();
-        console.log('submitting league settings...')
+        // console.log('submitting league settings...')
 
         let positionJSON = {}
         let categoryJSON = {}
@@ -96,7 +97,9 @@ export default function LeagueSettingsForm(props) {
             return
         }
 
-        console.log(data)
+        // console.log(data)
+
+        let reverseCountingCats = ['FOL', 'L', 'GA', 'GAA']
 
         for (let x in data) {
             let y = x.slice(0,3);
@@ -162,10 +165,15 @@ export default function LeagueSettingsForm(props) {
                     if (scoringType == 'categories') {
                             categoryJSON[ptsCat]["Weight"] = 1
                     } else {
-                        if (data[x] == "") {
+                        if ((data[x] == "") || (categoryJSON[ptsCat]["Status"] == 0)) {
                             categoryJSON[ptsCat]["Weight"] = 0
                         } else {
-                            categoryJSON[ptsCat]["Weight"] = parseFloat(data[x])
+                            if (reverseCountingCats.includes(ptsCat)) {
+                                categoryJSON[ptsCat]["Weight"] = Math.abs(parseFloat(data[x]))
+                                console.log(ptsCat, categoryJSON[ptsCat]["Weight"])
+                            } else {
+                                categoryJSON[ptsCat]["Weight"] = parseFloat(data[x])
+                            }
                         }
                     }
                     
@@ -191,18 +199,15 @@ export default function LeagueSettingsForm(props) {
         props.getCatSettings(categoryJSON)
         props.getPosSettings(positionJSON)
 
-        console.log(leagueSettingFile)
-
         
         // Check which Cat ID from leagueSettingFile matches form categoryID
         for (let catSetting in leagueSettingFile["Category_IDs"]) {
-            console.log('checking: ' + catSetting)
+            // console.log('checking: ' + catSetting)
             let catSettingJSON = leagueSettingFile["Category_IDs"][catSetting]
 
             // For some reason comparing (categoryJSON == catSettingJSON) ALWAYS returns false...? So this is the long stupid workaround :'(                
             let matchCheck = true
 
-            
             if (scoringType == 0) {
                 for (let cat in catSettingJSON) {
                     let settingCatStatus = catSettingJSON[cat]["Status"];
@@ -221,21 +226,16 @@ export default function LeagueSettingsForm(props) {
                     if ((settingCatStatus != formCatStatus) || (settingCatWeight != formCatWeight))  {
                         matchCheck = false
                     }
-                    if (formCatStatus == 1) {
-                        tableCats.push(cat)
-                    }
                 }         
             }
-
 
             if (matchCheck) {
                 catID = catSetting
                 console.log(catSetting + ' is a match!')
                 break;
             } else {
-                console.log(catSetting + ' is NOT a match')
+                // console.log(catSetting + ' is NOT a match')
             }    
-
         }
 
         // Also create the Column name / data array for getPlayerData
@@ -256,7 +256,6 @@ export default function LeagueSettingsForm(props) {
             tableCats[x] = catColInfo
             x += 1
         }
-
 
         if (scoringType == 0) {
             tableCats['Scoring Type'] = 'Categories'
@@ -285,7 +284,7 @@ export default function LeagueSettingsForm(props) {
                 console.log(posSetting + ' is a match!')
                 break;
             } else {
-                console.log(posSetting + ' is NOT a match')
+                // console.log(posSetting + ' is NOT a match')
             }    
 
         }
@@ -330,11 +329,10 @@ export default function LeagueSettingsForm(props) {
             leaguesetid += "___"
             leaguesetid += scoringType
         }
-        console.log(leaguesetid)
+
+
         props.getLSID(leaguesetid);
         props.getColData(tableCats);
-        // console.log(leaguesetid);
-        // console.log(tableCats);   
         // toggleModal();     
     }   
 
@@ -410,10 +408,12 @@ export default function LeagueSettingsForm(props) {
                     <Controller
                     name="leagueTeams"
                     control={control}
-                    defaultValue={16}
+                    defaultValue={12}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select leagueTeamSelect">
-                            <InputLabel id="leagueTeams-select">Teams</InputLabel>
+                            <InputLabel id="leagueTeams-select">
+                                    Teams
+                            </InputLabel>
                             <Select
                             labelId="leagueTeams-select"
                             label="# of Teams"
@@ -456,7 +456,13 @@ export default function LeagueSettingsForm(props) {
                     defaultValue={2}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select">
-                            <InputLabel id="roster-select">C</InputLabel>
+                            <InputLabel id="roster-select">
+                            <Tooltip title="Centers" placement="top" arrow disableFocusListener leaveDelay={200} maxwidth={200}>
+                                <span>
+                                    C
+                                </span>
+                            </Tooltip>
+                            </InputLabel>
                             <Select
                                 labelId="roster-select"
                                 label="C"
@@ -485,7 +491,13 @@ export default function LeagueSettingsForm(props) {
                     defaultValue={2}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select">
-                            <InputLabel id="roster-select">LW</InputLabel>
+                            <InputLabel id="roster-select">
+                            <Tooltip title="Left Wings" placement="top" arrow disableFocusListener leaveDelay={200} maxwidth={200}>
+                                <span>
+                                    LW
+                                </span>
+                            </Tooltip>
+                            </InputLabel>
                             <Select
                                 labelId="roster-select"
                                 label="LW"
@@ -515,7 +527,13 @@ export default function LeagueSettingsForm(props) {
                     defaultValue={2}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select">
-                            <InputLabel id="roster-select">RW</InputLabel>
+                            <InputLabel id="roster-select">
+                            <Tooltip title="Right Wings" placement="top" arrow disableFocusListener leaveDelay={200} maxwidth={200}>
+                                <span>
+                                    RW
+                                </span>
+                            </Tooltip>
+                            </InputLabel>
                             <Select
                                 labelId="roster-select"
                                 label="RW"
@@ -545,7 +563,13 @@ export default function LeagueSettingsForm(props) {
                     defaultValue={4}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select">
-                            <InputLabel id="roster-select">D</InputLabel>
+                            <InputLabel id="roster-select">
+                            <Tooltip title="Defences" placement="top" arrow disableFocusListener leaveDelay={200} maxwidth={200}>
+                                <span>
+                                    D
+                                </span>
+                            </Tooltip>
+                            </InputLabel>
                             <Select
                                 labelId="roster-select"
                                 label="D"
@@ -575,7 +599,13 @@ export default function LeagueSettingsForm(props) {
                     defaultValue={2}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select">
-                            <InputLabel id="roster-select">G</InputLabel>
+                            <InputLabel id="roster-select">
+                            <Tooltip title="Goalies" placement="top" arrow disableFocusListener leaveDelay={200} maxwidth={200}>
+                                <span>
+                                    G
+                                </span>
+                            </Tooltip>
+                            </InputLabel>
                             <Select
                                 labelId="roster-select"
                                 label="G"
@@ -605,7 +635,13 @@ export default function LeagueSettingsForm(props) {
                     defaultValue=""
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select">
-                            <InputLabel id="roster-select">F</InputLabel>
+                            <InputLabel id="roster-select">
+                            <Tooltip title="Forwards" placement="top" arrow disableFocusListener leaveDelay={200} maxwidth={200}>
+                                <span>
+                                    F
+                                </span>
+                            </Tooltip>
+                            </InputLabel>
                             <Select
                                 labelId="roster-select"
                                 label="F"
@@ -634,7 +670,13 @@ export default function LeagueSettingsForm(props) {
                     defaultValue=""
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select">
-                            <InputLabel id="roster-select">W</InputLabel>
+                            <InputLabel id="roster-select">
+                            <Tooltip title="Wingers" placement="top" arrow disableFocusListener leaveDelay={200} maxwidth={200}>
+                                <span>
+                                    W
+                                </span>
+                            </Tooltip>
+                            </InputLabel>
                             <Select
                                 labelId="roster-select"
                                 label="W"
@@ -664,7 +706,13 @@ export default function LeagueSettingsForm(props) {
                     defaultValue=""
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select">
-                            <InputLabel id="roster-select">Util</InputLabel>
+                            <InputLabel id="roster-select">
+                            <Tooltip title="Utility / Skater Slots" placement="top" arrow disableFocusListener leaveDelay={200} maxwidth={200}>
+                                <span>
+                                    Util
+                                </span>
+                            </Tooltip>
+                            </InputLabel>
                             <Select
                                 labelId="roster-select"
                                 label="Util"
@@ -695,7 +743,13 @@ export default function LeagueSettingsForm(props) {
                     defaultValue={4}
                     render={({ field: { onChange, value }, fieldState: { error } }) => (
                         <FormControl className="mui_select">
-                            <InputLabel id="roster-select">BN</InputLabel>
+                            <InputLabel id="roster-select">
+                            <Tooltip title="Bench Slots" placement="top" arrow disableFocusListener leaveDelay={200} maxwidth={200}>
+                                <span>
+                                    Bn
+                                </span>
+                            </Tooltip>
+                            </InputLabel>
                             <Select
                                 labelId="roster-select"
                                 label="BN"
@@ -769,6 +823,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Goals" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -787,6 +843,9 @@ export default function LeagueSettingsForm(props) {
                                 label="G"
                                 />} 
                             />
+    
+                            </Tooltip>
+
                         )}
                         />
                         <Controller
@@ -817,6 +876,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Assists" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -835,6 +896,9 @@ export default function LeagueSettingsForm(props) {
                                 label="A"
                                 />} 
                             />
+
+                            </Tooltip>
+
                         )}
                         />
                         <Controller
@@ -864,6 +928,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Points" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -876,11 +942,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="Pts"
                                 name="Pts"
                                 label="Pts"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -908,8 +977,10 @@ export default function LeagueSettingsForm(props) {
                         <Controller
                         name="cat_+/-"
                         control={control}
-                        defaultValue={false}
+                        defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Plus-Minus" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -922,11 +993,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                defaultChecked 
                                 value="+/-"
                                 name="+/-"
                                 label="+/-"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -956,6 +1030,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Penalties in Minutes" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -968,11 +1044,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="PIM"
                                 name="PIM"
                                 label="PIM"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1002,6 +1081,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Shots on Goal" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1020,6 +1101,8 @@ export default function LeagueSettingsForm(props) {
                                 label="SOG"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1049,6 +1132,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Powerplay Goals" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1061,11 +1146,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="PPG"
                                 name="PPG"
                                 label="PPG"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1095,6 +1183,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Powerplay Assists" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1107,11 +1197,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="PPA"
                                 name="PPA"
                                 label="PPA"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1141,6 +1234,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Powerplay Points" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1159,6 +1254,8 @@ export default function LeagueSettingsForm(props) {
                                 label="PPP"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1189,6 +1286,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Shorthanded Goals" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1201,11 +1300,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="SHG"
                                 name="SHG"
                                 label="SHG"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1235,6 +1337,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Shorthanded Assists" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1247,11 +1351,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="SHA"
                                 name="SHA"
                                 label="SHA"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1281,6 +1388,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Shorthanded Points" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1293,11 +1402,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="SHP"
                                 name="SHP"
                                 label="SHP"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1327,6 +1439,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Game-Winning Goals" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1339,11 +1453,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="GWG"
                                 name="GWG"
                                 label="GWG"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1374,6 +1491,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Faceoff Wins" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1386,11 +1505,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="FOW"
                                 name="FOW"
                                 label="FOW"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1420,6 +1542,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Faceoff Losses" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1432,11 +1556,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="FOL"
                                 name="FOL"
                                 label="FOL"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1467,6 +1594,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Hits" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1485,6 +1614,8 @@ export default function LeagueSettingsForm(props) {
                                 label="HIT"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1514,6 +1645,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Blocks" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1532,6 +1665,8 @@ export default function LeagueSettingsForm(props) {
                                 label="BLK"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1567,6 +1702,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Games Started" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1579,11 +1716,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="GS"
                                 name="GS"
                                 label="GS"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1613,6 +1753,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Wins" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1631,6 +1773,8 @@ export default function LeagueSettingsForm(props) {
                                 label="W"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1660,6 +1804,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Losses" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1672,11 +1818,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="L"
                                 name="L"
                                 label="L"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1706,6 +1855,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Goals Against" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1718,11 +1869,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="GA"
                                 name="GA"
                                 label="GA"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1752,6 +1906,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Goals Against Average" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1770,6 +1926,8 @@ export default function LeagueSettingsForm(props) {
                                 label="GAA"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1799,6 +1957,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Shots Against" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1811,11 +1971,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="SA"
                                 name="SA"
                                 label="SA"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1845,6 +2008,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Saves" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1857,11 +2022,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                // defaultChecked 
                                 value="SV"
                                 name="SV"
                                 label="SV"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1891,6 +2059,8 @@ export default function LeagueSettingsForm(props) {
                         control={control}
                         defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Save Percentage" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1909,6 +2079,8 @@ export default function LeagueSettingsForm(props) {
                                 label="SV%"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller
@@ -1936,8 +2108,10 @@ export default function LeagueSettingsForm(props) {
                         <Controller
                         name="cat_so"
                         control={control}
-                        defaultValue={false}
+                        defaultValue={true}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
+                            <Tooltip title="Shutouts" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
+
                             <FormControlLabel 
                             className="mui_checkbox" 
                             labelPlacement="start" 
@@ -1950,11 +2124,14 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
+                                defaultChecked 
                                 value="SO"
                                 name="SO"
                                 label="SO"
                                 />} 
                             />
+
+                            </Tooltip>
                         )}
                         />
                         <Controller

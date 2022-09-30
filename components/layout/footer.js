@@ -19,7 +19,7 @@ export default function Section() {
                         <h3>FooterTitle</h3>
                     </li> */}
                     <li>
-                        <Link href="/how-does-this-work">
+                        <Link href="/faqs-and-tutorial">
                             <a>FAQ & Help</a>
                         </Link>
                     </li>
