@@ -4,7 +4,7 @@
     @include flex-center-col;
     justify-content: flex-start;
     height: fit-cotent;
-    // min-height: 50vh;
+    min-height: 110vh;
     padding: 0 16px 32px;
     width: 95vw;
     max-width: $maxPageWidth;
@@ -31,20 +31,13 @@
     }
 
     .playerLoadOverlay {
-        position: absolute;
-        width: inherit;
-        height: inherit;
         background-color: $grey-02;
         border-radius: $borderRadius01;
         z-index: 100;
         @include centerAll;
-
-        h3 {
-            // width: 500px;
-            margin: 32px auto 33vh;
-            border-radius: 5px;
-            background: none;
-        }
+        height: 110vh;
+        width: 95vw;
+        position: absolute;
     }
 }
 
@@ -68,6 +61,7 @@
 @media only screen and (max-width: 950px) {
     .playerData {
         padding: 0 0 32px;
+        min-height: unset;
 
         h5 {
             margin: 8px 8px 16px;
