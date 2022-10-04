@@ -22,15 +22,19 @@ export default function Home(props) {
   const [posSettings, setPosSettings] = useState({});
   const [catSettings, setCatSettings] = useState({});
   const [activeAnswer, setActiveAnswer] = useState();
+  const [legend, setLegend] = useState(false);
+
 
   const [lsModal, setLSModal] = useState(false);
 
   const handleOpen = () => setLSModal(true);
   const handleClose = () => setLSModal(false);
 
+  const toggleLegend = () => setLegend(!legend);
+
   const pickAnswer = (answerID) => {
     // setActiveAnswer(answerID);
-    console.log('pickanswer: ' + answerID)
+    // console.log('pickanswer: ' + answerID)
 
     let answersParent = document.getElementById(`content_2`)
     for (const child of answersParent.children) {
@@ -174,20 +178,22 @@ export default function Home(props) {
         </section>
 
 
+        <div className="homeCtaContainer">
+          <Button 
+            onClick={handleOpen} 
+            variant="contained" 
+            type="submit" 
+            value="Submit"
+            className="setLSbtn"
+            >
+              Input your League Settings
+          </Button>
+        </div>
 
         <h2>NHL Fantasy VORP Data</h2>
-        <Button 
-          onClick={handleOpen} 
-          variant="contained" 
-          type="submit" 
-          value="Submit"
-          className="setLSbtn"
-          >
-            Input your League Settings
-        </Button>
         <div className="tableLegend">
-        <p>Notes:</p>
-        <ul className="withDots">
+        <h4 onClick={toggleLegend}>Notes & Legend:</h4>
+        <ul className={`withDots ${legend ? "active" : ""}`}>
           <li>
             All VORPs are adjusted to your League&apos;s replacement levels [A VORP of 0 means they are exactly at the replacement level].
           </li>

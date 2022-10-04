@@ -52,7 +52,7 @@ export default function LeagueSettingsForm(props) {
     let url = 'https://oxkhcrfsekayvbmrpvfj.supabase.co/storage/v1/object/public/site-content/nhl_settings_ID_map.json'
     leagueSettingFile = {};
     if (Object.keys(leagueSettingFile).length == 0) {
-        console.log('grabbing new LS Map from ' + url)
+        // console.log('grabbing new LS Map from ' + url)
         fetch(url)
         .then(res => res.json())
         .then(data =>
@@ -191,10 +191,10 @@ export default function LeagueSettingsForm(props) {
             }
         }
 
-        console.log('positionJSON :')
-        console.log(positionJSON)
-        console.log('categoryJSON :')
-        console.log(categoryJSON)
+        // console.log('positionJSON :')
+        // console.log(positionJSON)
+        // console.log('categoryJSON :')
+        // console.log(categoryJSON)
 
         props.getCatSettings(categoryJSON)
         props.getPosSettings(positionJSON)
@@ -231,7 +231,7 @@ export default function LeagueSettingsForm(props) {
 
             if (matchCheck) {
                 catID = catSetting
-                console.log(catSetting + ' is a match!')
+                // console.log(catSetting + ' is a match!')
                 break;
             } else {
                 // console.log(catSetting + ' is NOT a match')
@@ -281,7 +281,7 @@ export default function LeagueSettingsForm(props) {
 
             if (matchCheck) {
                 posID = posSetting
-                console.log(posSetting + ' is a match!')
+                // console.log(posSetting + ' is a match!')
                 break;
             } else {
                 // console.log(posSetting + ' is NOT a match')
@@ -292,10 +292,10 @@ export default function LeagueSettingsForm(props) {
         // IF LSID is not found in LS ID Map, then serialize the settings and send the prop to be submitted to LSIDSubmissions
         // SET LSID AND TABLE COLUMNS
         let leaguesetid = leagueTeams + '_' + catID + '_' + posID + '_' + scoringType;
-        console.log(leaguesetid)
+        // console.log(leaguesetid)
         if ((leaguesetid.length < 11) || (scoringType == null)) {
-            console.log(categoryJSON)
-            console.log(positionJSON)
+            // console.log(categoryJSON)
+            // console.log(positionJSON)
 
             leaguesetid = ""
             leaguesetid += leagueTeams
@@ -977,7 +977,7 @@ export default function LeagueSettingsForm(props) {
                         <Controller
                         name="cat_+/-"
                         control={control}
-                        defaultValue={true}
+                        defaultValue={false}
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <Tooltip title="Plus-Minus" placement="top" disableFocusListener enterDelay={500} leaveDelay={200} maxwidth={200}>
 
@@ -993,7 +993,7 @@ export default function LeagueSettingsForm(props) {
                             // helperText={error ? error.message : null}
                             control={
                                 <Checkbox 
-                                defaultChecked 
+                                // defaultChecked 
                                 value="+/-"
                                 name="+/-"
                                 label="+/-"

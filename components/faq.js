@@ -39,7 +39,7 @@ export default function Section() {
             <br />
             <hr />
             <br />
-            <h3 className="headingBg">
+            <h3 className="headingBg" id="aboutVORP">
                 What is VORP?
             </h3>
             <p><strong>VORP: Value Over Replacement Player</strong><br />
@@ -95,7 +95,7 @@ export default function Section() {
 
             
 
-            <Accordion className="accordion">
+            <Accordion className="accordion" id="faqs">
             <AccordionSummary
             // expandIcon={<ExpandMoreRoundedIcon />}
             aria-controls="panel1a-content"
@@ -105,7 +105,7 @@ export default function Section() {
             </AccordionSummary>
             <AccordionDetails>
             <p>
-                    <strong>A: </strong>Ah, right. Ok, so VORP is based on Z-scores, which is derived from Standard Deviations, which is a mathematical tool that makes it possible to compare and more accurately analyze various large datasets. Easy, right? Ha...</p>
+                    <strong>A: </strong>VORP is based on Z-scores - which is derived from Standard Deviations - which is a mathematical tool that makes it possible to compare and more accurately analyze various large datasets. Easy, right? Ha...</p>
                     <p>Think of all of the player stats within 1 category, let&apos;s take Goals and Centers for this example. <a>1 SD</a> [Standard Deviation] is a standard &apos;slice&apos; of the &apos;# of Goals&apos; within a given group [Centers, in this case]. So let&apos;s say <a>1 SD = 10 goals</a>.</p>
                     <p>This is where <a>Z-Scores</a> come in. A player&apos;s Z-Score is the count of <a>SDs</a> that player is in distance from the <a>average</a> of that category. So let&apos;s say, for # of Goals amongst Centers, the <a>average = 15</a>. PlayerX is a Center that had <strong>25 Goals</strong> last year.</p><p>Therefore, PlayerX has a <a>Z-Score of 1.0 in Goals, amongst Centers</a>; he is +1.0 SD from the average.</p>
                     <p>Essentially, the process is:

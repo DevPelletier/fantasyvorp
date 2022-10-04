@@ -3,7 +3,7 @@
 .playerData {
     @include flex-center-col;
     justify-content: flex-start;
-    height: 110vh;
+    height: fit-cotent;
     // min-height: 50vh;
     padding: 0 16px 32px;
     width: 95vw;
@@ -11,6 +11,7 @@
     box-shadow: $shadow01;
     border-radius: 5px;
     background: $dark-overlay-1;
+    margin-bottom: 50px;
 
     h5 {
         text-transform: uppercase;
@@ -39,7 +40,7 @@
         @include centerAll;
 
         h3 {
-            width: 500px;
+            // width: 500px;
             margin: 32px auto 33vh;
             border-radius: 5px;
             background: none;
@@ -60,4 +61,32 @@
     box-shadow: $shadow02;
     border: 1px solid $grey-03;
     border-radius: $borderRadius01;
+}
+
+
+// ----------- MOBILE STYLES ----------- //
+@media only screen and (max-width: 950px) {
+    .playerData {
+        padding: 0 0 32px;
+
+        h5 {
+            margin: 8px 8px 16px;
+            border-radius: $borderRadius01;
+        }
+
+        .dataTableContainer {
+            width: 98%;
+        }
+
+        .playerLoadOverlay {
+            position: fixed;
+            bottom: 0;
+            height: calc(100% - 60px);
+            width: 100vw;
+            display: grid;
+            place-content: center;
+        }    
+    }
+
+
 }

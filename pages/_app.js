@@ -19,10 +19,10 @@ function MyApp({ Component, pageProps }) {
       <h1>Undergoing Maintenance!</h1>
       <h2>Apologies for the inconvenience - we&apos;ll be back shortly!</h2>
     </div> */}
-    <div className="mobileCover">
+    {/* <div className="mobileCover">
       <h1>Unfortunately this site is not formatted for mobile yet!</h1>
       <h2>Please view in a larger browser window</h2>
-    </div>
+    </div> */}
 
 
     {/* Google Analytics Tag */}
@@ -41,7 +41,8 @@ function MyApp({ Component, pageProps }) {
         <title>FantasyVORP.com (Beta)</title>
         <meta name="description" content="Fantasy VORP - Value Over Replacement Stats for Fantasy Sports" />
         <link rel="icon" href="/favicon-vorp.png" />
-        <meta property="og:image" content={img_weblink} title="FantasyVORP.com"/>
+        <meta property="og:image" content='../public/fantasyVORP-main-1.jpg' title="FantasyVORP.com"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
     </Head>
 
     <Navbar />

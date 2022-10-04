@@ -61,3 +61,31 @@
 
 
 }
+
+
+
+@media only screen and (max-width: 950px) {
+    footer.footer {
+        height: unset;
+
+        .footerLinksContainer {
+            flex-direction: column-reverse;
+
+            div {
+                margin: 16px auto;
+            }
+        }
+
+        .footerLinkList {
+            flex-direction: column;
+            margin: 32px;
+            width: 100%;
+
+            li {
+                margin: 0 auto;
+                padding: 16px 0;
+                width: 100%;
+            }
+        }
+    }
+}

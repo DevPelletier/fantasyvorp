@@ -9,14 +9,14 @@
 .main {
   min-height: 100vh;
   // padding: 4rem 0;
-  flex: 1;
+  // flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   // background-color: $dark-overlay-1;
   width: 95vw;
-  margin: auto;
+  // margin: auto;
 }
 
 .footer {
@@ -120,7 +120,6 @@
 .hero {
   @include flex-center-col;
   justify-content: flex-start;
-  min-height: 90vh;
   min-height: 600px;
   width: 100%;  
 
@@ -150,5 +149,21 @@
   .grid {
     width: 100%;
     flex-direction: column;
+  }
+}
+
+// ----------- MOBILE STYLES ----------- //
+@media only screen and (max-width: 950px) {
+
+  .hero {
+
+    .content_1 {
+      min-height: unset;
+
+      h1 {
+        line-height: 200%;
+      }
+    }
+
   }
 }

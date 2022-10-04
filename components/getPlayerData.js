@@ -33,6 +33,9 @@ import { Controller, useForm } from 'react-hook-form';
 import styles from '../styles/components/playerData.module.scss';
 import { customRDTStyles, specificRDTStyles } from '../styles/components/dataTable';
 
+import { Grid } from  'react-loader-spinner'
+// import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+
 // -------------- Data Table Variables -------------- //
 const dataColWidth01 = "66px";
 const dataColWidth02 = "100px";
@@ -357,7 +360,7 @@ export default function PlayerVORPData(props) {
 
   const setTableCols = (colData) => {
     // console.log('setTableCols')
-    console.log(colData)
+    // console.log(colData)
 
     let showPerGP = false;
     if (perGPSelect == "perGP" && showPerGP == false) {
@@ -4161,8 +4164,8 @@ export default function PlayerVORPData(props) {
       if (error) {
         setNewLS(true);
         console.log('Database Error!')
-        console.log(error.message)
-        // alert('Uh oh, looks there was an issue with submitting your request. Try refreshing the page and submitting again. If the issue persists, please submit the issue to hello@fantasyvorp.com')
+        // console.log(error.message)
+        alert('Uh oh, looks there was an issue with submitting your request. Try refreshing the page and submitting again. If the issue persists, please submit the issue to hello@fantasyvorp.com')
         return data; // abort
       }
       
@@ -4216,7 +4219,17 @@ export default function PlayerVORPData(props) {
     <section className={styles.playerData}>
         { loading ? (
           <div className={styles.playerLoadOverlay}>
-            <h3>VORP Data Loading...</h3>
+            {/* <h3>VORP Data Loading...</h3> */}
+            <Grid
+              height="80"
+              width="80"
+              color="#536DFE"
+              ariaLabel="grid-loading"
+              radius="12.5"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />          
           </div>
         ) : (
           ""
