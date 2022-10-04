@@ -121,7 +121,8 @@
   @include flex-center-col;
   justify-content: flex-start;
   min-height: 600px;
-  width: 100%;  
+  width: 100%;
+
 
   .logoFont {
       background-color: $dark-overlay-1;
@@ -156,12 +157,14 @@
 @media only screen and (max-width: 950px) {
 
   .hero {
+    margin-top: 110px;
 
     .content_1 {
       min-height: unset;
 
       h1 {
         line-height: 200%;
+        width: 85vw;
       }
     }
 

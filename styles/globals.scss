@@ -1081,8 +1081,10 @@ section.faq {
       min-height: 80px;
       max-height: 120px;
       justify-content: end;
-      padding: 0 6vw 0 0;
-      width: -webkit-fill-available;
+      // padding: 0 6vw 0 0;
+      // width: -webkit-fill-available;
+      padding: 0;
+      width: inherit;
       
       &:hover {
         color: white;
@@ -1092,6 +1094,10 @@ section.faq {
 
     .subNav-menu {
       display: flex;
+    }
+
+    .subMenu {
+      display: none !important;
     }
   }
 

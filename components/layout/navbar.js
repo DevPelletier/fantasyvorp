@@ -52,9 +52,9 @@ export default function Section() {
                         onMouseEnter={() => setDropdown_faq(true)}
                         onMouseLeave={() => setDropdown_faq(false)}
                         >
-                            {/* <Link href="/faqs-and-tutorial"> */}
+                            <Link href="/faqs-and-tutorial">
                                 <a className="btn">FAQ</a>
-                            {/* </Link> */}
+                            </Link>
                             <ul className={`subMenu ${ dropdown_faq ? "active" : "" }`}>
                                 <li className="subMenu-item">
                                     <Link href="/faqs-and-tutorial">
