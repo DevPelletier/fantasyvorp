@@ -192,16 +192,16 @@ export default function Home(props) {
 
         <h2>NHL Fantasy VORP Data</h2>
         <div className="tableLegend">
-        <h4 onClick={toggleLegend}>Notes & Legend:</h4>
-        <ul className={`withDots ${legend ? "active" : ""}`}>
-          <li>
-            All VORPs are adjusted to your League&apos;s replacement levels [A VORP of 0 means they are exactly at the replacement level].
-          </li>
-          <li>
-            Category VORPs may not sum to overall VORP or positional VORP. This is because each VORP is a silo - only compared to relevant comparators, and finally adjusted to replacement levels. [e.g. PlayerX having &quot;2.3&quot; value for &apos;G&apos; means that&apos;s how valuable they are in that category <em>relative to other players at their position</em>, <strong>not</strong> relative to the entire league.]
-          </li>
-          <li>Please take these projections with a <strong>large grain of salt!</strong> They are ONLY supposed to give a general idea of potential value, based entirely on raw stats with zero adjustments. <a href="faqs">Learn about how I made these projections here.</a></li>
-        </ul>
+          <h4 onClick={toggleLegend}>Notes & Legend:</h4>
+          <ul className={`withDots ${legend ? "active" : ""}`}>
+            <li>
+              All VORPs are adjusted to your League&apos;s replacement levels [A VORP of 0 means they are exactly at the replacement level].
+            </li>
+            <li>
+              Category VORPs may not sum to overall VORP or positional VORP. This is because each VORP is a silo - only compared to relevant comparators, and finally adjusted to replacement levels. [e.g. PlayerX having &quot;2.3&quot; value for &apos;G&apos; means that&apos;s how valuable they are in that category <em>relative to other players at their position</em>, <strong>not</strong> relative to the entire league.]
+            </li>
+            <li>Please take these projections with a <strong>large grain of salt!</strong> They are ONLY supposed to give a general idea of potential value, based entirely on raw stats with zero adjustments. <a href="faqs">Learn about how I made these projections here.</a></li>
+          </ul>
         </div>
         <div id="dataTableAnchor"></div>
         {/* <StrictMode> */}

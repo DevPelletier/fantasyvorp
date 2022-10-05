@@ -32,6 +32,7 @@ import { Controller, useForm } from 'react-hook-form';
 
 import styles from '../styles/components/playerData.module.scss';
 import { customRDTStyles, specificRDTStyles } from '../styles/components/dataTable';
+import { useRouter } from 'next/router';
 
 import { Grid } from  'react-loader-spinner'
 // import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
@@ -57,7 +58,7 @@ const flaggedPlayers = [
   4261,   // pacioretty
   7554,   // jason robertson
   7115,   // keller
-  7528,   // suzuki
+  // 7528,   // suzuki
   5369,   // couturier
   6083,   // copp
   4351,   // marchand
@@ -68,6 +69,7 @@ const flaggedPlayers = [
   4762,   // lehner
   3231,   // smith
 ]
+
 
 export default function PlayerVORPData(props) {
   const [playerData, setPlayerData] = useState([])
@@ -86,6 +88,7 @@ export default function PlayerVORPData(props) {
   const [selectedRows, setSelectedRows] = useState([]);
 	const [toggleCleared, setToggleCleared] = useState(false);
 
+  const { pathname } = useRouter()
 
   const { register, watch, control, reset, handleSubmit, errors, setValue } = useForm();
   let tablePosFilter = watch("tablePosFilter");
@@ -117,10 +120,331 @@ export default function PlayerVORPData(props) {
     [lsID]
   );
 
+  let lsRequestForm = (
+    <h5 className="headingBg">NHL Raw Stats & Weighted Avg Projection</h5>
+  );
+  if ((pathname != '/raw-stats') && (newLS)) {
+    lsRequestForm = (
+      <>
+      <div className="ls-request-form-container">
+        <div className="content">
+        <h4 className="warning">Your League&apos;s VORP Data isn&apos;t in our database yet 😥!</h4>
+          <p>As this site is still under development, populating the database is - unfortunately - still a very manual process. Based on user requests, we&apos;re adding calculations to our database every day. However, your specific settings have not been added yet.</p>
+          <p><strong>Please enter your email below to submit your League Settings for calculation. We will notify you the moment your league&apos; VORP data is live ⏰!</strong></p>
+          {/* TODO: Add this capability
+          <h5>Your Settings:</h5>
+          <h5>{tableTitle2}</h5>
+          <h5>{tableTitle3}</h5> */}
+
+          <form className="ls-request-form" onSubmit={handleSubmit(submitRequestedLSID)}>
+          <div className="form_group_container">
+              <Controller
+              name="lsRequestEmail"
+              control={control}
+              defaultValue=""
+              required
+              type="email"
+              render={({ field: { onChange, value }, fieldState: { errors } }) => (
+                  <TextField 
+                  id="outlined-basic" 
+                  label="Email" 
+                  variant="outlined" 
+                  value={value}
+                  onChange={onChange}
+                  className="mui_textfield"
+                  type="email"
+                  />
+              )}
+              />
+              <Controller
+                // rules={{ required: 'Scoring Type required' }}
+                name="radioSubscribe"
+                control={control}
+                defaultValue="singlenote"
+                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    <RadioGroup
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    name="radio-subscribe"
+                    className="formControlGroup radioGroup"
+                    defaultValue='singlenote'
+                    value={value}
+                    onChange={(e) => {
+                        onChange(e);
+                    }}
+                    // error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <FormControlLabel 
+                        value="singlenote" 
+                        name="singlenote" 
+                        // checked={scoringRadio === "categories"} 
+                        label="Only use this email for THIS notification, and delete all records afterwards."
+                        control={<Radio />} 
+                        />
+
+                        <FormControlLabel 
+                        value="subscribe" 
+                        name="subscribe" 
+                        label="I would like to subscribe to future updates of FantasyVORP.com" 
+                        // checked={scoringRadio === "points"} 
+                        control={<Radio />} 
+                        />
+                    </RadioGroup>
+                )}
+                />                
+
+
+                  <Button 
+                  variant="contained" 
+                  type="submit" 
+                  value="Submit">
+                    Submit
+                  </Button>
+
+          </div>
+        </form>
+      </div>
+
+      </div>
+      <h5 className="headingBg">
+        Current Settings:<br />
+        {tableTitle2}<br />
+        {tableTitle3}
+      </h5>
+      </>
+    );
+  }
+
+  let playerDataControlMenu;
+  if (pathname != '/raw-stats') {
+    playerDataControlMenu = (
+      <div className="playerDataControlMenu">
+        <div className="form_group_container">
+          <Controller
+            name="tableViewSelect"
+            control={control}
+            defaultValue='Stats'
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="tableViewSelect-select">Table View</InputLabel>
+                    <Select
+                    labelId="tableViewSelect-select"
+                    label="Table View"
+                    // sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <MenuItem value={'Stats'}>Stats</MenuItem>
+                        <MenuItem value={'Draft'}>Draft</MenuItem>
+                    </Select>
+                </FormControl>
+              )}
+            />
+            <Controller
+            name="tablePosFilter"
+            control={control}
+            defaultValue="Overall"
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="tablePosFilter-select">Position Filter</InputLabel>
+                    <Select
+                    labelId="tablePosFilter-select"
+                    label="Position Filter"
+                    // sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <MenuItem value={'Overall'}>Overall</MenuItem>
+                        <MenuItem value={'C'}>C</MenuItem>
+                        <MenuItem value={'LW'}>LW</MenuItem>
+                        <MenuItem value={'RW'}>RW</MenuItem>
+                        <MenuItem value={'D'}>D</MenuItem>
+                        <MenuItem value={'G'}>G</MenuItem>
+                        {/* <MenuItem value={'None'}>None</MenuItem> */}
+                    </Select>
+                </FormControl>
+            )}
+            // rules={{ required: 'Fantasy Site required' }}
+            />
+            <Controller
+            name="seasonSelect"
+            control={control}
+            defaultValue="ProjVORPs"
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="seasonSelect-select">Season Select</InputLabel>
+                    <Select
+                    labelId="seasonSelect-select"
+                    label="Season Select"
+                    // sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <MenuItem value={'ProjVORPs'}>22-23 Projection</MenuItem>
+                        <MenuItem value={'21-22'}>21-22</MenuItem>
+                        <MenuItem value={'20-21'}>20-21</MenuItem>
+                        <MenuItem value={'19-20'}>19-20</MenuItem>
+                    </Select>
+                </FormControl>
+              )}
+            />
+            <Controller
+            name="perGPSelect"
+            control={control}
+            defaultValue='Season'
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <FormControl className="mui_select">
+                    <InputLabel id="perGP-select">Value Calculated For:</InputLabel>
+                    <Select
+                    labelId="perGPSelect"
+                    label="Value Calculated For:"
+                    // sx={{ width: 250 }}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    // helperText={error ? error.message : null}
+                    >
+                        <MenuItem value={'Season'}>Full Season</MenuItem>
+                        <MenuItem value={'perGP'}>Per Game</MenuItem>
+                    </Select>
+                </FormControl>
+              )}
+            />
+            </div>
+          {/* <div className="form_group_container">
+            <FormControl component="fieldset">
+              <FormGroup aria-label="position" row>
+
+                  <FormControlLabel
+                    label="Show Position Ranks"
+                    labelPlacement="top"
+                    control={
+                      <Checkbox 
+                        checked={!hidePosRnk}
+                        onChange={() => setHidePosRnk(!hidePosRnk)}
+                        inputProps={{ 'aria-label': 'controlled' }}  
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    label="Show ADP"
+                    labelPlacement="top"
+                    control={
+                      <Checkbox 
+                        checked={!hideADP}
+                        onChange={() => setHideADP(!hideADP)}
+                        inputProps={{ 'aria-label': 'controlled' }}  
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    label="Show Age"
+                    labelPlacement="top"
+                    control={
+                      <Checkbox 
+                        checked={!hideAge}
+                        onChange={() => setHideAge(!hideAge)}
+                        inputProps={{ 'aria-label': 'controlled' }}  
+                      />
+                    }
+                  />
+
+              </FormGroup>
+            </FormControl>
+        </div> */}
+      </div>
+    );
+  } else {
+    playerDataControlMenu = (
+      <div className="playerDataControlMenu">
+      <div className="form_group_container">
+          <Controller
+          name="tablePosFilter"
+          control={control}
+          defaultValue="None"
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <FormControl className="mui_select">
+                  <InputLabel id="tablePosFilter-select">Position Filter</InputLabel>
+                  <Select
+                  labelId="tablePosFilter-select"
+                  label="Position Filter"
+                  // sx={{ width: 250 }}
+                  value={value}
+                  onChange={onChange}
+                  error={!!error}
+                  // helperText={error ? error.message : null}
+                  >
+                      <MenuItem value={"None"}>None</MenuItem>
+                      <MenuItem value={'C'}>C</MenuItem>
+                      <MenuItem value={'LW'}>LW</MenuItem>
+                      <MenuItem value={'RW'}>RW</MenuItem>
+                      <MenuItem value={'D'}>D</MenuItem>
+                      <MenuItem value={'G'}>G</MenuItem>
+                      {/* <MenuItem value={'None'}>None</MenuItem> */}
+                  </Select>
+              </FormControl>
+          )}
+          // rules={{ required: 'Fantasy Site required' }}
+          />
+          <Controller
+          name="seasonSelect"
+          control={control}
+          defaultValue="22-23"
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <FormControl className="mui_select">
+                  <InputLabel id="seasonSelect-select">Season Select</InputLabel>
+                  <Select
+                  labelId="seasonSelect-select"
+                  label="Season Select"
+                  // sx={{ width: 250 }}
+                  value={value}
+                  onChange={onChange}
+                  error={!!error}
+                  // helperText={error ? error.message : null}
+                  >
+                      <MenuItem value={'22-23'}>22-23 Projection</MenuItem>
+                      <MenuItem value={'21-22'}>21-22</MenuItem>
+                      <MenuItem value={'20-21'}>20-21</MenuItem>
+                      <MenuItem value={'19-20'}>19-20</MenuItem>
+                  </Select>
+              </FormControl>
+            )}
+          />
+          <Controller
+          name="perGPSelect"
+          control={control}
+          defaultValue='Season'
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <FormControl className="mui_select">
+                  <InputLabel id="perGP-select">Value Calculated For:</InputLabel>
+                  <Select
+                  labelId="perGPSelect"
+                  label="Value Calculated For:"
+                  // sx={{ width: 250 }}
+                  value={value}
+                  onChange={onChange}
+                  error={!!error}
+                  // helperText={error ? error.message : null}
+                  >
+                      <MenuItem value={'Season'}>Full Season</MenuItem>
+                      <MenuItem value={'perGP'}>Per Game</MenuItem>
+                  </Select>
+              </FormControl>
+            )}
+          />
+          </div>
+      </div>
+    );
+  }
+
   const defaultYahooStatPull = async () => {
     setLoading(true)
-
-    lsID = "12_102_101_0"
 
     if (firstRender.current) {
       // console.log('Setting standard yahoo cats for first load')
@@ -133,38 +457,64 @@ export default function PlayerVORPData(props) {
     let initColData = []
     let colDataObj = {}
 
-    for (let cat in leagueCats) {
-      colDataObj = {}
-      colDataObj.name = leagueCats[cat]
-      colDataObj.dataRef1 = leagueCats[cat] + " VORP"
-      colDataObj.dataRef2 = leagueCats[cat] + " perGP VORP"
-      colDataObj.omitTotal = true   // these are set in setTableCols()
-      colDataObj.omitperGP = true   // this is set in setTableCols()
+    if (pathname == '/raw-stats') {
+      lsID = "NHL_allPlayers_22-23"
 
-      if (yahooStandardCats.includes(leagueCats[cat])) {
-        colDataObj.active = true
-      } else {
-        colDataObj.active = false
+      for (let cat in leagueCats) {
+        colDataObj = {}
+        colDataObj.name = leagueCats[cat]
+        colDataObj.dataRef1 = leagueCats[cat]
+        colDataObj.dataRef2 = leagueCats[cat] + " perGP"
+        colDataObj.omitTotal = true   // these are set in setTableCols()
+        colDataObj.omitperGP = true   // this is set in setTableCols()  
+        colDataObj.active = true    // show ALL cats
+        
+        initColData.push(colDataObj)
       }
-      
-      initColData.push(colDataObj)
-    }
+      initColData.Name = { dataRef: 'Full Name' }
 
-    initColData.Name = { dataRef: 'fullName' }
-    initColData.Rank = { dataRef: 'vorp_rank' }
-    initColData.Rank_pergp = { dataRef: 'vorp_pergp_rank' }
-    initColData['Scoring Type'] = 'Categories' 
-    initColData.VORP = { dataRef: 'vorp' }
-    initColData.VORP_pergp = { dataRef: 'vorp_pergp' }
+      if (seasonID == null) {
+        seasonID = '22-23'
+      }  
+
+
+    } else {
+      lsID = "12_102_101_0"
+
+      for (let cat in leagueCats) {
+        colDataObj = {}
+        colDataObj.name = leagueCats[cat]
+        colDataObj.dataRef1 = leagueCats[cat] + " VORP"
+        colDataObj.dataRef2 = leagueCats[cat] + " perGP VORP"
+        colDataObj.omitTotal = true   // these are set in setTableCols()
+        colDataObj.omitperGP = true   // this is set in setTableCols()
+  
+        if (yahooStandardCats.includes(leagueCats[cat])) {
+          colDataObj.active = true
+        } else {
+          colDataObj.active = false
+        }
+        
+        initColData.push(colDataObj)
+      }
+  
+      initColData.Name = { dataRef: 'fullName' }
+      initColData.Rank = { dataRef: 'vorp_rank' }
+      initColData.Rank_pergp = { dataRef: 'vorp_pergp_rank' }
+      initColData['Scoring Type'] = 'Categories' 
+      initColData.VORP = { dataRef: 'vorp' }
+      initColData.VORP_pergp = { dataRef: 'vorp_pergp' }  
+
+      if (seasonID == null) {
+        seasonID = 'ProjVORPs'
+      }  
+    }
 
     // // console.log(initColData)
     colData = initColData;
-    if (seasonID == null) {
-      seasonID = 'ProjVORPs'
-    }
 
     if (tableData[seasonID] == null) { 
-      // console.log('tableData[' + seasonID + '] is null, need new season data for default settings')
+      console.log('tableData[' + seasonID + '] is null, need new season data for default settings')
       
       // console.log('getting data from api')
       const t0 = new Date().getTime()
@@ -177,12 +527,9 @@ export default function PlayerVORPData(props) {
             data.responseTime = `${t1-t0} ms`
             setTableData(data)
           } else if (!data) {
-            submitRequestedLSID(lsID)
-              .then(() => {
-                // User Message and Input Triggered
-                setNewLS(true);
-                setLoading(false)
-              })
+            // User Message and Input Triggered
+            setNewLS(true);
+            setLoading(false)
             tableData = {};
             setFinalTableData([])
           }      
@@ -193,17 +540,16 @@ export default function PlayerVORPData(props) {
         })
   
     } else {
-      // console.log('already have ' + seasonID + ' data for default settings')
+      console.log('already have ' + seasonID + ' data for default settings')
       setTableData()
     }
-
-
 
     // Reset lsID to avoid "lsID changed" error
     lsID = ""
   }
 
   const regVORPDataPull = async() => {
+    setLoading(true)
     const t0 = new Date().getTime()
     fetchPlayerData()
       .then(data => {
@@ -214,9 +560,7 @@ export default function PlayerVORPData(props) {
           // redis.set(`playerData`, data) 
           setTableData(data)
         } else if (!data) {
-          submitRequestedLSID(lsID)
           // User Message and Input Triggered
-
           setNewLS(true);
           setLoading(false);
           tableData = {};
@@ -304,6 +648,7 @@ export default function PlayerVORPData(props) {
   // };
 
   const submitRequestedLSID = async (formData) => {
+    console.log('Submitting League Settings to be calculated')
     let userEmail = formData.lsRequestEmail
     let userSubscribe = formData.radioSubscribe
     let leagueSettingID = lsID
@@ -318,7 +663,7 @@ export default function PlayerVORPData(props) {
     }
     // console.log('lsID request submitted')
     if (userEmail != null) {
-      alert('Your email has been submitted! You will be notified by email as soon as your specific league data is live (usually within a few hours).')
+      alert('Your email has been submitted! You will be notified by email as soon as your specific league data is live.')
     }
     return data;
   }
@@ -338,25 +683,686 @@ export default function PlayerVORPData(props) {
   const firstRender = useRef(true);
 
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      // console.log('first render')
-      defaultYahooStatPull()
-      return;
-    }
-    // console.log('next renders')
+    if (pathname == '/raw-stats') {
+      if (firstRender.current) {
+        firstRender.current = false;
+        // console.log('first render')
+        defaultYahooStatPull()
+        return;
+      } else {
+        if (tableData[seasonID] == null) {
+          regVORPDataPull()
+        } else {
+          setLoading(true)
+          setTableData()
+        }
+      }
 
-    if (checkIfNewDataNecessary()) {
-      setLoading(true)
-      // console.log('Fetching data from API')
-      regVORPDataPull()
     } else {
-      // console.log('Getting data locally')
+      if (firstRender.current) {
+        firstRender.current = false;
+        // console.log('first render')
+        defaultYahooStatPull()
+        return;
+      }
+      // console.log('next renders')  
+
+      if (checkIfNewDataNecessary()) {
+        // console.log('Fetching data from API')
+        regVORPDataPull()
+      } else {
+        // console.log('Getting data locally')
+      }
     }
 
     // console.log(newLS)
   }, [props.lsID, season, perGPSelect, tablePosFilter, tableView])  // hidePosRnk, hideAge, 
   
+
+  const setRawDataTableCols = () => {
+
+    let showPerGP = false;
+    if (perGPSelect == "perGP" && showPerGP == false) {
+      showPerGP = true;
+    } else if (perGPSelect == "Season" && showPerGP == false){
+      showPerGP = false;
+    }
+
+    tableTitle = '';
+    tableTitle += 'Raw Stats '
+    tableTitle += '(' + seasonID + '): '
+    if (tablePosFilter == "None") {
+      tableTitle += "All Positions / "
+    } else {
+      tableTitle += tablePosFilter + " / "
+    }
+    if (showPerGP) {
+      tableTitle += 'Per Game'
+    } else {
+      tableTitle += 'Full Season'
+    }
+
+    if (showPerGP == true) {
+      tableColtoSortBy = "PointsperGP"
+    } else {
+      tableColtoSortBy = "Points"
+    }
+
+
+    let columnData = []
+    let x = 0;
+    for (let cat in leagueCats) {
+        columnData[x] = {
+            'name': leagueCats[cat],
+            'dataRef1' : leagueCats[cat],
+            'dataRef2' : `${leagueCats[cat]} perGP`,
+            'omitTotal' : showPerGP,
+            'omitperGP' : !showPerGP,
+        }
+
+        x += 1
+    }
+
+    // console.log(columnData)
+
+    let dataTableBorder = "1px dotted #414141"
+
+    columns = [
+        {
+            name: 'Name',
+            selector: row => row['Full Name'],
+            sortable: false,
+            maxWidth: '200px',
+            reorder: true,
+            style: {
+              justifyContent: 'left',
+              borderRight: dataTableBorder
+            },
+            conditionalCellStyles: [
+              {
+                when: row => (flaggedPlayers.includes(row.PlayerID)),
+                style: {
+                  backgroundColor: '#D50000',
+                }
+              },
+            ]    
+        },
+        {
+            name: 'Team',
+            selector: row => row.Team,
+            sortable: false,
+            width: "80px",
+            style: {
+                textTransform: 'uppercase',
+                borderRight: dataTableBorder
+            }
+        },
+        {
+            name: 'Pos',
+            selector: row => row.PositionAll,
+            sortable: false,
+            width: '85px',
+            style: {
+              color: 'black',
+              fontSize: '12px',
+              fontWeight: '600',
+              borderRight: dataTableBorder
+            },
+            conditionalCellStyles: [
+                {
+                  when: row => row.PositionAll == 'C',
+                  style: {
+                    backgroundColor: '#93d274',
+                  }
+                },
+                {
+                  when: row => row.PositionAll == 'LW',
+                  style: {
+                    backgroundColor: '#f5df72',
+                  }
+                },
+                {
+                  when: row => row.PositionAll == 'RW',
+                  style: {
+                    backgroundColor: '#ff6963',
+                  }
+                },
+                {
+                  when: row => row.PositionAll == 'D',
+                  style: {
+                    backgroundColor: '#7bb3d6',
+                  }
+                },
+                {
+                  when: row => row.PositionAll == 'G',
+                  style: {
+                    backgroundColor: '#b875c8',
+                  } 
+                },
+                {
+                when: row => (row.PositionAll == 'C, LW' || row.PositionAll == 'LW, RW' || row.PositionAll == 'C, RW' || row.PositionAll == 'C, LW, RW'),
+                  style: {
+                    backgroundColor: '#ffab44',
+                  } 
+                },  
+            ]
+        },
+        {
+            name: "GP",
+            selector: row => row.GP,
+            sortable: true,
+            width: '80px',
+            style: {
+                // fontSize: '0.9rem',
+                justifyContent: 'center',
+                borderRight: dataTableBorder
+            }
+        },
+        {
+            name: columnData[0]['name'],
+            selector: row => row[columnData[0]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[0]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+        },
+        {
+            name: columnData[0]['name'],
+            selector: row => row[columnData[0]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[0]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+        },
+        {
+            name: columnData[1]['name'],
+            selector: row => row[columnData[1]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[1]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+        },
+        {
+            name: columnData[1]['name'],
+            selector: row => row[columnData[1]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[1]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+        },
+        {
+            name: columnData[2]['name'],
+            id: 'Points',
+            selector: row => row[columnData[2]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[2]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[2]['name'],
+            id: 'PointsperGP',
+            selector: row => row[columnData[2]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[2]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[3]['name'],
+            selector: row => row[columnData[3]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[3]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[3]['name'],
+            selector: row => row[columnData[3]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[3]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[4]['name'],
+            selector: row => row[columnData[4]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[4]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[4]['name'],
+            selector: row => row[columnData[4]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[4]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[5]['name'],
+            selector: row => row[columnData[5]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[5]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[5]['name'],
+            selector: row => row[columnData[5]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[5]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[6]['name'],
+            selector: row => row[columnData[6]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[6]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[6]['name'],
+            selector: row => row[columnData[6]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[6]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[7]['name'],
+            selector: row => row[columnData[7]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[7]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[7]['name'],
+            selector: row => row[columnData[7]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[7]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[8]['name'],
+            selector: row => row[columnData[8]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[8]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[8]['name'],
+            selector: row => row[columnData[8]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[8]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[9]['name'],
+            selector: row => row[columnData[9]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[9]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[9]['name'],
+            selector: row => row[columnData[9]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[9]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[10]['name'],
+            selector: row => row[columnData[10]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[10]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[10]['name'],
+            selector: row => row[columnData[10]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[10]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[11]['name'],
+            selector: row => row[columnData[11]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[11]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[11]['name'],
+            selector: row => row[columnData[11]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[11]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[12]['name'],
+            selector: row => row[columnData[12]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[12]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[12]['name'],
+            selector: row => row[columnData[12]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[12]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[13]['name'],
+            selector: row => row[columnData[13]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[13]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[13]['name'],
+            selector: row => row[columnData[13]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[13]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[14]['name'],
+            selector: row => row[columnData[14]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[14]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[14]['name'],
+            selector: row => row[columnData[14]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[14]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[15]['name'],
+            selector: row => row[columnData[15]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[15]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[15]['name'],
+            selector: row => row[columnData[15]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[15]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[16]['name'],
+            selector: row => row[columnData[16]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[16]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[16]['name'],
+            selector: row => row[columnData[16]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[16]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[17]['name'],
+            selector: row => row[columnData[17]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[17]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[17]['name'],
+            selector: row => row[columnData[17]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[17]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[18]['name'],
+            selector: row => row[columnData[18]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[18]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[18]['name'],
+            selector: row => row[columnData[18]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[18]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[19]['name'],
+            selector: row => row[columnData[19]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[19]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[19]['name'],
+            selector: row => row[columnData[19]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[19]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[20]['name'],
+            selector: row => row[columnData[20]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[20]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[20]['name'],
+            selector: row => row[columnData[20]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[20]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            { // GAA
+            name: columnData[21]['name'],
+            selector: row => row[columnData[21]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[21]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[22]['name'],
+            selector: row => row[columnData[22]['dataRef1']],
+            sortable: true,
+            width: dataColWidth02,
+            omit: columnData[22]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[22]['name'],
+            selector: row => row[columnData[22]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[22]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[23]['name'],
+            selector: row => row[columnData[23]['dataRef1']],
+            sortable: true,
+            width: dataColWidth02,
+            omit: columnData[23]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[23]['name'],
+            selector: row => row[columnData[23]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[23]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {  // SV%
+            name: columnData[24]['name'],
+            selector: row => row[columnData[24]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[24]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[25]['name'],
+            selector: row => row[columnData[25]['dataRef1']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[25]['omitTotal'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            },
+            {
+            name: columnData[25]['name'],
+            selector: row => row[columnData[25]['dataRef2']],
+            sortable: true,
+            width: dataColWidth01,
+            omit: columnData[25]['omitperGP'],
+            style: {
+                borderRight: dataTableBorder
+            }
+            }
+    ]
+  }
+
 
   const setTableCols = (colData) => {
     // console.log('setTableCols')
@@ -4039,86 +5045,72 @@ export default function PlayerVORPData(props) {
 
   }
 
-  // // async function fetchADPs() {
-  // //   console.log('fetching ADPs')
-  // //   let adpSupabaseTable = 'Yahoo_NHL_ADP';
-
-  // //   const { data, error } = await supabase
-  // //     .from(adpSupabaseTable)
-  // //     .select()
-  // //   if (error) {
-  // //     console.log('error')
-  // //     console.log(error.message)
-  // //     return // abort
-  // //   }    
-
-  // //   return data;
-  // // }
-
-  // const addADP = (mainData) => {
-  //   console.log('addADPs')
-  //   let keyedADPs = {}
-
-  //   fetchADPs()
-  //     .then(data => {
-  //       for (let row in data) {
-  //         keyedADPs[data[row]['playerID']] = {
-  //           avgPick: data[row]['playerAvgPick'],
-  //           avgRd: data[row]['playerAvgRd'],
-  //           pctPicked: data[row]['playerPctPicked']
-  //         }
-  //       }
-
-  //       for (let player in mainData) {
-  //         let id = mainData[player]["PlayerID"];
-  //         if (id in keyedADPs) {
-  //           mainData[player]["avgPick"] = keyedADPs[id]["avgPick"]
-  //         }
-  //       }
-
-  //       // console.log('mainData has ADPs')
-  //     })
-  //     .catch(console.error)
-
-  //   return mainData
-
-  // }
-
-
   const setTableData = async (data) => {
     setFinalTableData([]);  // clear specific subset of data to display
-
-    ensureDraftViewSettings();
 
     // NOTE: Below is for API vs Cache
     // data.Source = dataSource;
     // console.log('Data was pulled from: ' + data.Source + ' and took ' + data.responseTime)
-    
-    // If season data doesn't exist locally yet, or lsID is unset/just changed => set season data
-    if ((tableData[seasonID] == null) || (lsIDChanged_Flag == true)) {
-      // console.log('incoming data being set in tableData['+seasonID+']')
-      tableData[seasonID] = data
-    }
-    
-    // Filter data on tablePosFilter setting
-    if (tablePosFilter == null) {
-      tablePosFilter = "Overall"  
-    }
-    if (tablePosFilter == 'None') {
-      // console.log('setting tableData')
-      setFinalTableData(
-        tableData[seasonID].filter(player => (player.VORPPosition != "Overall") && (player.VORPPosition != "Overall perGP"))
-      )
-    } else {
-      // console.log('setting tableData')
-      setFinalTableData(
-        tableData[seasonID].filter(player => player.VORPPosition == tablePosFilter)
-      )
-    }
-    
-    // Set Table Cols appropriately
-    setTableCols(colData)
 
+    if (pathname == '/raw-stats') {
+      // If season data doesn't exist locally yet => set season data
+      if (tableData[seasonID] == null) {
+        // console.log('incoming data being set in tableData['+seasonID+']')
+        tableData[seasonID] = data
+      }
+      
+      // Filter data on tablePosFilter setting
+      if (tablePosFilter == null) {
+        tablePosFilter = "None"  
+      }
+      if (tablePosFilter == "None") {
+        // console.log('setting tableData')
+        setFinalTableData(tableData[seasonID])
+      } else {
+        // console.log('setting tableData')
+        setFinalTableData(
+          tableData[seasonID].filter(player => player.PositionAll.includes(tablePosFilter))
+        )
+      }
+
+      // Set Table Cols appropriately
+      setRawDataTableCols()
+      
+    } else {
+      ensureDraftViewSettings();
+
+      // If season data doesn't exist locally yet, or lsID is unset/just changed => set season data
+      if ((tableData[seasonID] == null) || (lsIDChanged_Flag == true)) {
+        // console.log('incoming data being set in tableData['+seasonID+']')
+        tableData[seasonID] = data
+      }
+      
+      // Filter data on tablePosFilter setting
+      if (tablePosFilter == null) {
+        tablePosFilter = "Overall"  
+      }
+      if (tablePosFilter == 'None') {
+        // console.log('setting tableData')
+        setFinalTableData(
+          tableData[seasonID].filter(player => (player.VORPPosition != "Overall") && (player.VORPPosition != "Overall perGP"))
+        )
+      } else {
+        // console.log('setting tableData')
+        setFinalTableData(
+          tableData[seasonID].filter(player => player.VORPPosition == tablePosFilter)
+        )
+      }
+      
+      // Set Table Cols appropriately
+      setTableCols(colData)
+    }
+
+    
+
+    if (pathname == '/raw-stats') {
+    } else {
+    }
+    
     // console.log('lsID did not change')
     let delayTime = 333
     await wait(delayTime);
@@ -4141,15 +5133,20 @@ export default function PlayerVORPData(props) {
       //   return cacheData;
       // }
 
-      ensureDraftViewSettings()
+      let dbFile = '';
+      if (pathname == '/raw-stats') {
+        dbFile = league + '_allPlayers_' + seasonID;
 
-      if (lsID == "") {
-        lsID = "12_102_101_0"
+      } else {
+        console.log(pathname)
+        ensureDraftViewSettings()
+        if (lsID == "") {
+          lsID = "12_102_101_0"
+        }
+        dbFile = league + '__' + lsID + '__' + seasonID;
       }
-
-      let dbFile = league + '__' + lsID + '__' + seasonID;
-      // console.log("db file = " + dbFile)
-
+  
+      console.log("db file = " + dbFile)
       // ------------- TODO: Add REDIS cache here (or some other simple cache) in order to save on server calls
 
       const { data, error } = await supabase
@@ -4165,7 +5162,7 @@ export default function PlayerVORPData(props) {
         setNewLS(true);
         console.log('Database Error!')
         // console.log(error.message)
-        alert('Uh oh, looks there was an issue with submitting your request. Try refreshing the page and submitting again. If the issue persists, please submit the issue to hello@fantasyvorp.com')
+        // alert('Uh oh! Looks there was an issue with submitting your request. Try refreshing the page and submitting again. If the issue persists, please submit the issue to hello@fantasyvorp.com')
         return data; // abort
       }
       
@@ -4234,237 +5231,9 @@ export default function PlayerVORPData(props) {
         ) : (
           ""
         )}
-        { newLS ? (
-        <div className="ls-request-form-container">
-          <div className="content">
-          <h4 className="warning">Your League&apos;s VORP Data isn&apos;t in our database yet 😥!</h4>
-            <p>As this site is still under development, populating the database is - unfortunately - still a very manual process. Based on user requests, we&apos;re adding calculations to our database every day. However, your specific settings have not been added yet.</p>
-            <p><strong>Please enter your email below to submit your League Settings for calculation. We will notify you the moment your league&apos; VORP data is live ⏰!</strong></p>
-             {/* TODO: Add this capability
-             <h5>Your Settings:</h5>
-             <h5>{tableTitle2}</h5>
-             <h5>{tableTitle3}</h5> */}
 
-            <form className="ls-request-form" onSubmit={handleSubmit(submitRequestedLSID)}>
-            <div className="form_group_container">
-                <Controller
-                name="lsRequestEmail"
-                control={control}
-                defaultValue=""
-                required
-                type="email"
-                render={({ field: { onChange, value }, fieldState: { errors } }) => (
-                    <TextField 
-                    id="outlined-basic" 
-                    label="Email" 
-                    variant="outlined" 
-                    value={value}
-                    onChange={onChange}
-                    className="mui_textfield"
-                    type="email"
-                    />
-                )}
-                />
-                <Controller
-                  // rules={{ required: 'Scoring Type required' }}
-                  name="radioSubscribe"
-                  control={control}
-                  defaultValue="singlenote"
-                  render={({ field: { onChange, value }, fieldState: { error } }) => (
-                      <RadioGroup
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      name="radio-subscribe"
-                      className="formControlGroup radioGroup"
-                      defaultValue='singlenote'
-                      value={value}
-                      onChange={(e) => {
-                          onChange(e);
-                      }}
-                      // error={!!error}
-                      // helperText={error ? error.message : null}
-                      >
-                          <FormControlLabel 
-                          value="singlenote" 
-                          name="singlenote" 
-                          // checked={scoringRadio === "categories"} 
-                          label="Only use this email for THIS notification, and delete all records afterwards."
-                          control={<Radio />} 
-                          />
-
-                          <FormControlLabel 
-                          value="subscribe" 
-                          name="subscribe" 
-                          label="I would like to subscribe to future updates of FantasyVORP.com" 
-                          // checked={scoringRadio === "points"} 
-                          control={<Radio />} 
-                          />
-                      </RadioGroup>
-                  )}
-                  />                
-
-
-                    <Button 
-                    variant="contained" 
-                    type="submit" 
-                    value="Submit">
-                      Submit
-                    </Button>
-
-            </div>
-          </form>
-        </div>
-
-        </div>
-      ) : (
-        ""
-      )}
-
-      <h5 className="headingBg">
-        Current Settings:<br />
-        {tableTitle2}<br />
-        {tableTitle3}
-      </h5>
-      <div className="playerDataControlMenu">
-        <div className="form_group_container">
-          <Controller
-            name="tableViewSelect"
-            control={control}
-            defaultValue='Stats'
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <FormControl className="mui_select">
-                    <InputLabel id="tableViewSelect-select">Table View</InputLabel>
-                    <Select
-                    labelId="tableViewSelect-select"
-                    label="Table View"
-                    // sx={{ width: 250 }}
-                    value={value}
-                    onChange={onChange}
-                    error={!!error}
-                    // helperText={error ? error.message : null}
-                    >
-                        <MenuItem value={'Stats'}>Stats</MenuItem>
-                        <MenuItem value={'Draft'}>Draft</MenuItem>
-                    </Select>
-                </FormControl>
-              )}
-            />
-            <Controller
-            name="tablePosFilter"
-            control={control}
-            defaultValue="Overall"
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <FormControl className="mui_select">
-                    <InputLabel id="tablePosFilter-select">Position Filter</InputLabel>
-                    <Select
-                    labelId="tablePosFilter-select"
-                    label="Position Filter"
-                    // sx={{ width: 250 }}
-                    value={value}
-                    onChange={onChange}
-                    error={!!error}
-                    // helperText={error ? error.message : null}
-                    >
-                        <MenuItem value={'Overall'}>Overall</MenuItem>
-                        <MenuItem value={'C'}>C</MenuItem>
-                        <MenuItem value={'LW'}>LW</MenuItem>
-                        <MenuItem value={'RW'}>RW</MenuItem>
-                        <MenuItem value={'D'}>D</MenuItem>
-                        <MenuItem value={'G'}>G</MenuItem>
-                        {/* <MenuItem value={'None'}>None</MenuItem> */}
-                    </Select>
-                </FormControl>
-            )}
-            // rules={{ required: 'Fantasy Site required' }}
-            />
-            <Controller
-            name="seasonSelect"
-            control={control}
-            defaultValue="ProjVORPs"
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <FormControl className="mui_select">
-                    <InputLabel id="seasonSelect-select">Season Select</InputLabel>
-                    <Select
-                    labelId="seasonSelect-select"
-                    label="Season Select"
-                    // sx={{ width: 250 }}
-                    value={value}
-                    onChange={onChange}
-                    error={!!error}
-                    // helperText={error ? error.message : null}
-                    >
-                        <MenuItem value={'ProjVORPs'}>22-23 Projection</MenuItem>
-                        <MenuItem value={'21-22'}>21-22</MenuItem>
-                        <MenuItem value={'20-21'}>20-21</MenuItem>
-                        <MenuItem value={'19-20'}>19-20</MenuItem>
-                    </Select>
-                </FormControl>
-              )}
-            />
-            <Controller
-            name="perGPSelect"
-            control={control}
-            defaultValue='Season'
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <FormControl className="mui_select">
-                    <InputLabel id="perGP-select">Value Calculated For:</InputLabel>
-                    <Select
-                    labelId="perGPSelect"
-                    label="Value Calculated For:"
-                    // sx={{ width: 250 }}
-                    value={value}
-                    onChange={onChange}
-                    error={!!error}
-                    // helperText={error ? error.message : null}
-                    >
-                        <MenuItem value={'Season'}>Full Season</MenuItem>
-                        <MenuItem value={'perGP'}>Per Game</MenuItem>
-                    </Select>
-                </FormControl>
-              )}
-            />
-            </div>
-          {/* <div className="form_group_container">
-            <FormControl component="fieldset">
-              <FormGroup aria-label="position" row>
-
-                  <FormControlLabel
-                    label="Show Position Ranks"
-                    labelPlacement="top"
-                    control={
-                      <Checkbox 
-                        checked={!hidePosRnk}
-                        onChange={() => setHidePosRnk(!hidePosRnk)}
-                        inputProps={{ 'aria-label': 'controlled' }}  
-                      />
-                    }
-                  />
-                  <FormControlLabel
-                    label="Show ADP"
-                    labelPlacement="top"
-                    control={
-                      <Checkbox 
-                        checked={!hideADP}
-                        onChange={() => setHideADP(!hideADP)}
-                        inputProps={{ 'aria-label': 'controlled' }}  
-                      />
-                    }
-                  />
-                  <FormControlLabel
-                    label="Show Age"
-                    labelPlacement="top"
-                    control={
-                      <Checkbox 
-                        checked={!hideAge}
-                        onChange={() => setHideAge(!hideAge)}
-                        inputProps={{ 'aria-label': 'controlled' }}  
-                      />
-                    }
-                  />
-
-              </FormGroup>
-            </FormControl>
-        </div> */}
-      </div>
+      {lsRequestForm}
+      {playerDataControlMenu}
 
       <div className={styles.dataTableContainer}>
         { loading ? (

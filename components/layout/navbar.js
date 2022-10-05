@@ -39,7 +39,7 @@ export default function Section() {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/coming-soon">
+                            <Link href="/raw-stats">
                                 <a className="btn">Raw Stats</a>
                             </Link>
                         </li>
@@ -95,7 +95,7 @@ export default function Section() {
                             </Link>
                         </li>
                         <li className="subNav-item">
-                            <Link href="/coming-soon">
+                            <Link href="/raw-stats">
                             <a>
                                 <RawOnSharpIcon />
                                 <span>Raw Stats</span>

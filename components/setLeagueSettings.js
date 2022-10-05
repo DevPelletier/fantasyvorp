@@ -39,6 +39,7 @@ let leagueSettingFile;
 export default function LeagueSettingsForm(props) {
     const [loading, setLoading] = useState(false);
     const { watch, control, reset, handleSubmit } = useForm();
+    const [pts, setPts] = useState(false);
     const recaptchaRef = createRef();
 
     let scoringTypeRadio = watch("radioScoringType");
@@ -91,13 +92,14 @@ export default function LeagueSettingsForm(props) {
         let posID = '';
         tableCats = [];
 
-        if (!data) {
-            console.log('form data error')
-            alert('Uh oh, looks there was an issue with submitting your League Settings. Try refreshing the page and submitting them again. If the issue persists, please submit the issue to hello@fantasyvorp.com. So sorry for the inconvenience!')
-            return
-        }
+        // THIS DOESN'T WORK - but I want to add something here that does... lol
+        // if (data.length == 0) {
+        //     console.log('form data error')
+        //     alert('Uh oh, looks there was an issue with submitting your League Settings! Try refreshing the page and submitting them again. If the issue persists, please submit the issue to hello@fantasyvorp.com. So sorry for the inconvenience!')
+        //     return
+        // }
 
-        // console.log(data)
+        console.log(data)
 
         let reverseCountingCats = ['FOL', 'L', 'GA', 'GAA']
 
@@ -162,10 +164,15 @@ export default function LeagueSettingsForm(props) {
                             break;
                     }
 
-                    if (scoringType == 'categories') {
+                    if (scoringType == 0) {
                             categoryJSON[ptsCat]["Weight"] = 1
                     } else {
-                        if ((data[x] == "") || (categoryJSON[ptsCat]["Status"] == 0)) {
+                        if ((data[x] == "") && (categoryJSON[ptsCat]["Status"] == 1)) {
+                            console.log(scoringType)
+                            alert("League Setting Error: Points League, but no value assigned for some active Categories, including " + ptsCat +  " - please make sure you assign point values to each Active Category!")
+                            return
+                        }
+                        if (categoryJSON[ptsCat]["Status"] == 0) {
                             categoryJSON[ptsCat]["Weight"] = 0
                         } else {
                             if (reverseCountingCats.includes(ptsCat)) {
@@ -193,8 +200,8 @@ export default function LeagueSettingsForm(props) {
 
         // console.log('positionJSON :')
         // console.log(positionJSON)
-        // console.log('categoryJSON :')
-        // console.log(categoryJSON)
+        console.log('categoryJSON :')
+        console.log(categoryJSON)
 
         props.getCatSettings(categoryJSON)
         props.getPosSettings(positionJSON)
@@ -343,16 +350,18 @@ export default function LeagueSettingsForm(props) {
 
     // Show or Hide Points fields (based on scoringRadio)
     const togglePointsFields = () => {
-        const fields = document.querySelectorAll('.mui_textfield_pts');
+        // const fields = document.querySelectorAll('.mui_textfield_pts');
 
         if (scoringTypeRadio == 'points') {
-            for (const field of fields) {
-                field.classList.remove('hidden');
-            }
+            setPts(true)
+            // for (const field of fields) {
+            //     field.classList.remove('hidden');
+            // }
         } else {
-            for (const field of fields) {
-                field.classList.add('hidden');
-            }
+            setPts(false)
+            // for (const field of fields) {
+            //     field.classList.add('hidden');
+            // }
         }
     }
     
@@ -448,7 +457,7 @@ export default function LeagueSettingsForm(props) {
                 </div>
 
                 <h3>Roster Settings</h3>
-                <p>Your league&apos;s roster slots. (e.g. 2 C, 2 LW, 2 RW, 4 D, 4 Bench (Only input F, W, or Util slots if those specific slots apply to your league))</p>
+                <p>Your league&apos;s roster slots.<br /><em>(Only set F, W, or Util slots if those specific slots apply to your league.)</em></p>
                 <div className="form_group_container select-container" id="section_2">
                     <Controller
                     name="roster-c"
@@ -815,7 +824,7 @@ export default function LeagueSettingsForm(props) {
                 </div>
                 
                 <h3>Skater Categories</h3>
-                <p>Check all active categories in your league (and ensure inactive categories are un-checked)</p>
+                <p>Check all active categories in your league (and ensure inactive categories are un-checked!)<br /><em>For Points Leagues, ensure that you set a value for each <strong>active</strong> category!</em></p>
                 <div className="form_group_container cats-container" id="section_4">
                     <FormControl className="formControlGroup checkbox-and-textfield cats-field">
                         <Controller
@@ -854,7 +863,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -907,7 +916,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -958,7 +967,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1009,7 +1018,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1060,7 +1069,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1111,7 +1120,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1162,7 +1171,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1213,7 +1222,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1264,7 +1273,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1316,7 +1325,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1367,7 +1376,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1418,7 +1427,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1469,7 +1478,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1521,7 +1530,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1572,7 +1581,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1624,7 +1633,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1675,7 +1684,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1694,7 +1703,7 @@ export default function LeagueSettingsForm(props) {
                 </div>
                 
                 <h3>Goalie Categories</h3>
-                <p>Check all active categories in your league (and ensure inactive categories are un-checked!)</p>
+                <p>Check all active categories in your league (and ensure inactive categories are un-checked!)<br /><em>For Points Leagues, ensure that you set a value for each <strong>active</strong> category!</em></p>
                 <div className="form_group_container cats-container" id="section_5">
                     <FormControl className="formControlGroup checkbox-and-textfield cats-field">
                         <Controller
@@ -1732,7 +1741,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1783,7 +1792,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1834,7 +1843,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1885,7 +1894,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1936,7 +1945,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -1987,7 +1996,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -2038,7 +2047,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -2089,7 +2098,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 
@@ -2140,7 +2149,7 @@ export default function LeagueSettingsForm(props) {
                         defaultValue=""
                         render={({ field: { onChange, value }, fieldState: { error } }) => (
                             <TextField 
-                            className="mui_textfield mui_textfield_pts hidden" 
+                            className={`mui_textfield mui_textfield_pts ${ pts ? "" : "hidden"}`}
                             size="small" 
                             // fullwidth 
                             // endadornment={<InputAdornment position="end">pts</InputAdornment>} 

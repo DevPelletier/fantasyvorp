@@ -96,7 +96,6 @@ export default function PlayerRawData(props) {
         // }
   
         // console.log('fetching data from server')
-        let dbFile = league + '_allPlayers_' + seasonID;
         // console.log("db file = " + dbFile)
   
         // ------------- TODO: Add REDIS cache here (or some other simple cache) in order to save on server calls

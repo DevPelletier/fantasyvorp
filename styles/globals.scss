@@ -52,7 +52,7 @@ ul {
 }
 
 .hidden {
-  // display: none;
+  display: none;
   visibility: hidden !important;
   opacity: 0 !important;
   transition: visibility 0s, opacity 0.5s linear;
@@ -629,7 +629,7 @@ span.closeBtn {
 
       &.cats-field {
         width: auto;
-        grid-template-columns: 70px 80px;
+        grid-template-columns: 70px auto;
         min-width: unset;
         max-width: unset;
 
@@ -1148,6 +1148,31 @@ section.faq {
 
     // ----------- FAQs TABLE ----------- //
     .MuiAccordion-root {
+    }
+
+    // ----------- LeagueSetting MODAL ----------- //
+    .MuiBox-root {
+      width: 95vw;
+    }
+
+    .ls-modal {
+      padding: 32px 24px;
+
+      p {
+        width: 80%;
+        max-width: 300px;
+      }
+
+      .form_group_container.cats-container {
+        @include flex-center;
+        flex-wrap: wrap;
+      }
+
+      span.closeBtn {
+        position: fixed;
+        top: 8vh;
+        right: 5.5vw;
+      }
     }
 
 
